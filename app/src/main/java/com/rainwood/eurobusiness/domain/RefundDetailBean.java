@@ -9,8 +9,8 @@ import java.io.Serializable;
  */
 public final class RefundDetailBean implements Serializable {
 
-    private String id;             // 退货订单号
-    private String ico;         // 图片
+    private String id;              // 退货订单号
+    private String ico;             // 图片
     private String goodsName;       // 商品名称
     private String  skuName;        // 规格名称
     private String refundMoney;     // 退货金额

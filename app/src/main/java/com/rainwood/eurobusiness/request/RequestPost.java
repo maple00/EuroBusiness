@@ -41,4 +41,13 @@ public final class RequestPost {
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getRefundOrderInfo", params, listener);
     }
+
+    /**
+     * 订单销售统计页
+     */
+    public static void saleTotal(OnHttpListener listener){
+        RequestParams params = new RequestParams();
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/statistics.php?type=getTotal", params, listener);
+    }
+
 }

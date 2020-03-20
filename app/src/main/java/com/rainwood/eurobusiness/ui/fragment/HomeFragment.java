@@ -128,6 +128,7 @@ public class HomeFragment extends BaseFragment {
                 }
             });
         }
+        // 供应商端
         if (Contants.userType == 0) {                   // 供应商端
             StatusBarUtil.setCommonUI(getActivity(), false);
             StatusBarUtil.setStatusBarColor(getActivity(), R.color.textColor);

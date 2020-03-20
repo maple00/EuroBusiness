@@ -198,19 +198,32 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
                 if (result.url().contains("wxapi/v1/order.php?type=getRefundOrder")) {
                     mDetail = JsonParser.parseJSONObject(RefundDetailBean.class,
                             JsonParser.parseJSONObject(body.get("data")).get("info"));
-
                     // 赋值
                     for (int i = 0; i < mUIList.size(); i++) {
                         switch (i){
                             case 0:         // 退货数量
+                                mUIList.get(i).setShowText(mDetail.getRefundNum());
                                 break;
                             case 1:         // 退货金额
+                                mUIList.get(i).setShowText(mDetail.getRefundMoney());
                                 break;
                             case 2:         // 退货原因
+                                mUIList.get(i).setShowText(mDetail.getText());
+                                break;
+                            case 3:         // 运费
+                                mUIList.get(i).setShowText(mDetail.getRefundMoney());
+                                break;
+                            case 4:         // 订单类型
+                                mUIList.get(i).setShowText(mDetail.getClassify());
+                                break;
+                            case 5:         // 申请时间
+                                mUIList.get(i).setShowText(mDetail.getTime());
+                                break;
+                            case 6:         // 退货单号
+                                mUIList.get(i).setShowText(mDetail.getId());
                                 break;
                         }
                     }
-
                     Message msg = new Message();
                     msg.what = INITIAL_SIZE;
                     mHandler.sendMessage(msg);
