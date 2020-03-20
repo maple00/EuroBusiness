@@ -1,0 +1,155 @@
+<resources>
+    <string name="app_name">欧商科技</string>
+
+    <!-- 占位-->
+    <!-- Http-->
+    <string name="frame_name" translatable="false">AndroidOHP</string>
+    <!-- 通用的-->
+    <string name="common_code_send" translatable="false">发送验证码</string>
+    <string name="common_input_code" translatable="false">输入验证码</string>
+    <string name="common_loading" translatable="false">加载中&#8230;</string>
+    <string name="common_step_commit" translatable="false">提交</string>
+    <string name="common_confirm" translatable="false">确定</string>
+    <string name="common_cancel" translatable="false">取消</string>
+    <string name="common_reset" translatable="false">重置</string>
+    <string name="common_percent" translatable="false">%</string>
+    <string name="common_year" translatable="false">年</string>
+    <string name="common_month" translatable="false">月</string>
+    <string name="common_day" translatable="false">日</string>
+    <string name="common_save" translatable="false">保存</string>
+    <string name="common_choose" translatable="false">请选择</string>
+    <string name="common_input" translatable="false">请输入</string>
+    <string name="common_check_all" translatable="false">查看全部</string>
+    <string name="common_clear_screening" translatable="false">清空筛选</string>
+    <string name="common_delete" translatable="false">删除</string>
+    <string name="common_edit" translatable="false">编辑</string>
+    <string name="common_default_address" translatable="false">默认地址</string>
+    <string name="common_default" translatable="false">默认</string>
+    <string name="common_disable" translatable="false">停用</string>
+    <!-- 更新-->
+    <string name="update_app" translatable="false">更新</string>
+    <string name="update_status_running" translatable="false">下载中</string>
+    <string name="update_status_successful" translatable="false">立即安装</string>
+    <string name="update_status_failed" translatable="false">下载失败</string>
+    <string name="update_status_paused" translatable="false">暂停中</string>
+    <string name="update_status_pending" translatable="false">等待下载</string>
+    <string name="update_download_fail" translatable="false">启动下载失败</string>
+    <string name="update_permission_hint" translatable="false">必须先要授予权限才能正常下载更新哦</string>
+    <!-- 提示-->
+    <string name="hint_layout_no_data" translatable="false">亲，暂无数据</string>
+    <string name="hint_layout_error_request" translatable="false">亲，请求出错了</string>
+    <string name="hint_layout_error_network" translatable="false">亲，没有网络了</string>
+    <string name="print_tips" translatable="false">请选择打印尺寸</string>
+    <!-- 本地异常捕捉-->
+    <string name="crash_error_hint" translatable="false">发生意外错误\n抱歉，给您带来不便</string>
+    <string name="crash_error_restart" translatable="false">重新启动</string>
+    <string name="crash_copy_log" translatable="false">复制日志</string>
+    <string name="crash_error_log" translatable="false">错误日志</string>
+    <string name="crash_error_info" translatable="false">错误信息</string>
+    <string name="crash_error_details" translatable="false">错误详情</string>
+    <string name="crash_close" translatable="false">关闭</string>
+    <!--
+    项目
+    -->
+    <!-- 身份选择-->
+    <string name="identity_choose" translatable="false">请选择您的身份</string>
+    <string name="next_step" translatable="false">下一步</string>
+    <!-- 登陆-->
+    <string name="common_login" translatable="false">登陆</string>
+    <string name="common_input_account" translatable="false">请输入账号</string>
+    <string name="common_input_pwd" translatable="false">请输入密码</string>
+    <string name="common_forget_pwd" translatable="false">忘记密码</string>
+    <string name="common_check_phone" translatable="false">手机号验证</string>
+    <string name="common_input_phone" translatable="false">请输入手机号</string>
+    <string name="common_get_check_code" translatable="false">获取验证码</string>
+    <string name="common_reset_pwd" translatable="false">重置密码</string>
+    <string name="common_input_new_pwd" translatable="false">请输入新密码</string>
+    <string name="common_input_new_pwd_again" translatable="false">请再次输入新密码</string>
+    <!-- 首页-->
+    <string name="index_scale" translatable="false">扫一扫</string>
+    <string name="index_my" translatable="false">我的</string>
+    <string name="index_home" translatable="false">首页</string>
+    <string name="goods_save_draft" translatable="false">保存为草稿</string>
+    <!-- 个人中心-->
+    <string name="personal_logout" translatable="false">退出登陆</string>
+    <string name="invoice_copy" translatable="false">复制</string>
+    <string name="invoice_tex_type" translatable="false">公司税号(P.IVA)</string>
+    <string name="invoice_copy_all" translatable="false">复制开票信息</string>
+    <string name="modify_phone" translatable="false">手机号</string>
+    <string name="modify_verify" translatable="false">验证码</string>
+    <string name="modify_new_pwd" translatable="false">新密码</string>
+    <string name="modify_tips_phone" translatable="false">请输入</string>
+    <string name="modify_tips_pwd" translatable="false">请输入新密码</string>
+    <string name="modify_tips_pwd_again" translatable="false">请再次输入新密码</string>
+    <string name="feedback_text" translatable="false">问题/意见描述</string>
+    <string name="feedback_desc" translatable="false">请详细描述您的问题</string>
+    <string name="feedback_contact" translatable="false">联系方式</string>
+    <string name="feedback_contact_hint" translatable="false">请填写您的手机号，便于我们与您联系</string>
+    <!-- 搜索框-->
+    <string name="index_search_view_tips">搜索商品名称/首字母/型号</string>
+    <string name="index_search_btn">搜索</string>
+    <string name="index_search_history_record">历史记录</string>
+    <string name="index_search_delete_history">删除历史记录</string>
+    <!-- 商品管理-->
+    <string name="shop_manager_bottom" translatable="false">已经到底了！</string>
+    <string name="shop_manager_wholesale" translatable="false">批</string>
+    <string name="shop_manager_retail" translatable="false">零</string>
+    <string name="time_title" translatable="false">请选择时间</string>
+    <string name="common_hour" translatable="false">时</string>
+    <string name="common_minute" translatable="false">分</string>
+    <string name="common_second" translatable="false">秒</string>
+    <string name="date_title" translatable="false">请选择日期</string>
+    <string name="sales_leaders" translatable="false">排名</string>
+    <string name="sales_goods_name" translatable="false">商品名称</string>
+    <string name="sales_fication" translatable="false">规格</string>
+    <string name="sales_number" translatable="false">销售数量</string>
+    <string name="sales_statics_today" translatable="false">今日</string>
+    <string name="sales_statics_month" translatable="false">本月</string>
+    <string name="goods_choose_size" translatable="false">去添加尺码</string>
+    <string name="params_color" translatable="false">颜色</string>
+    <string name="params_size" translatable="false">尺码</string>
+    <string name="params_repertory_below" translatable="false">库存下限</string>
+    <string name="params_whole_price" translatable="false">批发价</string>
+    <string name="params_repertory" translatable="false">库存</string>
+    <string name="params_add_size" translatable="false">添加尺码</string>
+    <string name="screening_goods_type" translatable="false">筛选商品分类</string>
+    <!-- 采购记录-->
+    <string name="purchase_search" translatable="false">请输入商品名称</string>
+    <string name="purchase_pre_size" translatable="false">预设尺码</string>
+    <string name="purchase_custom" translatable="false">自定义</string>
+    <string name="purchase_bulk_storage" translatable="false">批量入库</string>
+    <string name="purchase_in_storage_num" translatable="false">入库数量</string>
+    <string name="purchase_note" translatable="false">备注</string>
+    <!-- 库存商品-->
+    <string name="inventory_all_num" translatable="false">库存总数</string>
+    <string name="inventory_all_money" translatable="false">库存总额</string>
+    <string name="inventory_goods_info" translatable="false">商品信息</string>
+    <string name="inventory_info" translatable="false">库存信息</string>
+    <!-- 订单管理-->
+    <string name="order_search" translatable="false">搜罗订单号/客户名称</string>
+    <string name="order_stamp" translatable="false">打印</string>
+    <string name="order_tips" translatable="false">没有更多订单了～</string>
+    <string name="order_add_shop" translatable="false">添加商品</string>
+    <!-- 预警库存-->
+    <string name="warn_replenish" translatable="false">补货</string>
+    <!-- 退货管理-->
+    <!-- 客户管理-->
+    <string name="custom_manager_type" translatable="false">管理分类</string>
+    <string name="custom_search" translatable="false">请输入客户名称</string>
+    <string name="custom_new" translatable="false">新增客户</string>
+    <string name="custom_new_type" translatable="false">新增分类</string>
+
+    <!--
+    批发商
+    -->
+    <!-- 个人中心-->
+    <string name="personal_confirm_call" translatable="false">确认报警</string>
+    <!--门店管理-->
+    <string name="stores_delete" translatable="false">删除该门店</string>
+    <!-- 商品管理-->
+    <string name="goods_my_create" translatable="false">我创建的商品</string>
+    <string name="goods_store_create" translatable="false">门店创建的商品</string>
+    <string name="goods_draft" translatable="false">我的草稿</string>
+    <string name="goods_classify" translatable="false">商品分类</string>
+    
+</resources>

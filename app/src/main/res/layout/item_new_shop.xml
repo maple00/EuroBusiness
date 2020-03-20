@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:lineSpacingExtra="9dp"
+        android:textColor="@color/white66"
+        android:textSize="13sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp"/>
+
+    <com.rainwood.tools.widget.MeasureListView
+        android:id="@+id/lv_params_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:divider="@color/transparent"
+        android:dividerHeight="8dp"
+        android:scrollbars="none"/>
+
+    <!-- 图片-->
+    <com.rainwood.tools.widget.MeasureGridView
+        android:id="@+id/gv_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:numColumns="4"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp" />
+
+    <View style="@style/HorizontalLineStyle" />
+
+</LinearLayout>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:layout_width="80dp"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_shop_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/icon_loadding_fail" />
+
+        <!--<TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:background="@drawable/shape_radius_20"
+            android:paddingStart="5dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="2dp"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            tools:ignore="SmallSp" />-->
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_right_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lineSpacingExtra="35dp"
+            android:maxLines="1"
+            android:textColor="@color/textColor"
+            android:textSize="16sp" />
+
+        <com.rainwood.tools.widget.MeasureGridView
+            android:id="@+id/gv_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_name"
+            android:layout_marginTop="12dp" />
+
+        <!-- 编辑-->
+        <Button
+            android:id="@+id/btn_edit"
+            android:layout_width="60dp"
+            android:layout_height="27dp"
+            android:layout_below="@+id/gv_price"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@id/btn_shelves"
+            android:background="@drawable/shape_radius_gray_14"
+            android:paddingLeft="18dp"
+            android:paddingTop="5dp"
+            android:paddingRight="18dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/textColor"
+            android:textSize="11sp"
+            tools:ignore="SmallSp" />
+
+        <!-- 上架/下架-->
+        <Button
+            android:id="@+id/btn_shelves"
+            android:layout_width="60dp"
+            android:layout_height="27dp"
+            android:layout_below="@+id/gv_price"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/shape_radius_red_14"
+            android:paddingLeft="18dp"
+            android:paddingTop="5dp"
+            android:paddingRight="18dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/red30"
+            android:textSize="11sp"
+            tools:ignore="SmallSp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

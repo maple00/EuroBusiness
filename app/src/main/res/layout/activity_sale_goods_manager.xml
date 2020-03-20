@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.activity.SaleGoodsManagerActivity">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/vv_line"
+        android:background="@color/white" />
+
+    <View
+        android:id="@+id/vv_line"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@+id/tabs_rg"
+        android:background="@color/whiteF6" />
+
+    <!-- 底部按钮-->
+    <RadioGroup
+        android:id="@+id/tabs_rg"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_sale"
+            style="@style/Custom.TabRadioButton"
+            android:checked="true"
+            android:drawableTop="@drawable/tab_record_selector"
+            android:text="@string/goods_my_create" />
+
+        <RadioButton
+            android:id="@+id/rb_store"
+            style="@style/Custom.TabRadioButton"
+            android:drawableTop="@drawable/tab_contact_selector"
+            android:text="@string/goods_store_create" />
+
+        <RadioButton
+            android:id="@+id/rb_draft"
+            style="@style/Custom.TabRadioButton"
+            android:drawableTop="@drawable/tab_contact_selector"
+            android:text="@string/goods_draft" />
+
+        <RadioButton
+            android:id="@+id/rb_classify"
+            style="@style/Custom.TabRadioButton"
+            android:drawableTop="@drawable/tab_contact_selector"
+            android:text="@string/goods_classify" />
+
+    </RadioGroup>
+
+</RelativeLayout>

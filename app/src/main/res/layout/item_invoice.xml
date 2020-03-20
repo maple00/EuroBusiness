@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_white_4"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_company"
+        style="@style/RedBelowButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="9dp" />
+
+    <TextView
+        android:id="@+id/tv_tax_num"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_company"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="25dp"
+        android:gravity="center_horizontal"
+        android:textColor="@color/red30"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_tax_num"
+        android:id="@+id/ll_tax"
+        android:layout_marginTop="15dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/invoice_tex_type"
+            android:textColor="@color/fontColor"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_copy_tax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/shape_text_red30_round2"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:text="@string/invoice_copy"
+            android:textColor="@color/red30"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/s_line"
+        style="@style/HorizontalLineStyle"
+        android:layout_below="@+id/ll_tax"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="20dp" />
+
+    <LinearLayout
+        android:id="@+id/ll_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/s_line"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="17dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_location" />
+
+        <TextView
+            android:id="@+id/tv_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/textColor"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_address"
+        android:layout_below="@id/ll_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="35dp"
+        android:lineSpacingExtra="22dp"
+        android:textColor="@color/textColor"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ll_tel"
+        android:layout_below="@id/tv_address"
+        android:gravity="center_vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="25dp">
+
+        <!-- tel-->
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="17dp"
+            android:src="@drawable/ic_tel"/>
+
+        <TextView
+            android:id="@+id/tv_tel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/textColor"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_stroke_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_tel"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="30dp"
+        android:gravity="center_vertical">
+
+        <Button
+            android:id="@+id/btn_left_radio"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginStart="-8dp"
+            android:background="@drawable/shape_radio" />
+
+        <View
+            android:layout_toEndOf="@id/btn_left_radio"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/shape_line_stroke"
+            android:layerType="software" />
+
+        <Button
+            android:layout_alignParentEnd="true"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="-8dp"
+            android:background="@drawable/shape_radio" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_copy_all_tax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/shape_text_red30"
+        android:gravity="center"
+        android:paddingLeft="26dp"
+        android:paddingTop="16dp"
+        android:paddingRight="26dp"
+        android:paddingBottom="16dp"
+        android:text="@string/invoice_copy_all"
+        android:textColor="@color/red30"
+        android:layout_below="@+id/rl_stroke_line"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>

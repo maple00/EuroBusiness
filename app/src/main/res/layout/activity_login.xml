@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/common_login"
+        android:textColor="@color/white66"
+        android:textSize="30sp"
+        android:textStyle="normal"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left"
+        android:layout_marginTop="60dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"/>
+
+    <com.rainwood.tools.view.ClearEditText
+        android:id="@+id/et_login_account"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/common_input_account"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left"
+        android:inputType="text"
+        android:singleLine="true"
+        app:regexType="name"/>
+
+    <View style="@style/HorizontalLineStyle"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left"/>
+
+    <com.rainwood.tools.view.PasswordEditText
+        android:id="@+id/et_login_password"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:hint="@string/common_input_pwd"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left"
+        android:singleLine="true"
+        app:regexType="nonnull"/>
+
+    <View style="@style/HorizontalLineStyle"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left"/>
+
+    <TextView
+        android:id="@+id/tv_forget_pwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="15dp"
+        android:text="@string/common_forget_pwd"
+        android:textColor="@color/red30"
+        tools:ignore="RtlHardcoded"
+        android:padding="5dp"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left"/>
+
+    <Button
+        android:id="@+id/btn_login_commit"
+        style="@style/RedButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="@string/common_login"
+        android:layout_marginStart="@dimen/padding_right"
+        android:layout_marginEnd="@dimen/padding_left"/>
+
+</LinearLayout>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/fontColor"
+        android:textSize="15sp" />
+
+    <!-- 开关-->
+    <com.rainwood.tools.widget.SwitchButton
+        android:id="@+id/sb_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:checked="true"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/et_hint"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        style="@style/EditTextStyle"
+        android:textColorHint="@color/gray_white"
+        android:textSize="15sp"
+        android:textColor="@color/textColor"/>
+
+    <TextView
+        android:id="@+id/tv_percent"
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:gravity="start"
+        android:layout_height="wrap_content"
+        android:text="@string/common_percent"
+        android:textColor="@color/textColor"
+        android:textSize="15sp"
+        android:layout_marginStart="30dp"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/iv_right_arrow"
+        android:layout_width="7dp"
+        android:layout_height="13dp"
+        android:src="@drawable/ic_right_arrow"
+        android:layout_gravity="center_vertical"/>
+
+</LinearLayout>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activity.HomeActivity"
+    android:background="@color/white">
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/vv_line"
+        android:background="@color/white"/>
+
+    <View
+        android:id="@+id/vv_line"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="@color/whiteF6"
+        android:layout_above="@+id/tabs_rg"/>
+
+    <!-- 底部按钮-->
+    <RadioGroup
+        android:id="@+id/tabs_rg"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rb_home"
+            style="@style/Custom.TabRadioButton"
+            android:checked="true"
+            android:drawableTop="@drawable/tab_record_selector"
+            android:text="@string/index_home" />
+
+        <View style="@style/Custom.TabRadioButton" />
+
+        <RadioButton
+            android:id="@+id/rb_my"
+            style="@style/Custom.TabRadioButton"
+            android:drawableTop="@drawable/tab_contact_selector"
+            android:text="@string/index_my" />
+
+    </RadioGroup>
+
+    <ImageView
+        android:id="@+id/iv_scan"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/bg_round"
+        android:src="@drawable/ic_scale"
+        android:scaleType="centerInside"/>
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Custom.TabRadioButton"
+        android:text="@string/index_scale"
+        android:layout_alignParentBottom="true"
+        android:textSize="11sp"
+        android:layout_centerHorizontal="true"
+        tools:ignore="SmallSp" />
+
+</RelativeLayout>

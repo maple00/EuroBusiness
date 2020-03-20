@@ -1,0 +1,2 @@
+include ':app', ':tools', ':zxingqrc'
+rootProject.name='EuroBusiness'

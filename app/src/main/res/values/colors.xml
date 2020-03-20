@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App 样式中引用的颜色 -->
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">@color/black</color>
+    <color name="colorAccent">#5A8DDF</color>
+    <color name="windowBackground">#F4F4F4</color>
+    <color name="textColor">#333333</color>
+    <color name="textColorHint">#757575</color>
+
+    <!-- 按钮按压时的颜色 -->
+    <!-- 按钮禁用时的颜色 -->
+    <color name="colorButtonDisable">#BBBBBB</color>
+    <color name="colorButtonPressed">#CC302C</color>
+    <!-- 分割线的颜色 -->
+    <color name="colorLine">#ECECEC</color>
+
+    <!-- 对话框确认按钮文本颜色 -->
+    <color name="colorConfirm">#007AFF</color>
+
+    <!-- Base Color-->
+    <!-- 透明色 -->
+    <color name="transparent">#00000000</color>
+
+    <!-- 白色 -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="white90">#E6FFFFFF</color>
+
+    <!-- 浅白-->
+    <color name="whiteF6">#F6F6F6</color>
+    <color name="white66">#666666</color>
+    <color name="white20">#33FFFFFF</color>
+    <color name="white5">#0DFFFFFF</color>
+    <!-- 黑色 -->
+    <color name="black">#FF000000</color>
+    <color name="black5">#0D000000</color>
+    <color name="black00">#000000</color>
+    <color name="black01">#332F40</color>
+    <color name="black45">#73000000</color>
+    <color name="black20">#33000000</color>
+    <color name="black25">#353235</color>
+    <color name="black30">#00FFFFFF</color>
+    <!-- 字体颜色-->
+    <color name="fontColor">#999999</color>
+
+    <!-- 灰色 -->
+    <color name="gray">#808080</color>
+    <color name="gray05">#F7F7F7</color>
+    <color name="gray10">#F7F5F7</color>
+    <!-- 灰白-->
+    <color name="gray_white">#cccccc</color>
+    <color name="gray_f6f7f9">#F6F7F9</color>
+    <color name="gray_e">#eeeeee</color>
+    <color name="gray_f0">#F0F0F0</color>
+    <color name="gray_e6">#E6E6E6</color>
+    <color name="gray_404">#404044</color>
+    <color name="gray_ae">#AEAEAE</color>
+    <color name="gray_a0">#A0A0A0</color>
+    <color name="gray15">#D7D7D7</color>
+    <color name="gray20">#E9E9E9</color>
+
+    <!-- 红色 -->
+    <color name="red30">#CC302C</color>
+    <color name="colorCancel">#F44336</color>
+    <color name="red35">#F25D87</color>
+    <color name="red40">#FC9086</color>
+    <color name="red45">#FD6488</color>
+    <color name="red50">#FF9194</color>
+    <color name="red55">#DF5753</color>
+    <color name="red60">#FFF2F2</color>
+    <color name="red65">#FFE9E9</color>
+    <color name="red70">#FFF4F2</color>
+    <color name="red75">#FF655A</color>
+    <color name="red80">#FB4E4A</color>
+    <color name="red85">#E03D3A</color>
+    <color name="red95">#E23E3B</color>
+    <color name="red100">#FF7263</color>
+    <!-- 金色 -->
+    <color name="gold05">#FEFAF7</color>
+    <!-- 黄色 -->
+    <color name="yellow05">#FFBA00</color>
+    <!-- 绿色 -->
+    <color name="green05">#26CCD8</color>
+    <color name="green10">#03E2AF</color>
+    <color name="green15">#42D1BF</color>
+    <!-- 蓝色 -->
+    <color name="blue5">#5D92F7</color>
+    <color name="blue10">#4F84F8</color>
+    <color name="blue15">#47C2FB</color>
+    <color name="blue20">#3F7AF2</color>
+    <!-- 紫色 -->
+    <!-- 粉色 -->
+    <!-- 橙色 -->
+    <color name="orange5">#E0AF45</color>
+    <color name="orange10">#FFF8DC</color>
+    <color name="orange15">#B9805E</color>
+    <color name="orange20">#FFAB51</color>
+    <color name="orange25">#EFC787</color>
+</resources>

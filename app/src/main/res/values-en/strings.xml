@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">欧商科技</string>
+
+    <!-- 占位-->
+    <!-- 搜索框-->
+    <string name="index_search_view_tips" >lease enter the commodity number or commodity name</string>
+    <string name="index_search_btn">search</string>
+    <string name="index_search_history_record">The historical record</string>
+    <string name="index_search_delete_history">Delete history</string>
+
+    <!-- 通用的 -->
+
+</resources>

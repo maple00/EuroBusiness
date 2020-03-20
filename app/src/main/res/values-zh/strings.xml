@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">欧商科技</string>
+
+    <!-- 占位-->
+    <!-- 搜索框-->
+    <string name="index_search_view_tips" >请输入商品编号或商品名称</string>
+    <string name="index_search_btn">搜索</string>
+    <string name="index_search_history_record">历史记录</string>
+    <string name="index_search_delete_history">删除历史记录</string>
+
+    <!-- 通用的 -->
+
+</resources>

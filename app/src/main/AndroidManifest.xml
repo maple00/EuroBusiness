@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.rainwood.eurobusiness">
+
+    <!-- 外部存储读写权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- 拍照权限 -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- 联网权限 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 访问网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <!-- 安装包的权限 -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- 接收短信-->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!-- 读取短信-->
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <application
+        android:name=".base.BaseApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="n">
+
+        <!-- App 首页-->
+        <activity
+            android:name=".ui.activity.IdentityActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait">
+            <!-- 程序入口 -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--FileProvider共享文件、缓存-->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.rainwood.eurobusiness.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- 启动页身份选择界面 IdentityActivity-->
+        <activity
+            android:name=".ui.activity.HomeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 登陆页面 LoginActivity-->
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 手机号验证 CheckPhoneActivity-->
+        <activity
+            android:name=".ui.activity.CheckPhoneActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 输入手机验证码 CodeVerifyActivity-->
+        <activity
+            android:name=".ui.activity.CodeVerifyActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 重置密码 ResetPassword-->
+        <activity
+            android:name=".ui.activity.ResetPassword"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!--
+        个人中心
+        -->
+        <!-- 门店信息 StoresActivity-->
+        <activity
+            android:name=".ui.activity.StoresActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 开票信息 InvoiceActivity-->
+        <activity
+            android:name=".ui.activity.InvoiceActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 账号设置 ModifyPwdActivity-->
+        <activity
+            android:name=".ui.activity.ModifyPwdActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 帮助中心 HelperActivity-->
+        <activity
+            android:name=".ui.activity.HelperActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 意见反馈  FeedBackActivity-->
+        <activity
+            android:name=".ui.activity.FeedBackActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!--
+        首页
+        -->
+        <!-- 新建商品 NewShopActivity-->
+        <activity
+            android:name=".ui.activity.NewShopActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 选择商品分类 GoodsTypeActivity-->
+        <activity
+            android:name=".ui.activity.GoodsTypeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 选择尺码 AppendSizeActivity-->
+        <activity
+            android:name=".ui.activity.AppendSizeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 添加尺码 AddSizeActivity-->
+        <activity
+            android:name=".ui.activity.AddSizeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 选择颜色 或者尺码 ChooseParams-->
+        <activity
+            android:name=".ui.activity.ChooseParamsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 商品管理 ShopManagementActivity-->
+        <activity
+            android:name=".ui.activity.ShopManagementActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 商品详情 GoodsDetailActivity-->
+        <activity
+            android:name=".ui.activity.GoodsDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 采购记录 PurchaseActivity-->
+        <activity
+            android:name=".ui.activity.PurchaseActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 采购详情 PurchaseDetailActivity-->
+        <activity
+            android:name=".ui.activity.PurchaseDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 入库 InStorageActivity-->
+        <activity
+            android:name=".ui.activity.InStorageActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 库存商品 InventoryActivity-->
+        <activity
+            android:name=".ui.activity.InventoryActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 库存商品信息  InventoryGoodsActivity-->
+        <activity
+            android:name=".ui.activity.InventoryGoodsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 订单管理  OrderManagerActivity-->
+        <activity
+            android:name=".ui.activity.OrderManagerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 订单详情 OrderDetailActivity-->
+        <activity
+            android:name=".ui.activity.OrderDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 新建订单 OrderNewActivity-->
+        <activity
+            android:name=".ui.activity.OrderNewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 订单添加商品 OrderAddShopActivity-->
+        <activity
+            android:name=".ui.activity.OrderAddShopActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 出库记录 OutInBoundActivity-->
+        <activity
+            android:name=".ui.activity.OutInBoundActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 出库详情 OutBoundDetailActivity-->
+        <activity
+            android:name=".ui.activity.OutBoundDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 盘点记录 StockActivity-->
+        <activity
+            android:name=".ui.activity.StockActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 新建盘点 NewStockActivity-->
+        <activity
+            android:name=".ui.activity.NewStockActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 盘点详情 StockDetailActivity-->
+        <activity
+            android:name=".ui.activity.StockDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 预警库存 WarnRepertoryActivity-->
+        <activity
+            android:name=".ui.activity.WarnRepertoryActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 预警库存详情  WarnRepertoryDetailActivity-->
+        <activity
+            android:name=".ui.activity.WarnRepertoryDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 预警库存 -补货 WarnReplishenActivity-->
+        <activity
+            android:name=".ui.activity.WarnReplishenActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 退货管理 ReturnGoodsActivity-->
+        <activity
+            android:name=".ui.activity.ReturnGoodsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 退货详情 ReGoodsDetailActivity-->
+        <activity
+            android:name=".ui.activity.ReGoodsDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 退货申请 ReGoodsApplyActivity-->
+        <activity
+            android:name=".ui.activity.ReGoodsApplyActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 客户管理 CustomManagerActivity-->
+        <activity
+            android:name=".ui.activity.CustomManagerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 客户详情 CustomDetailActivity-->
+        <activity
+            android:name=".ui.activity.CustomDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 新增客户 CustomNewActivity-->
+        <activity
+            android:name=".ui.activity.CustomNewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 收货地址 GoodsAddressActivity-->
+        <activity
+            android:name=".ui.activity.GoodsAddressActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!--  NewGoodsAddressActivity-->
+        <activity
+            android:name=".ui.activity.NewGoodsAddressActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 客户分类 CustomTypeActivity-->
+        <activity
+            android:name=".ui.activity.CustomTypeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 销售统计  SaleStaticsActivity-->
+        <activity
+            android:name=".ui.activity.SaleStaticsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 销售排行榜 SalesLeaderActivity-->
+        <activity
+            android:name=".ui.activity.SalesLeaderActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 异常崩溃页面-->
+        <activity
+            android:name=".ui.activity.CrashActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 含历史记录的搜索框 SearchViewActivity-->
+        <activity
+            android:name=".ui.activity.SearchViewActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 扫码 QRCodeCaptureActivity-->
+        <activity
+            android:name="com.rainwood.zxingqrc.android.QRCodeCaptureActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 未收款项 & 未付款项 UnPaymentActivity-->
+        <activity
+            android:name=".ui.activity.UnPaymentActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 新建供应商 NewSupplierActivity -->
+        <activity
+            android:name=".ui.activity.NewSupplierActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 批发商（商品管理）SaleGoodsManagerActivity-->
+        <activity
+            android:name=".ui.activity.SaleGoodsManagerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+    </application>
+
+</manifest>

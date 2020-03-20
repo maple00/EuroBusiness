@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/tv_ranking"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
+        android:textSize="11sp"
+        android:gravity="start"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:maxLines="1"
+        android:maxEms="11"
+        android:ellipsize="end"
+        android:textColor="@color/textColor"
+        android:textSize="13sp"
+        android:lineSpacingExtra="35dp"
+        android:gravity="center_vertical|start"/>
+
+    <TextView
+        android:id="@+id/tv_special"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textColor="@color/textColor"
+        android:gravity="center"
+        android:textSize="13sp"/>
+
+    <TextView
+        android:id="@+id/tv_sale_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/textColor"
+        android:gravity="center"
+        android:textSize="13sp"
+        android:layout_marginEnd="25dp"/>
+
+</LinearLayout>
