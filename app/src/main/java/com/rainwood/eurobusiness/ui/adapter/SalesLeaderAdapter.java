@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
+import com.rainwood.eurobusiness.domain.GoodsRankingBean;
 import com.rainwood.eurobusiness.domain.SalesLeaderBean;
 
 import java.util.List;
@@ -20,9 +21,9 @@ import java.util.List;
 public class SalesLeaderAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<SalesLeaderBean> mList;
+    private List<GoodsRankingBean> mList;
 
-    public SalesLeaderAdapter(Context mContext, List<SalesLeaderBean> mList) {
+    public SalesLeaderAdapter(Context mContext, List<GoodsRankingBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -33,7 +34,7 @@ public class SalesLeaderAdapter extends BaseAdapter {
     }
 
     @Override
-    public SalesLeaderBean getItem(int position) {
+    public GoodsRankingBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -56,10 +57,10 @@ public class SalesLeaderAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_ranking.setText(getItem(position).getRanking());
-        holder.tv_name.setText(getItem(position).getName());
-        holder.tv_special.setText(getItem(position).getSpecial());
-        holder.tv_sale_num.setText(getItem(position).getNumber());
+        holder.tv_ranking.setText(getItem(position).getRaking());
+        holder.tv_name.setText(getItem(position).getGoodsName());
+        holder.tv_special.setText(getItem(position).getGoodsSkuName());
+        holder.tv_sale_num.setText(getItem(position).getNum());
         return convertView;
     }
 
