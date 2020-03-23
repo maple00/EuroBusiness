@@ -103,6 +103,7 @@
     <string name="sales_goods_name" translatable="false">商品名称</string>
     <string name="sales_fication" translatable="false">规格</string>
     <string name="sales_number" translatable="false">销售数量</string>
+    <string name="sales_money" translatable="false">销售金额</string>
     <string name="sales_statics_today" translatable="false">今日</string>
     <string name="sales_statics_month" translatable="false">本月</string>
     <string name="goods_choose_size" translatable="false">去添加尺码</string>

@@ -1,30 +1,43 @@
 package com.rainwood.eurobusiness.ui.activity;
 
+import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.CommonUIBean;
 import com.rainwood.eurobusiness.domain.NewCommUIBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.other.BaseDialog;
 import com.rainwood.eurobusiness.ui.adapter.CustomNewAdapter;
 import com.rainwood.eurobusiness.ui.dialog.MenuDialog;
+import com.rainwood.eurobusiness.utils.ListUtils;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/22
- * @Desc: 新增
+ * @Desc: 编辑
  */
-public class CustomNewActivity extends BaseActivity implements View.OnClickListener {
+public class CustomNewActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
+
+    private ClientEditDetailBean mEditClient;
 
     @Override
     protected int getLayoutId() {
@@ -40,71 +53,77 @@ public class CustomNewActivity extends BaseActivity implements View.OnClickListe
     @ViewById(R.id.btn_confirm)
     private Button confirm;
 
+    private final int INITIAL_SIZE = 0x101;
+
     @Override
     protected void initView() {
         pageBack.setOnClickListener(this);
         confirm.setOnClickListener(this);
         if (Contants.CHOOSE_MODEL_SIZE == 15) {
             pageTitle.setText("客户详情");
+            mEditClient = (ClientEditDetailBean) getIntent().getSerializableExtra("editClient");
+            if (mEditClient != null){
+                for (int i = 0; i < ListUtils.getSize(mList); i++) {
+                    switch (i){
+                        case 0:                 // 基本资料
+                            for (int j = 0; j < ListUtils.getSize(mList.get(i).getCommonUIList()); j++) {
+                                switch (j){
+                                    case 0:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getCompany());
+                                        break;
+                                    case 1:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getName());
+                                        break;
+                                    case 2:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getTel());
+                                        break;
+                                    case 3:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getEmail());
+                                        break;
+                                    case 4:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getInvoiceDetai().getName());
+                                        break;
+                                    case 5:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getTakeGoods().getAddressMx());
+                                        break;
+                                }
+                            }
+                            break;
+                        case 1:                 // 支付信息
+                            for (int j = 0; j < ListUtils.getSize(mList.get(i).getCommonUIList()); j++) {
+                                switch (j){
+                                    case 0:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getKehuTypeName());
+                                        break;
+                                    case 1:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getPayType());
+                                        break;
+                                    case 2:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getPayTerm());
+                                        break;
+                                    case 3:                 // 请输入天数
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getPayTerm());
+                                        break;
+                                    case 4:
+                                        mList.get(i).getCommonUIList().get(j).setShowText(mEditClient.getClientBase().getText());
+                                        break;
+                                }
+                            }
+                            break;
+                    }
+                }
+                Message msg = new Message();
+                msg.what = INITIAL_SIZE;
+                mHandler.sendMessage(msg);
+            }
         } else {
             pageTitle.setText("新增客户");
+
+            Message msg = new Message();
+            msg.what = INITIAL_SIZE;
+            mHandler.sendMessage(msg);
         }
 
-        CustomNewAdapter customNewAdapter = new CustomNewAdapter(this, mList);
-        contentLit.setAdapter(customNewAdapter);
-        customNewAdapter.setOnClickEditText((parentPos, position) -> {
-            //toast(mList.get(parentPos).getCommonUIList().get(position).getTitle());
-            switch (mList.get(parentPos).getCommonUIList().get(position).getTitle()) {
-                case "发票信息":
-                    // toast("去填写发票地址");
-                    Contants.CHOOSE_MODEL_SIZE = 14;
-                    openActivity(GoodsAddressActivity.class);
-                    break;
-                case "收货地址":
-                    // toast("选择收货地址");
-                    Contants.CHOOSE_MODEL_SIZE = 13;
-                    openActivity(GoodsAddressActivity.class);
-                    break;
-                case "客户类型":
-                    setText(customType);
-                    break;
-                case "支付方式":
-                    setText(payMethod);
-                    break;
-                case "支付期限":
-                    setText(payTimeLimited);
-                    break;
-            }
-        });
-    }
-
-    /**
-     * 设置Text
-     *
-     * @param payTimeLimited
-     */
-    private void setText(String[] payTimeLimited) {
-        new MenuDialog.Builder(getActivity())
-                // 设置null 表示不显示取消按钮
-                .setCancel(R.string.common_cancel)
-                // 设置点击按钮后不关闭弹窗
-                .setAutoDismiss(false)
-                // 显示的数据
-                .setList(payTimeLimited)
-                //.setCanceledOnTouchOutside(false)
-                .setListener(new MenuDialog.OnListener<String>() {
-                    @Override
-                    public void onSelected(BaseDialog dialog, int position, String text) {
-                        toast(text);
-                        dialog.dismiss();
-                    }
-
-                    //
-                    @Override
-                    public void onCancel(BaseDialog dialog) {
-                        dialog.dismiss();
-                    }
-                }).show();
     }
 
     @Override
@@ -163,9 +182,73 @@ public class CustomNewActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    /*
-    模拟数据
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case INITIAL_SIZE:
+                    CustomNewAdapter customNewAdapter = new CustomNewAdapter(CustomNewActivity.this, mList);
+                    contentLit.setAdapter(customNewAdapter);
+                    customNewAdapter.setOnClickEditText((parentPos, position) -> {
+                        //toast(mList.get(parentPos).getCommonUIList().get(position).getTitle());
+                        switch (mList.get(parentPos).getCommonUIList().get(position).getTitle()) {
+                            case "发票信息":
+                                // toast("去填写发票地址");
+                                Contants.CHOOSE_MODEL_SIZE = 14;
+                                openActivity(GoodsAddressActivity.class);
+                                break;
+                            case "收货地址":
+                                // toast("选择收货地址");
+                                Contants.CHOOSE_MODEL_SIZE = 13;
+                                openActivity(GoodsAddressActivity.class);
+                                break;
+                            case "客户类型":
+                                setText(customType);
+                                break;
+                            case "支付方式":
+                                setText(payMethod);
+                                break;
+                            case "支付期限":
+                                setText(payTimeLimited);
+                                break;
+                        }
+                    });
+                    break;
+            }
+        }
+    };
+
+    /**
+     * 设置Text
+     *
+     * @param payTimeLimited
      */
+    private void setText(String[] payTimeLimited) {
+        new MenuDialog.Builder(getActivity())
+                // 设置null 表示不显示取消按钮
+                .setCancel(R.string.common_cancel)
+                // 设置点击按钮后不关闭弹窗
+                .setAutoDismiss(false)
+                // 显示的数据
+                .setList(payTimeLimited)
+                //.setCanceledOnTouchOutside(false)
+                .setListener(new MenuDialog.OnListener<String>() {
+                    @Override
+                    public void onSelected(BaseDialog dialog, int position, String text) {
+                        toast(text);
+                        dialog.dismiss();
+                    }
+
+                    //
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
     private List<NewCommUIBean> mList;
     private String[] titles = {"基本资料", "支付信息"};
     // 基本资料
@@ -182,4 +265,25 @@ public class CustomNewActivity extends BaseActivity implements View.OnClickListe
     // 客户类型
     private String[] customType = {"VIP会员", "普通会员", "普通客户", "其它"};
 
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, " result --- " + result);
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 编辑客户详情
+                if (result.url().contains("wxapi/v1/client.php?type=getClientInfo")) {
+
+                }
+            }else {
+
+            }
+            dismissLoading();
+        }
+    }
 }

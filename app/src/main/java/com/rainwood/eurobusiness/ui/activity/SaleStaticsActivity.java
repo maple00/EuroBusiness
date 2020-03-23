@@ -66,6 +66,7 @@ public class SaleStaticsActivity extends BaseActivity implements View.OnClickLis
             mList.add(saleStatics);
         }
         // request
+        showLoading("loading");
         RequestPost.saleTotal(this);
     }
 
@@ -97,10 +98,13 @@ public class SaleStaticsActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, "reslut --- " + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
                 if (result.url().contains("wxapi/v1/statistics.php?type=getTotal")) {               // 销售量统计表
+                    Map<String, String> map = JsonParser.parseJSONObject(body.get("data"));
+                    Log.d(TAG, "map ---" + map);
                     Map<String, String> info = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("info"));
                     Log.d(TAG, "info --- " + JsonParser.parseJSONObject(body.get("data")));
                     for (int i = 0; i < mList.size(); i++) {
@@ -128,6 +132,7 @@ public class SaleStaticsActivity extends BaseActivity implements View.OnClickLis
             }else {
                 toast(body.get("warn"));
             }
+            dismissLoading();
         }
     }
 }

@@ -331,7 +331,7 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
                 if (result.url().contains("wxapi/v1/order.php?type=getRefundOrder")) {            // 查询退货列表
                     goodsList = JsonParser.parseJSONArray(RefundGoodsBean.class,
                             JsonParser.parseJSONObject(body.get("data")).get("refundlist"));
-                    disLoading();
+                    dismissLoading();
                     if (Contants.CHOOSE_MODEL_SIZE == 9) {
                         Message msg = new Message();
                         msg.what = DEFAULT_SIZE;
@@ -346,6 +346,7 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
             } else {
                 toast(body.get("warn"));
             }
+            dismissLoading();
         }
     }
 }

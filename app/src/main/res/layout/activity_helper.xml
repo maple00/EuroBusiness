@@ -2,26 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:orientation="vertical">
 
-    <include layout="@layout/activity_title"/>
+    <include layout="@layout/activity_title" />
 
-    <ImageView
-        android:id="@+id/iv_helper"
+    <!--  <ImageView
+          android:id="@+id/iv_helper"
+          android:layout_width="match_parent"
+          android:layout_height="340dp"
+          android:src="@drawable/icon_loadding_fail"/>
+
+      <TextView
+          android:id="@+id/tv_helper"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="20dp"
+          android:layout_marginStart="15dp"
+          android:layout_marginEnd="25dp"
+          android:textColor="@color/white66"
+          android:textSize="14sp"
+          android:lineSpacingExtra="24dp"/>-->
+
+    <WebView
+        android:id="@+id/wv_content"
         android:layout_width="match_parent"
-        android:layout_height="340dp"
-        android:src="@drawable/icon_loadding_fail"/>
-
-    <TextView
-        android:id="@+id/tv_helper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="25dp"
-        android:textColor="@color/white66"
-        android:textSize="14sp"
-        android:lineSpacingExtra="24dp"/>
-
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp" />
 
 </LinearLayout>

@@ -155,7 +155,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         mDialog.showDialog();
     }
 
-    public void disLoading(){
+    public void dismissLoading(){
         mDialog.dismissDialog();
     }
 

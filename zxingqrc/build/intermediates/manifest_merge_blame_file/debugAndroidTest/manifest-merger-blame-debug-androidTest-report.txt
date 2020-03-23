@@ -3,34 +3,34 @@
 3    package="com.rainwood.zxingqrc.test" >
 4
 5    <uses-sdk
-5-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:5:5-74
+5-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:5:5-74
 6        android:minSdkVersion="19"
-6-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:5:15-41
+6-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:5:15-41
 7        android:targetSdkVersion="29" />
-7-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:5:42-71
+7-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:5:42-71
 8
 9    <instrumentation
-9-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:11:5-15:76
+9-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:11:5-15:76
 10        android:name="android.test.InstrumentationTestRunner"
-10-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:11:22-75
+10-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:11:22-75
 11        android:functionalTest="false"
-11-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:14:22-52
+11-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:14:22-52
 12        android:handleProfiling="false"
-12-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:13:22-53
+12-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:13:22-53
 13        android:label="Tests for com.rainwood.zxingqrc.test"
-13-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:15:22-74
+13-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:15:22-74
 14        android:targetPackage="com.rainwood.zxingqrc.test" />
-14-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:12:22-72
+14-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:12:22-72
 15
 16    <application
-16-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:7:5-9:19
+16-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:7:5-9:19
 17        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-17-->[androidx.core:core:1.1.0] D:\Users\a797s\depository\gradle\.gradle\caches\transforms-2\files-2.1\f01b27bb220ecb79298884ef36a7a2fb\core-1.1.0\AndroidManifest.xml:24:18-86
+17-->[androidx.core:core:1.1.0] C:\Users\a797s\.gradle\caches\transforms-2\files-2.1\f01b27bb220ecb79298884ef36a7a2fb\core-1.1.0\AndroidManifest.xml:24:18-86
 18        android:debuggable="true" >
-18-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:7:18-43
+18-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:7:18-43
 19        <uses-library android:name="android.test.runner" />
-19-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:8:9-60
-19-->D:\Users\a797s\android\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger7418271079456946743.xml:8:23-57
+19-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:8:9-60
+19-->D:\MY_DEV\company\EuroBusiness\zxingqrc\build\intermediates\tmp\manifest\androidTest\debug\manifestMerger6449905994562896634.xml:8:23-57
 20    </application>
 21
 22</manifest>

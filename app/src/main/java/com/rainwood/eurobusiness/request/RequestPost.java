@@ -69,4 +69,89 @@ public final class RequestPost {
         RequestParams params = new RequestParams();
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/statistics.php?type=getReclistct", params, listener);
     }
+
+    //     客户管理
+    /**
+     * 获取客户列表
+     * @param name      客户名称
+     * @param kehuTypeId 客户id
+     * @param listener
+     */
+    public static void getClientList(String name, String kehuTypeId, OnHttpListener listener){
+        RequestParams params = new RequestParams();
+        params.add("name", name);
+        params.add("kehuTypeId", kehuTypeId);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getClientlist", params, listener);
+    }
+
+    /**
+     * 获取客户分类列表
+     * @param listener
+     */
+    public static void getClientTypeList(OnHttpListener listener){
+        RequestParams params = new RequestParams();
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getKehuTypelist", params, listener);
+    }
+
+    /**
+     * 查看客户详情
+      * @param id custom id
+     * @param listener
+     */
+    public static void getClientDetail(String id, OnHttpListener listener){
+        RequestParams params = new RequestParams();
+        params.add("id", id);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getClientInfo", params, listener);
+    }
+
+    // 个人中心
+
+    /**
+     * 个人中心
+     * @param listener
+     */
+    public static void getPersonalInfo(OnHttpListener listener){
+       RequestParams params = new RequestParams();
+       OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=getPerson", params, listener);
+    }
+
+    /**
+     * 门店或开票信息
+     * @param listener
+     */
+    public static void storeOrInvoice(OnHttpListener listener){
+        RequestParams params = new RequestParams();
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=getStoreInfo", params, listener);
+    }
+
+    /**
+     * 获取验证码
+     * @param listener
+     */
+    public static void getVerifyCode(String tel,OnHttpListener listener){
+        RequestParams params = new RequestParams();
+        params.add("tel", tel);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/login.php?type=getCode", params, listener);
+    }
+
+    /**
+     * 修改密码
+     * @param listener
+     */
+    public static void modifyPwd(String prove, String newPas, String surePas, OnHttpListener listener){
+        RequestParams params = new RequestParams();
+        params.add("prove", prove);
+        params.add("newPas", newPas);
+        params.add("surePas", surePas);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=changePwd", params, listener);
+    }
+
+    /**
+     * 帮助中心
+     */
+    public static void helpCenter(OnHttpListener listener){
+        RequestParams params = new RequestParams();
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=getHelp", params, listener);
+    }
+
 }

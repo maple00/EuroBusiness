@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
@@ -51,17 +52,31 @@ public class LevelTypeAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.item_level_type, parent, false);
             hodler.tv_level = convertView.findViewById(R.id.tv_level);
             hodler.iv_selector = convertView.findViewById(R.id.iv_selector);
+            hodler.ll_item = convertView.findViewById(R.id.ll_item);
             convertView.setTag(hodler);
         } else {
             hodler = (ViewHodler) convertView.getTag();
         }
         hodler.tv_level.setText(getItem(position).getItemName());
         hodler.iv_selector.setImageResource(R.drawable.ic_down_selector);
+        // 点击事件 --- 触发筛选
+        hodler.ll_item.setOnClickListener(v -> mOnClickItem.onClickItem(position));
         return convertView;
+    }
+
+    public interface OnClickItem{
+        void onClickItem(int position);
+    }
+
+    private OnClickItem mOnClickItem;
+
+    public void setOnClickItem(OnClickItem onClickItem) {
+        mOnClickItem = onClickItem;
     }
 
     private class ViewHodler {
         private TextView tv_level;
         private ImageView iv_selector;
+        private LinearLayout ll_item;
     }
 }

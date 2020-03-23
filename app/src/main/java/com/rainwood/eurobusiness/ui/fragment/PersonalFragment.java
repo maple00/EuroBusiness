@@ -1,12 +1,13 @@
 package com.rainwood.eurobusiness.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -14,16 +15,21 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.core.content.FileProvider;
+import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseFragment;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.PersonalListBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.other.BaseDialog;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.activity.FeedBackActivity;
 import com.rainwood.eurobusiness.ui.activity.HelperActivity;
 import com.rainwood.eurobusiness.ui.activity.InvoiceActivity;
@@ -46,6 +52,7 @@ import com.rainwood.tools.widget.MeasureListView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
@@ -55,7 +62,7 @@ import static android.app.Activity.RESULT_OK;
  * @Date: 2020/2/7
  * @Desc: 个人中心
  */
-public class PersonalFragment extends BaseFragment implements View.OnClickListener {
+public class PersonalFragment extends BaseFragment implements View.OnClickListener, OnHttpListener {
 
     @Override
     protected int initLayout() {
@@ -66,6 +73,8 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     private ImageView msg, edit, headPhoto;
     private TextView userName, location;
     private Button logout;
+
+    private final int INITIAL_SIZE = 0x101;
 
     @Override
     protected void initView(View view) {
@@ -200,6 +209,14 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // request
+        showLoading("loading");
+        RequestPost.getPersonalInfo(this);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_head_photo:        // 头像更改
@@ -288,6 +305,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     // 指定存储位置
     private File picSavePath = new File(Environment.getExternalStorageDirectory().getPath()
             + "/" + System.currentTimeMillis() + ".jpg");
+
     /**
      * 底部选择框
      */
@@ -318,11 +336,11 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
 
     /**
      * 获取相机相册的返回值
+     *
      * @param requestCode 请求码
-     * @param resultCode 结果
-     * @param data
-     * 当data为null时：参考
-     * https://blog.csdn.net/zimo2013/article/details/16916279
+     * @param resultCode  结果
+     * @param data        当data为null时：参考
+     *                    https://blog.csdn.net/zimo2013/article/details/16916279
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -339,7 +357,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                                     .load(bitmap)
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
                                     .into(headPhoto);
-                        }else {         // 如果返回的不是缩略图，则直接获取地址
+                        } else {         // 如果返回的不是缩略图，则直接获取地址
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                 photoPath = String.valueOf(picSavePath);
                             } else {
@@ -365,9 +383,6 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    /*
-    模拟数据
-     */
     private List<PersonalListBean> mList;
 
     private String[] moduleName = {"门店信息", "开票信息", "账号设置", "帮助中心", "意见反馈",
@@ -378,4 +393,53 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
             R.drawable.ic_icon_me_version_update};
     private String[] addPictures = {"相机", "相册"};
 
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case INITIAL_SIZE:
+
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+        Log.d(TAG, "上传失败");
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, "result -- " + result);
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                if (result.url().contains("wxapi/v1/index.php?type=getPerson")) {           // 个人中心
+                    // 供应商
+                    if (Contants.userType == 0){
+                    }
+                    // 门店
+                    if (Contants.userType == 1){
+                        Map<String, String> data = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("info"));
+                        Log.d(TAG, "data --- " + data);
+                        Glide.with(Objects.requireNonNull(getActivity()))
+                                .load(data.get("ico"))
+                                .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+                                .error(R.drawable.icon_loadding_fail)        //异常时候显示的图片
+                                .placeholder(R.drawable.icon_loadding_fail) //加载成功前显示的图片
+                                .fallback(R.drawable.icon_loadding_fail)  //url为空的时候,显示的图片
+                                .into(headPhoto);
+                        location.setText(data.get("storeName"));
+                        userName.setText(data.get("name"));
+                    }
+                }
+            }else {
+                toast(body.get("data"));
+            }
+            dismissLoading();
+        }
+    }
 }

@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
-import com.rainwood.eurobusiness.domain.CustomBean;
+import com.rainwood.eurobusiness.domain.ClientManagerBean;
 import com.rainwood.tools.common.FontDisplayUtil;
 
 import java.util.List;
@@ -26,9 +26,9 @@ import java.util.List;
 public class CustomAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<CustomBean> mList;
+    private List<ClientManagerBean> mList;
 
-    public CustomAdapter(Context mContext, List<CustomBean> mList) {
+    public CustomAdapter(Context mContext, List<ClientManagerBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -39,7 +39,7 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     @Override
-    public CustomBean getItem(int position) {
+    public ClientManagerBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -65,35 +65,35 @@ public class CustomAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if (TextUtils.isEmpty(getItem(position).getLogoPath())) {
+        if (TextUtils.isEmpty(getItem(position).getIco())) {
             Glide.with(convertView).load(R.drawable.icon_loadding_fail).into(holder.iv_img);
         } else {
-            Glide.with(convertView).load(getItem(position).getLogoPath()).into(holder.iv_img);
+            Glide.with(convertView).load(getItem(position).getIco()).into(holder.iv_img);
         }
         holder.tv_name.setText(getItem(position).getName());
         holder.tv_type.setText(getItem(position).getType());
         holder.tv_gather.setText(Html.fromHtml("<font color=" +
                 mContext.getResources().getColor(R.color.fontColor) + " size='" + FontDisplayUtil.dip2px(mContext, 12)
-                + "'>订单总额：</font>" + "<font color=" + mContext.getResources().getColor(R.color.textColor)
-                + " size='" + FontDisplayUtil.dip2px(mContext, 14) + "'>" + getItem(position).getGather() + "</font>"));
-        if (getItem(position).getUiType() == 0) {
-            holder.iv_point.setVisibility(View.GONE);
-        } else {
-            holder.iv_point.setVisibility(View.VISIBLE);
-            holder.iv_point.setOnClickListener(v -> {
-                if (!count) {
-                    holder.tv_delete_store.setVisibility(View.VISIBLE);
-                } else {
-                    holder.tv_delete_store.setVisibility(View.VISIBLE);
-                    holder.tv_delete_store.setOnClickListener(v1 -> {
-                        onClickContent.onClickDelete(position);
-                        notifyDataSetChanged();
-                    });
-                }
-                count = !count;
-                notifyDataSetChanged();
-            });
-        }
+                + "'>应收款：</font>" + "<font color=" + mContext.getResources().getColor(R.color.textColor)
+                + " size='" + FontDisplayUtil.dip2px(mContext, 14) + "'>" + getItem(position).getMoney() + "</font>"));
+//        if (getItem(position).getUiType() == 0) {
+//            holder.iv_point.setVisibility(View.GONE);
+//        } else {
+        holder.iv_point.setVisibility(View.VISIBLE);
+        holder.iv_point.setOnClickListener(v -> {
+            if (!count) {
+                holder.tv_delete_store.setVisibility(View.INVISIBLE);
+            } else {
+                holder.tv_delete_store.setVisibility(View.VISIBLE);
+                holder.tv_delete_store.setOnClickListener(v1 -> {
+                    mList.remove(position);
+                    holder.tv_delete_store.setVisibility(View.INVISIBLE);
+                    notifyDataSetChanged();
+                });
+            }
+            count = !count;
+        });
+//        }
         // 点击事件
         holder.ll_item.setOnClickListener(v -> onClickContent.onClickContent(position));
         return convertView;
@@ -104,8 +104,6 @@ public class CustomAdapter extends BaseAdapter {
     public interface OnClickContent {
         // 查看详情
         void onClickContent(int position);
-        // 删除
-        void onClickDelete(int position);
     }
 
     private OnClickContent onClickContent;

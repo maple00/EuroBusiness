@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
+import com.rainwood.eurobusiness.utils.DialogUtils;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.toast.ToastUtils;
 
@@ -174,9 +175,26 @@ public abstract class BaseFragment extends Fragment {
         startActivity(new Intent(mContext, cls));
     }
 
+    /**
+     * 显示loading
+     */
+    private DialogUtils mDialog;
+
+    public void showLoading(String tips){
+        mDialog = new DialogUtils(getmContext(), tips);
+        mDialog.showDialog();
+    }
+
+    public void dismissLoading(){
+        mDialog.dismissDialog();
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mDialog != null){
+            dismissLoading();
+        }
     }
 
 }

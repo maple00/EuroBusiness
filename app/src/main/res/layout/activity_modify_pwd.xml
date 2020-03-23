@@ -47,6 +47,7 @@
                     app:regexType="mobile" />
 
                 <com.rainwood.tools.view.CountdownView
+                    android:id="@+id/cv_send_code"
                     style="@style/CountdownViewStyle"
                     android:layout_gravity="center_vertical" />
             </LinearLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <TextView
+        android:id="@+id/tv_rankings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sales_leaders"
+        android:textColor="@color/fontColor"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_names"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:textAlignment="center"
+        android:textColor="@color/fontColor"
+        android:textSize="13sp" />
+
+    <TextView
+        android:id="@+id/tv_sale_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sales_money"
+        android:textColor="@color/fontColor"
+        android:textSize="13sp" />
+
+</LinearLayout>
