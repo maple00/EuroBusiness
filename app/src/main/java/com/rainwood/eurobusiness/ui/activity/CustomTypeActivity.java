@@ -1,6 +1,7 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -14,21 +15,26 @@ import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.CustomTypeBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.other.BaseDialog;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.CustomTypeAdapter;
 import com.rainwood.eurobusiness.ui.dialog.MenuDialog;
+import com.rainwood.eurobusiness.utils.ListUtils;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: shearson
  * @Time: 2020/2/24 18:19
  * @Desc: 客户分类
  */
-public class CustomTypeActivity extends BaseActivity implements View.OnClickListener {
+public class CustomTypeActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
     @Override
     protected int getLayoutId() {
@@ -52,11 +58,14 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
         newType.setOnClickListener(this);
         pageTitle.setText("客户分类");
 
-        // content
-        Message msg = new Message();
-        msg.what = DEFAULT_SIZE;
-        mHandler.sendMessage(msg);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // request
+        showLoading("loading");
+        RequestPost.getClientManagerTypeList(this);
     }
 
     /**
@@ -79,16 +88,16 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
                         // toast("位置：" + position + ", 文本：" + text);
                         switch (position) {
                             case 0:
-                                 toast("编辑客户分类");
+                                //toast("编辑客户分类");  --- 分类实体
                                 Contants.CHOOSE_MODEL_SIZE = 17;
-                                openActivity(NewGoodsAddressActivity.class);
+                                Intent intent = new Intent(CustomTypeActivity.this, NewGoodsAddressActivity.class);
+                                intent.putExtra("typeId", mList.get(pos).getId());
+                                startActivity(intent);
                                 break;
-                            case 1:
-                                // toast("删除");
-                                mList.remove(pos);
-                                Message msg = new Message();
-                                msg.what = DEFAULT_SIZE;
-                                mHandler.sendMessage(msg);
+                            case 1:         // 删除客户分类
+                                // request
+                                showLoading("loading");
+                                RequestPost.clearCustomType(mList.get(pos).getId(), CustomTypeActivity.this);
                                 break;
                         }
                         dialog.dismiss();
@@ -99,19 +108,6 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
                         dialog.dismiss();
                     }
                 }).show();
-    }
-
-    @Override
-    protected void initData() {
-        super.initData();
-        mList = new ArrayList<>();
-        for (int i = 0; i < tyeps.length; i++) {
-            CustomTypeBean type = new CustomTypeBean();
-            type.setId(String.valueOf(i + 1));
-            type.setType(tyeps[i]);
-            type.setPercent(percent[i]);
-            mList.add(type);
-        }
     }
 
     @Override
@@ -143,11 +139,38 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
         }
     };
 
-    /*
-    模拟数据
-     */
     private List<CustomTypeBean> mList;
-    private String[] tyeps = {"普通客户", "VIP客户", "黄金会员", "铂金会员", "钻石会员"};
-    private String[] percent = {"10%", "15%", "25%", "30%", "35%"};
     private String[] menuLabels = {"编辑", "删除"};
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 获取客户列表
+                if (result.url().contains("wxapi/v1/client.php?type=getKehuTypelist")) {
+                    mList = JsonParser.parseJSONArray(CustomTypeBean.class, JsonParser.parseJSONObject(body.get("data")).get("kehuTypelist"));
+                    for (int i = 0; i < ListUtils.getSize(mList); i++) {
+                        mList.get(i).setOrder(String.valueOf(i + 1));
+                    }
+                    Message msg = new Message();
+                    msg.what = DEFAULT_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+                // 删除客户分类
+                if (result.url().contains("wxapi/v1/client.php?type=delKehuType")){
+                    toast("删除成功");
+
+                }
+            } else {
+                toast(body.get("data"));
+            }
+            dismissLoading();
+        }
+    }
 }

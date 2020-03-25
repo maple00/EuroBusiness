@@ -51,8 +51,6 @@ public class InvoiceActivity extends BaseActivity implements View.OnClickListene
 
     private List<InvoiceBean> mList;
 
-    private String[] companys = {"重庆双木衣馆服饰有限公司", "重庆双木衣馆服饰有限公司", "重庆双木衣馆服饰有限公司"};
-
 
     @Override
     protected void initView() {
@@ -69,15 +67,6 @@ public class InvoiceActivity extends BaseActivity implements View.OnClickListene
     @Override
     protected void initData() {
         mList = new ArrayList<>();
-        /*for (String company : companys) {
-            InvoiceBean invoice = new InvoiceBean();
-            invoice.setCompany(company);
-            invoice.setTaxP("2250 6250 4870 8620");
-            invoice.setLocation("中国-重庆");
-            invoice.setAddress("重庆市南岸区弹子石腾龙大道国际商务大厦A座22-2");
-            invoice.setTel("+86 13512270415");
-            mList.add(invoice);
-        }*/
     }
 
     @Override
@@ -142,37 +131,13 @@ public class InvoiceActivity extends BaseActivity implements View.OnClickListene
                 // 门店或开票信息
                 if (result.url().contains("wxapi/v1/index.php?type=getStoreInfo")) {
                     Map<String, String> data = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("info"));
-                    /*if (data != null)
-                        for (int i = 0; i < ListUtils.getSize(mList); i++) {
-                            switch (i) {
-                                case 0:
-                                    mList.get(i).setCompany(data.get("id"));
-                                    break;
-                                case 1:
-                                    break;
-                                case 2:
-                                    break;
-                                case 3:
-                                    break;
-                                case 4:
-                                    break;
-                                case 5:
-                                    break;
-                                case 6:
-                                    break;
-                                case 7:
-                                    break;
-                                case 8:
-                                    break;
-                            }
-                        }*/
+
                     InvoiceBean invoice = new InvoiceBean();
-                    invoice.setCompany(data.get("id"));
+                    invoice.setCompany(data.get("name"));
                     invoice.setTaxP(data.get("companyTax"));
                     invoice.setLocation(data.get("region"));
                     invoice.setAddress(data.get("address"));
                     invoice.setTel(data.get("tel"));
-
                     mList.add(invoice);
 
                     Message msg = new Message();

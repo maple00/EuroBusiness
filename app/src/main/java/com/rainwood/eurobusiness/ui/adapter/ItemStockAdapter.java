@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.domain.StockBean;
+import com.rainwood.eurobusiness.domain.StocksBean;
 
 import java.util.List;
 
@@ -24,10 +25,10 @@ import java.util.List;
  */
 public class ItemStockAdapter extends BaseAdapter {
 
-    private Context mContext;
-    private List<StockBean> mList;
+   private Context mContext;
+    private List<StocksBean> mList;
 
-    public ItemStockAdapter(Context mContext, List<StockBean> mList) {
+    public ItemStockAdapter(Context mContext, List<StocksBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -38,7 +39,7 @@ public class ItemStockAdapter extends BaseAdapter {
     }
 
     @Override
-    public StockBean getItem(int position) {
+    public StocksBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -65,19 +66,19 @@ public class ItemStockAdapter extends BaseAdapter {
         }else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if (TextUtils.isEmpty(getItem(position).getImgPath())){
+        if (TextUtils.isEmpty(getItem(position).getIco())){
             Glide.with(convertView).load(R.drawable.icon_loadding_fail).into(holder.iv_img);
         }else {
-            Glide.with(convertView).load(getItem(position).getImgPath()).into(holder.iv_img);
+            Glide.with(convertView).load(getItem(position).getIco()).into(holder.iv_img);
         }
-        holder.tv_name.setText(getItem(position).getName());
+        holder.tv_name.setText(getItem(position).getGoodsName());
         holder.tv_model.setText(getItem(position).getModel());
-        holder.tv_params.setText(getItem(position).getParams());
+        holder.tv_params.setText(getItem(position).getGoodsSkuName());
         holder.tv_ven_num.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='12px'>库存：</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.orange15) + " size='12px'>" + getItem(position).getVenNum() + "</font>"));
+                + "<font color=" + mContext.getResources().getColor(R.color.orange15) + " size='12px'>" + getItem(position).getStock() + "</font>"));
         holder.tv_stock_num.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='12px'>盘点：</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.red100) + " size='12px'>" + getItem(position).getStockNum() + "</font>"));
-        holder.tv_status.setText(getItem(position).getStatus());
+                + "<font color=" + mContext.getResources().getColor(R.color.red100) + " size='12px'>" + getItem(position).getNum() + "</font>"));
+        holder.tv_status.setText(getItem(position).getState());
         // 点击事件
         holder.ll_item.setOnClickListener(v -> onClickItem.onClickStockItem(position));
         return convertView;

@@ -1,16 +1,27 @@
 package com.rainwood.eurobusiness.ui.activity;
 
+import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.domain.CommonUIBean;
 import com.rainwood.eurobusiness.domain.OrderBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.StockDetailAdapter;
+import com.rainwood.eurobusiness.utils.ListUtils;
 import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.viewinject.ViewById;
@@ -18,13 +29,14 @@ import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/20
  * @Desc: 盘点详情
  */
-public class StockDetailActivity extends BaseActivity implements View.OnClickListener {
+public class StockDetailActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
 
     @Override
@@ -46,13 +58,27 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
     @ViewById(R.id.lv_content_list)
     private MeasureListView contentList;
 
+    private List<OrderBean> mList;
+    private String[] titles = {"", ""};
+    // 商品信息
+    private String[] goodsTitle = {"商品分类", "商品名称", "商品型号", "条码", "规格"};
+    // 盘点信息
+    private String[] stockTitle = {"库存数", "盘点数", "备注", "制单人", "盘点时间"};
+
+    private final int INITIAL_SIZE = 0x101;
+
     @Override
     protected void initView() {
         initContext();
-        status.setText("审核中");
-
-        StockDetailAdapter detailAdapter = new StockDetailAdapter(this, mList);
-        contentList.setAdapter(detailAdapter);
+        // request
+        showLoading("loading");
+        String inventoryId = getIntent().getStringExtra("InventoryId");
+        if (inventoryId != null){
+            RequestPost.getInventoryInfo(inventoryId, this);
+        }else {
+            toast("异常错误");
+            dismissLoading();
+        }
     }
 
     @Override
@@ -66,13 +92,11 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
             for (int j = 0; j < goodsTitle.length && i == 0; j++) {
                 CommonUIBean commonUI = new CommonUIBean();
                 commonUI.setTitle(goodsTitle[j]);
-                commonUI.setShowText(goodsLabel[j]);
                 commonUIList.add(commonUI);
             }
             for (int j = 0; j < stockTitle.length && i == 1; j++) {
                 CommonUIBean commonUI = new CommonUIBean();
                 commonUI.setTitle(stockTitle[j]);
-                commonUI.setShowText(stockLabel[j]);
                 commonUIList.add(commonUI);
             }
             order.setCommonList(commonUIList);
@@ -110,15 +134,84 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
         actionBar.setLayoutParams(layoutParams);
     }
 
-    /*
-    模拟数据
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what){
+                case INITIAL_SIZE:
+                    StockDetailAdapter detailAdapter = new StockDetailAdapter(StockDetailActivity.this, mList);
+                    contentList.setAdapter(detailAdapter);
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 获取盘点记录详情
+                if (result.url().contains("wxapi/v1/stock.php?type=getInventoryInfo")) {
+                    Map<String, String> inventoryInfo = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("inventoryInfo"));
+                    status.setText(inventoryInfo.get("workFlow"));
+                    for (int i = 0; i < ListUtils.getSize(mList); i++) {
+                        switch (i){
+                            case 0:
+                                setValues(inventoryInfo, i, "goodsType", "goodsName", "model", "barCode", "goodsSkuName");
+                                break;
+                            case 1:
+                                setValues(inventoryInfo, i, "stock", "num", "text", "adName", "time");
+                                break;
+                        }
+                    }
+
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+            }else {
+                toast(body.get("warn"));
+            }
+            dismissLoading();
+        }
+    }
+
+    /**
+     * 赋值
+     * @param inventoryInfo
+     * @param i
+     * @param stock
+     * @param num
+     * @param text
+     * @param adName
+     * @param goodsType
      */
-    private List<OrderBean> mList;
-    private String[] titles = {"", ""};
-    // 商品信息
-    private String[] goodsTitle = {"商品分类", "商品名称", "商品型号", "条码", "规格"};
-    private String[] goodsLabel = {"女士时装-连衣裙", "西装外套式系缀扣连衣裙", "XDF-226023", "6920584471071", "杏色/XL"};
-    // 盘点信息
-    private String[] stockTitle = {"库存数", "盘点数", "备注", "制单人", "盘点时间"};
-    private String[] stockLabel = {"2250", "2250", "这里是备注文字内容这里是备注文字内容", "李亚奇", "2019-12-26 13:20"};
+    private void setValues(Map<String, String> inventoryInfo, int i, String stock, String num, String text, String adName, String goodsType) {
+        for (int j = 0; j < ListUtils.getSize(mList.get(i).getCommonList()); j++) {
+            switch (j) {
+                case 0:
+                    mList.get(i).getCommonList().get(j).setShowText(inventoryInfo.get(stock));
+                    break;
+                case 1:
+                    mList.get(i).getCommonList().get(j).setShowText(inventoryInfo.get(num));
+                    break;
+                case 2:
+                    mList.get(i).getCommonList().get(j).setShowText(inventoryInfo.get(text));
+                    break;
+                case 3:
+                    mList.get(i).getCommonList().get(j).setShowText(inventoryInfo.get(adName));
+                    break;
+                case 4:
+                    mList.get(i).getCommonList().get(j).setShowText(inventoryInfo.get(goodsType));
+                    break;
+            }
+        }
+    }
 }

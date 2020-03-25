@@ -157,7 +157,6 @@ public class CustomDetailActivity extends BaseActivity implements View.OnClickLi
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        Log.d(TAG, " result --- " + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {

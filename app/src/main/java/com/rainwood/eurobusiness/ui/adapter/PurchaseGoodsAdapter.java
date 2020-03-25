@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.domain.PurchaseBean;
+import com.rainwood.eurobusiness.domain.PurchasesBean;
 
 import java.util.List;
 
@@ -24,9 +25,9 @@ import java.util.List;
 public class PurchaseGoodsAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<PurchaseBean> mList;
+    private List<PurchasesBean> mList;
 
-    public PurchaseGoodsAdapter(Context mContext, List<PurchaseBean> mList) {
+    public PurchaseGoodsAdapter(Context mContext, List<PurchasesBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -37,7 +38,7 @@ public class PurchaseGoodsAdapter extends BaseAdapter {
     }
 
     @Override
-    public PurchaseBean getItem(int position) {
+    public PurchasesBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -62,19 +63,19 @@ public class PurchaseGoodsAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if (getItem(position).getImgPath() == null){
+        if (getItem(position).getIco() == null){
             Glide.with(convertView).load(mContext.getResources().getDrawable(R.drawable.icon_loadding_fail)).into(holder.iv_img);
         }else {
-            Glide.with(convertView).load(getItem(position).getImgPath()).into(holder.iv_img);
+            Glide.with(convertView).load(getItem(position).getIco()).into(holder.iv_img);
         }
         holder.tv_name.setText(getItem(position).getName());
         // 采购
         holder.tv_purchase.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>采购：</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>" + getItem(position).getNum() + "</font>"));
+                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>" + getItem(position).getBuyTotal() + "</font>"));
         // 入库
         holder.tv_in_storage.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>入库：</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.red30) + " size='13px'>" + getItem(position).getInNum() + "</font>"));
-        holder.tv_status.setText(getItem(position).getStatus());
+                + "<font color=" + mContext.getResources().getColor(R.color.red30) + " size='13px'>" + getItem(position).getInTotal() + "</font>"));
+        holder.tv_status.setText(getItem(position).getWorkFlow());
         // 点击事件
         holder.ll_item.setOnClickListener(v -> onClickItem.onClickItem(position));
         return convertView;

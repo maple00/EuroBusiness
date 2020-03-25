@@ -3,15 +3,23 @@ package com.rainwood.eurobusiness.ui.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.ItemGridBean;
-import com.rainwood.eurobusiness.domain.ShopBean;
+import com.rainwood.eurobusiness.domain.StockBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.InventoryAdapter;
 import com.rainwood.eurobusiness.ui.adapter.LevelTypeAdapter;
 import com.rainwood.tools.permission.OnPermission;
@@ -24,13 +32,14 @@ import com.rainwood.zxingqrc.android.QRCodeCaptureActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/18
  * @Desc: 库存商品首页
  */
-public class InventoryActivity extends BaseActivity implements View.OnClickListener {
+public class InventoryActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
     @Override
     protected int getLayoutId() {
@@ -50,6 +59,12 @@ public class InventoryActivity extends BaseActivity implements View.OnClickListe
     @ViewById(R.id.gv_level_type)
     private MeasureGridView levelType;
 
+    private List<StockBean> mList;
+    // levele
+    private List<ItemGridBean> levelList;
+    private String[] levels = {"一级分类", "二级分类"};
+
+    private final int INITIAL_SIZE = 0x101;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -57,36 +72,19 @@ public class InventoryActivity extends BaseActivity implements View.OnClickListe
         pageBack.setOnClickListener(this);
         screening.setOnClickListener(this);
 
-        allNum.setText("45622");
-        allMoney.setText("45622");
+    }
 
-        // level
-        LevelTypeAdapter typeAdapter = new LevelTypeAdapter(this, levelList);
-        levelType.setAdapter(typeAdapter);
-        // content
-        InventoryAdapter inventoryAdapter = new InventoryAdapter(this, mList);
-        contentList.setAdapter(inventoryAdapter);
-        inventoryAdapter.setOnClickItem(position -> {
-            // toast("点击了： " + position);
-            openActivity(InventoryGoodsActivity.class);
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // request
+        showLoading("loading");
+        RequestPost.getAllStock("", "", this);
     }
 
     @Override
     protected void initData() {
         super.initData();
-        mList = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            ShopBean shopBean = new ShopBean();
-            shopBean.setImgPath(R.drawable.icon_loadding_fail);
-            shopBean.setName("西装外套式系缀扣连衣裙");
-            shopBean.setModel("XDF-256165");
-            shopBean.setInvenNum("库存582件");
-            shopBean.setWholesalePrice("136.00€");
-            shopBean.setRetailPrice("136.00€");
-            mList.add(shopBean);
-        }
-
         levelList = new ArrayList<>();
         for (String level : levels) {
             ItemGridBean itemGrid = new ItemGridBean();
@@ -108,6 +106,35 @@ public class InventoryActivity extends BaseActivity implements View.OnClickListe
                 break;
         }
     }
+
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what) {
+                case INITIAL_SIZE:
+                    // level
+                    LevelTypeAdapter typeAdapter = new LevelTypeAdapter(InventoryActivity.this, levelList);
+                    levelType.setAdapter(typeAdapter);
+                    typeAdapter.setOnClickItem(new LevelTypeAdapter.OnClickItem() {
+                        @Override
+                        public void onClickItem(int position) {
+                            toast(levelList.get(position).getItemName());
+                        }
+                    });
+                    // content
+                    InventoryAdapter inventoryAdapter = new InventoryAdapter(InventoryActivity.this, mList);
+                    contentList.setAdapter(inventoryAdapter);
+                    inventoryAdapter.setOnClickItem(position -> {
+                        // toast("点击了： " + position);
+                        Intent intent = new Intent(InventoryActivity.this, InventoryGoodsActivity.class);
+                        intent.putExtra("stockId", mList.get(position).getId());
+                        startActivity(intent);
+                    });
+                    break;
+            }
+        }
+    };
 
     /**
      * 打开扫一扫
@@ -146,11 +173,33 @@ public class InventoryActivity extends BaseActivity implements View.OnClickListe
                 });
     }
 
-    /*
-    模拟数据
-    */
-    private List<ShopBean> mList;
-    // levele
-    private List<ItemGridBean> levelList;
-    private String[] levels = {"一级分类", "二级分类"};
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 获取库存列表
+                if (result.url().contains("wxapi/v1/stock.php?type=getAllStock")) {
+                    mList = JsonParser.parseJSONArray(StockBean.class, JsonParser.parseJSONObject(body.get("data")).get("stocklist"));
+
+                    allNum.setText(JsonParser.parseJSONObject(JsonParser
+                            .parseJSONObject(body.get("data")).get("info")).get("totalStock"));            // 总库存
+                    allMoney.setText(JsonParser.parseJSONObject(JsonParser
+                            .parseJSONObject(body.get("data")).get("info")).get("totalMoney"));          // 总金额
+
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+            dismissLoading();
+        }
+    }
 }

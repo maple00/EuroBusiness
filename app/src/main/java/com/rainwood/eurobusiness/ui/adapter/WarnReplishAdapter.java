@@ -1,9 +1,14 @@
 package com.rainwood.eurobusiness.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -13,7 +18,10 @@ import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.domain.CommonUIBean;
+import com.rainwood.tools.common.RegexEditText;
 
+import java.lang.reflect.Type;
+import java.security.KeyRep;
 import java.util.List;
 
 /**
@@ -46,6 +54,7 @@ public class WarnReplishAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
@@ -75,10 +84,19 @@ public class WarnReplishAdapter extends BaseAdapter {
             holder.iv_arrow.setVisibility(View.VISIBLE);
             holder.et_hint.setOnClickListener(v -> onClickLine.onClickLine(position));
         }
+        if (position == 0){
+            holder.et_hint.setInputType(InputType.TYPE_CLASS_TEXT);
+        }else if (position == 1){
+            holder.et_hint.setInputType(InputType.TYPE_CLASS_NUMBER);
+        }else {
+            holder.et_hint.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
+       // holder.et_hint.addTextChangedListener(new TextViewWatcher(position));
         return convertView;
     }
 
     public interface OnClickLine {
+        // 时间选择
         void onClickLine(int position);
     }
 
@@ -87,6 +105,7 @@ public class WarnReplishAdapter extends BaseAdapter {
     public void setOnClickLine(OnClickLine onClickLine) {
         this.onClickLine = onClickLine;
     }
+
 
     private class ViewHolder {
         private TextView tv_title;

@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentActivity;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseDialogFragment;
 import com.rainwood.eurobusiness.other.BaseDialog;
+import com.rainwood.eurobusiness.utils.DateTimeUtils;
 import com.rainwood.tools.widget.LoopView;
 
 import java.text.SimpleDateFormat;
@@ -30,7 +31,7 @@ public final class DateDialog {
             View.OnClickListener {
 
         private final int mStartYear = 1920;
-        private final int mEndYear = 2019;
+        private final int mEndYear = DateTimeUtils.getNowYear();
 
         private final TextView mTitleView;
         private final TextView mCancelView;

@@ -1,5 +1,6 @@
 package com.rainwood.eurobusiness.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,7 @@ public class CustomTypeAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
@@ -57,9 +59,9 @@ public class CustomTypeAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_serial.setText(getItem(position).getId());
-        holder.tv_type.setText(getItem(position).getType());
-        holder.tv_percent.setText(getItem(position).getPercent());
+        holder.tv_serial.setText(getItem(position).getOrder());
+        holder.tv_type.setText(getItem(position).getName());
+        holder.tv_percent.setText(getItem(position).getDiscount() + "%");
         // 点击事件
         holder.iv_point.setOnClickListener(v -> {
             onClickItem.onClickItem(position);

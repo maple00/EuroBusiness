@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
+import com.rainwood.eurobusiness.domain.InventoryOutBean;
 import com.rainwood.eurobusiness.domain.OutBoundBean;
 import com.rainwood.tools.viewinject.OnClick;
 
@@ -25,9 +26,9 @@ import java.util.List;
 public class ItemOutBoundAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<OutBoundBean> mList;
+    private List<InventoryOutBean> mList;
 
-    public ItemOutBoundAdapter(Context mContext, List<OutBoundBean> mList) {
+    public ItemOutBoundAdapter(Context mContext, List<InventoryOutBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -38,7 +39,7 @@ public class ItemOutBoundAdapter extends BaseAdapter {
     }
 
     @Override
-    public OutBoundBean getItem(int position) {
+    public InventoryOutBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -66,20 +67,20 @@ public class ItemOutBoundAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if (TextUtils.isEmpty(getItem(position).getImgPath())) {
+        if (TextUtils.isEmpty(getItem(position).getIco())) {
             Glide.with(convertView).load(R.drawable.icon_loadding_fail).into(holder.iv_img);
         } else {
-            Glide.with(convertView).load(getItem(position).getImgPath()).into(holder.iv_img);
+            Glide.with(convertView).load(getItem(position).getIco()).into(holder.iv_img);
         }
-        holder.tv_name.setText(getItem(position).getName());
+        holder.tv_name.setText(getItem(position).getGoodsName());
         holder.tv_model.setText(getItem(position).getModel());
-        holder.tv_params.setText(getItem(position).getParams());
-        holder.tv_order_source.setText(getItem(position).getSource());
+        holder.tv_params.setText(getItem(position).getSkuName());
+        holder.tv_order_source.setText(getItem(position).getWorkFlow());
         holder.tv_num.setText(getItem(position).getNum());
-        if (TextUtils.isEmpty(getItem(position).getAddress())){
+        if (TextUtils.isEmpty(getItem(position).getStoreName())){
             holder.ll_saler_address.setVisibility(View.GONE);
         }else {
-            holder.tv_address.setText(getItem(position).getAddress());
+            holder.tv_address.setText(getItem(position).getStoreName());
         }
         // 点击事件
         holder.ll_item.setOnClickListener(v -> onClickItem.onClickItem(position));

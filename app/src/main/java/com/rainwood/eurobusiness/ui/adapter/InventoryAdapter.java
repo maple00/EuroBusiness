@@ -1,5 +1,6 @@
 package com.rainwood.eurobusiness.ui.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.domain.ShopBean;
+import com.rainwood.eurobusiness.domain.StockBean;
 
 import java.util.List;
 
@@ -22,9 +25,9 @@ import java.util.List;
 public class InventoryAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<ShopBean> mList;
+    private List<StockBean> mList;
 
-    public InventoryAdapter(Context mContext, List<ShopBean> mList) {
+    public InventoryAdapter(Context mContext, List<StockBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -35,7 +38,7 @@ public class InventoryAdapter extends BaseAdapter {
     }
 
     @Override
-    public ShopBean getItem(int position) {
+    public StockBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -44,6 +47,7 @@ public class InventoryAdapter extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
@@ -61,11 +65,12 @@ public class InventoryAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.iv_img.setImageResource(getItem(position).getImgPath());
+        // holder.iv_img.setImageResource(getItem(position).getImgPath());
+        Glide.with(convertView).load(getItem(position).getIco()).into(holder.iv_img);
         holder.tv_name.setText(getItem(position).getName());
         holder.tv_model.setText(getItem(position).getModel());
-        holder.tv_inventory_num.setText(getItem(position).getInvenNum());
-        holder.tv_wholesale_price.setText(getItem(position).getWholesalePrice());
+        holder.tv_inventory_num.setText("库存" + (getItem(position).getStock()==null ? 0 :getItem(position).getStock()) + "件");
+        holder.tv_wholesale_price.setText(getItem(position).getTradePrice());
         holder.tv_retail_price.setText(getItem(position).getRetailPrice());
         // 点击事件
         holder.ll_item.setOnClickListener(v -> onClickItem.onClickItem(position));

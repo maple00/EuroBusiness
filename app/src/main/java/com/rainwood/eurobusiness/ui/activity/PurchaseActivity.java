@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -20,8 +21,12 @@ import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.PressBean;
-import com.rainwood.eurobusiness.domain.PurchaseBean;
+import com.rainwood.eurobusiness.domain.PurchasesBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.other.BaseDialog;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.GoodsStatusAdapter;
 import com.rainwood.eurobusiness.ui.adapter.PurchaseGoodsAdapter;
 import com.rainwood.eurobusiness.ui.adapter.TopTypeAdapter;
@@ -33,13 +38,14 @@ import com.rainwood.tools.widget.MeasureListView;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/16
  * @Desc: 采购记录
  */
-public class PurchaseActivity extends BaseActivity implements View.OnClickListener {
+public class PurchaseActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
 
     @Override
@@ -66,56 +72,20 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
     // handler 码
     private final int STATUS_SIZE = 0x1124;
+    private final int INITIAL_SIZE = 0x1123;
+    // 头部选中位置标记
+    private static int posFalg;
 
     @Override
     protected void initView() {
         pageBack.setOnClickListener(this);
         screening.setOnClickListener(this);
         newFound.setOnClickListener(this);
-        if (Contants.CHOOSE_MODEL_SIZE == 2) {
-            search1.setVisibility(View.GONE);
-            newFound.setVisibility(View.GONE);
-            TopTypeAdapter typeAdapter = new TopTypeAdapter(this, mTopList);
-            topType.setAdapter(typeAdapter);
-            topType.setNumColumns(2);
-            typeAdapter.setOnClickItem(position -> {
-                for (PressBean pressBean : mTopList) {
-                    pressBean.setChoose(false);
-                }
-                mTopList.get(position).setChoose(true);
-            });
-            // 商品状态
-            Message msg = new Message();
-            msg.what = STATUS_SIZE;
-            mHandler.sendMessage(msg);
-            //  商品列表
-            PurchaseGoodsAdapter goodsAdapter = new PurchaseGoodsAdapter(this, goodsList);
-            goodsLists.setAdapter(goodsAdapter);
-            goodsAdapter.setOnClickItem(position -> openActivity(PurchaseDetailActivity.class));
-        }
 
-        if (Contants.CHOOSE_MODEL_SIZE == 109) {
-            search.setVisibility(View.GONE);
-            screening.setVisibility(View.GONE);
-            TopTypeAdapter typeAdapter = new TopTypeAdapter(this, mTopList);
-            topType.setAdapter(typeAdapter);
-            topType.setNumColumns(2);
-            typeAdapter.setOnClickItem(position -> {
-                for (PressBean pressBean : mTopList) {
-                    pressBean.setChoose(false);
-                }
-                mTopList.get(position).setChoose(true);
-            });
-            // 商品状态
-            Message msg = new Message();
-            msg.what = STATUS_SIZE;
-            mHandler.sendMessage(msg);
-
-            //  商品列表
-            PurchaseGoodsAdapter goodsAdapter = new PurchaseGoodsAdapter(this, goodsList);
-            goodsLists.setAdapter(goodsAdapter);
-            goodsAdapter.setOnClickItem(position -> openActivity(PurchaseDetailActivity.class));
-        }
+        // default query new -- 默认查询供应商采购订单的全部
+        showLoading("loading");
+        RequestPost.getPurchaseOrderlist("new", "", "", "", "",
+                "", this);
     }
 
     @Override
@@ -124,6 +94,8 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
         // 头部
         mTopList = new ArrayList<>();
         for (int i = 0; i < topTitles.length && Contants.CHOOSE_MODEL_SIZE == 2; i++) {
+            search1.setVisibility(View.GONE);
+            newFound.setVisibility(View.GONE);
             PressBean press = new PressBean();
             press.setTitle(topTitles[i]);
             press.setChoose(false);
@@ -133,6 +105,8 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
             mTopList.add(press);
         }
         for (int i = 0; i < salerStatus.length && Contants.CHOOSE_MODEL_SIZE == 109; i++) {
+            search.setVisibility(View.GONE);
+            screening.setVisibility(View.GONE);
             PressBean press = new PressBean();
             press.setTitle(salerStatus[i]);
             press.setChoose(false);
@@ -153,19 +127,6 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
             }
             statuList.add(press);
         }
-
-        // 商品列表
-        goodsList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            PurchaseBean purchase = new PurchaseBean();
-            purchase.setName("西装外套式系缀扣...");
-            //    purchase.setImgPath(null);
-            purchase.setNum(String.valueOf(250));
-            purchase.setInNum(String.valueOf(0));
-            purchase.setStatus("待入库");
-            goodsList.add(purchase);
-        }
-
     }
 
     @Override
@@ -222,7 +183,20 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 toast("选择时间范围不完整!");
                 return;
             }
-            toast("您选择了：" + startTime.getText().toString() + "至" + endTime.getText().toString());
+            // 通过时间查询订单列表 -- 默认查询当前选中的类型的全部状态
+            showLoading("loading");
+            String type = "";
+            switch (posFalg){
+                case 0:             // 采购订单
+                    type = "new";
+                    break;
+                case 1:             // 补货订单
+                    type = "charge";
+                    break;
+            }
+            RequestPost.getPurchaseOrderlist(type, "", "", "", startTime.getText().toString().trim(),
+                    endTime.getText().toString().trim(), this);
+            //toast("您选择了：" + startTime.getText().toString() + "至" + endTime.getText().toString());
         });
         // dialog  dismiss 监听
         dialog.setOnDismissListener(DialogInterface::dismiss);
@@ -281,6 +255,16 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case INITIAL_SIZE:
+                    // 门店端
+                    if (Contants.CHOOSE_MODEL_SIZE == 2) {
+                        setValues();
+                    }
+                    // 批发商端
+                    if (Contants.CHOOSE_MODEL_SIZE == 109) {
+                        setValues();
+                    }
+                    break;
                 case STATUS_SIZE:                   // 查询不同入库的情况
                     GoodsStatusAdapter statusAdapter = new GoodsStatusAdapter(PurchaseActivity.this, statuList);
                     goodsStatus.setAdapter(statusAdapter);
@@ -289,7 +273,32 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                             pressBean.setChoose(false);
                         }
                         statuList.get(position).setChoose(true);
-                        // 查询不同状态的列表
+                        // query 不同的类型的不同状态
+                        String topType = "";
+                        String status;
+                        switch (posFalg) {
+                            case 0:
+                                topType = "";
+                                break;
+                            case 1:
+                                topType = "charge";
+                                break;
+                        }
+                        switch (position) {
+                            case 1:
+                                status = "waitIn";
+                                break;
+                            case 2:
+                                status = "complete";
+                                break;
+                            default:
+                                status = "";
+                                break;
+                        }
+                        // request
+                        showLoading("loading");
+                        RequestPost.getPurchaseOrderlist(topType, "", "", status, "",
+                                "", PurchaseActivity.this);
 
                     });
                     break;
@@ -297,10 +306,44 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
         }
     };
 
-
-    /*
-    模拟数据
+    /**
+     * 设置UI
      */
+    private void setValues() {
+        TopTypeAdapter typeAdapter = new TopTypeAdapter(PurchaseActivity.this, mTopList);
+        topType.setAdapter(typeAdapter);
+        topType.setNumColumns(2);
+        typeAdapter.setOnClickItem(position -> {
+            for (PressBean pressBean : mTopList) {
+                pressBean.setChoose(false);
+            }
+            mTopList.get(position).setChoose(true);
+            for (PressBean pressBean : statuList) {
+                pressBean.setChoose(false);
+            }
+            statuList.get(0).setChoose(true);
+            String topType;
+            if (position == 1) {
+                topType = "charge";
+            } else {
+                topType = "";
+            }
+            posFalg = position;
+            // request -- default query all
+            showLoading("loading");
+            RequestPost.getPurchaseOrderlist(topType, "", "", "", "",
+                    "", PurchaseActivity.this);
+        });
+        // 商品状态
+        Message statusMsg = new Message();
+        statusMsg.what = STATUS_SIZE;
+        mHandler.sendMessage(statusMsg);
+        //  商品列表
+        PurchaseGoodsAdapter goodsAdapter = new PurchaseGoodsAdapter(PurchaseActivity.this, goodsList);
+        goodsLists.setAdapter(goodsAdapter);
+        goodsAdapter.setOnClickItem(position -> openActivity(PurchaseDetailActivity.class));
+    }
+
     private List<PressBean> mTopList;
     private String[] topTitles = {"供应商采购订单", "申请补货订单"};
     // 商品状态
@@ -308,5 +351,31 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
     private String[] status = {"全部", "待入库", "已完成"};
     private String[] salerStatus = {"采购订单", "补货订单"};
     // 商品列表
-    private List<PurchaseBean> goodsList;
+    private List<PurchasesBean> goodsList;
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, " --- result --- " + result);
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 获取采购记录列表
+                if (result.url().contains("wxapi/v1/order.php?type=getPurchaseOrderlist")) {
+                    goodsList = JsonParser.parseJSONArray(PurchasesBean.class, JsonParser.parseJSONObject(body.get("data")).get("datalist"));
+
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+            } else {
+                toast(body.get("data"));
+            }
+            dismissLoading();
+        }
+    }
 }

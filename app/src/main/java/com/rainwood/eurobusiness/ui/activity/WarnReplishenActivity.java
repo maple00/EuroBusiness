@@ -3,6 +3,7 @@ package com.rainwood.eurobusiness.ui.activity;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,6 +14,9 @@ import androidx.annotation.NonNull;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.domain.CommonUIBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.other.BaseDialog;
 import com.rainwood.eurobusiness.ui.adapter.WarnReplishAdapter;
 import com.rainwood.eurobusiness.ui.dialog.DateDialog;
@@ -21,13 +25,14 @@ import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/21
  * @Desc: 预警库存 --- 补货
  */
-public class WarnReplishenActivity extends BaseActivity implements View.OnClickListener {
+public class WarnReplishenActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
     @Override
     protected int getLayoutId() {
@@ -46,6 +51,10 @@ public class WarnReplishenActivity extends BaseActivity implements View.OnClickL
     // handler
     private final int REPLISH_SIZE = 0x1124;
 
+    private List<CommonUIBean> mList;
+    private String[] titles = {"交货时间", "采购数量", "备注"};
+    private String[] labels = {"请选择", "请输入", "请输入"};
+
     @Override
     protected void initView() {
         pageBack.setOnClickListener(this);
@@ -54,45 +63,6 @@ public class WarnReplishenActivity extends BaseActivity implements View.OnClickL
         Message msg = new Message();
         msg.what = REPLISH_SIZE;
         mHandler.sendMessage(msg);
-
-    }
-
-    /**
-     * 选择时间
-     */
-    private void toFinished(int position) {
-        new DateDialog.Builder(this)
-                .setTitle(getString(R.string.date_title))
-                // 确定文本
-                .setConfirm(getString(R.string.common_confirm))
-                // 设置为null 时表示不显示取消按钮
-                .setCancel(getString(R.string.common_cancel))
-                // 设置日期(可支持2019-12-03， 20191203， 时间戳)
-                // .setDate(20191203)
-                // 设置年份
-                //.setYear(2019)
-                // 设置月份
-                //.setMonth(12)
-                // 设置天数
-                //.setDay(3)
-                // 不选择天数
-                //.setIgnoreDay()
-                .setListener(new DateDialog.OnListener() {
-                    @Override
-                    public void onSelected(BaseDialog dialog, int year, int month, int day) {
-                        // toast(year + "-" + month + "-" + day);
-                        mList.get(position).setShowText(year + "-" + month + "-" + day);
-                        //
-                        Message msg = new Message();
-                        msg.what = REPLISH_SIZE;
-                        mHandler.sendMessage(msg);
-                    }
-
-                    @Override
-                    public void onCancel(BaseDialog dialog) {
-                        dialog.dismiss();
-                    }
-                }).show();
     }
 
     @Override
@@ -119,7 +89,9 @@ public class WarnReplishenActivity extends BaseActivity implements View.OnClickL
                 finish();
                 break;
             case R.id.btn_confirm:
-                toast("提交");
+                Log.d(TAG, " mList --- " + mList.toString());
+                // request
+                //RequestPost.commitChargeOrder();
                 break;
         }
     }
@@ -133,12 +105,15 @@ public class WarnReplishenActivity extends BaseActivity implements View.OnClickL
                 case REPLISH_SIZE:
                     WarnReplishAdapter replishAdapter = new WarnReplishAdapter(WarnReplishenActivity.this, mList);
                     content.setAdapter(replishAdapter);
-                    replishAdapter.setOnClickLine(position -> {
-                        // toast(mList.get(position).getTitle());
-                        switch (mList.get(position).getTitle()) {
-                            case "交货时间":
-                                toFinished(position);
-                                break;
+                    replishAdapter.setOnClickLine(new WarnReplishAdapter.OnClickLine() {
+                        @Override
+                        public void onClickLine(int position) {
+                            // toast(mList.get(position).getTitle());
+                            switch (mList.get(position).getTitle()) {
+                                case "交货时间":
+                                    toFinished(position);
+                                    break;
+                            }
                         }
                     });
                     break;
@@ -146,8 +121,52 @@ public class WarnReplishenActivity extends BaseActivity implements View.OnClickL
         }
     };
 
-    private List<CommonUIBean> mList;
-    private String[] titles = {"交货时间", "采购数量", "备注"};
-    private String[] labels = {"请选择", "请输入", "请输入"};
+    /**
+     * 选择时间
+     */
+    private void toFinished(int position) {
+        new DateDialog.Builder(this)
+                .setTitle(getString(R.string.date_title))
+                .setConfirm(getString(R.string.common_confirm))
+                .setCancel(getString(R.string.common_cancel))
+                // 不选择天数
+                //.setIgnoreDay()
+                .setListener(new DateDialog.OnListener() {
+                    @Override
+                    public void onSelected(BaseDialog dialog, int year, int month, int day) {
+                        // toast(year + "-" + month + "-" + day);
+                        mList.get(position).setShowText(year + "-" + month + "-" + day);
+                        //
+                        Message msg = new Message();
+                        msg.what = REPLISH_SIZE;
+                        mHandler.sendMessage(msg);
+                    }
 
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 预警补货
+                if (result.url().contains("wxapi/v1/stock.php?type=commitChargeOrder")) {
+
+                }
+            } else {
+                toast(body.get("data"));
+            }
+            dismissLoading();
+        }
+    }
 }

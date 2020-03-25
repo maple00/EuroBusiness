@@ -110,7 +110,7 @@ public class StoresActivity extends BaseActivity implements View.OnClickListener
                         for (int i = 0; i < ListUtils.getSize(mList); i++) {
                             switch (i) {
                                 case 0:
-                                    mList.get(i).setShowText(data.get("id"));
+                                    mList.get(i).setShowText(data.get("name"));
                                     break;
                                 case 1:
                                     mList.get(i).setShowText(data.get("contactName"));

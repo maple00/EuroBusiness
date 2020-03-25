@@ -5,24 +5,34 @@ import java.io.Serializable;
 /**
  * @Author: a797s
  * @Date: 2020/2/20
- * @Desc: 盘点记录
+ * @Desc: 库存商品
  */
 public class StockBean implements Serializable {
 
-    private String imgPath;         // 图片地址
-    private String name;            // 名称
-    private String model;           // 型号
-    private String params;          // 规格参数
-    private String venNum;          // 库存
-    private String stockNum;        // 盘点
-    private String status;          // 状态
+    private String id;          // 商品id
+    private String ico;         // 商品地址
+    private String name;        // 商品名称
+    private String model;       // 商品型号
+    private String stock;       // 库存数量
+    private String price;       // 进价
+    private String retailPrice;     // 零售价
+    private String tradePrice;      // 批发价
+    private String storeName;       // 门店名称
 
-    public String getImgPath() {
-        return imgPath;
+    public String getId() {
+        return id;
     }
 
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getIco() {
+        return ico;
+    }
+
+    public void setIco(String ico) {
+        this.ico = ico;
     }
 
     public String getName() {
@@ -41,35 +51,43 @@ public class StockBean implements Serializable {
         this.model = model;
     }
 
-    public String getParams() {
-        return params;
+    public String getStock() {
+        return stock;
     }
 
-    public void setParams(String params) {
-        this.params = params;
+    public void setStock(String stock) {
+        this.stock = stock;
     }
 
-    public String getVenNum() {
-        return venNum;
+    public String getPrice() {
+        return price;
     }
 
-    public void setVenNum(String venNum) {
-        this.venNum = venNum;
+    public void setPrice(String price) {
+        this.price = price;
     }
 
-    public String getStockNum() {
-        return stockNum;
+    public String getRetailPrice() {
+        return retailPrice;
     }
 
-    public void setStockNum(String stockNum) {
-        this.stockNum = stockNum;
+    public void setRetailPrice(String retailPrice) {
+        this.retailPrice = retailPrice;
     }
 
-    public String getStatus() {
-        return status;
+    public String getTradePrice() {
+        return tradePrice;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setTradePrice(String tradePrice) {
+        this.tradePrice = tradePrice;
+    }
+
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setStoreName(String storeName) {
+        this.storeName = storeName;
     }
 }

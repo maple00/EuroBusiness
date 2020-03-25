@@ -56,7 +56,8 @@ public class GoodsImageAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Glide.with(convertView).load(mContext.getResources().getDrawable(R.drawable.icon_loadding_fail))
+        Glide.with(convertView).load(getItem(position).getImgPath())
+                .error(mContext.getResources().getDrawable(R.drawable.icon_loadding_fail))
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(4)).override(80, 80))
                 .into(holder.iv_img);
         return convertView;

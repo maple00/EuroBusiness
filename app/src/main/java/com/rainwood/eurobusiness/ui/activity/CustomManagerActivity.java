@@ -129,13 +129,13 @@ public class CustomManagerActivity extends BaseActivity implements View.OnClickL
                             // request 客户分类列表
                             showLoading("loading");
                             RequestPost.getClientTypeList(CustomManagerActivity.this);
-
                         });
                         // content
                         CustomAdapter customAdapter = new CustomAdapter(CustomManagerActivity.this, mList);
                         contentList.setAdapter(customAdapter);
                         customAdapter.setOnClickContent(position -> {
                             // 查看详情
+                            Log.d(TAG, "mList ---- " + mList.toString());
                             Intent intent = new Intent(CustomManagerActivity.this, CustomDetailActivity.class);
                             intent.putExtra("customId", mList.get(position).getId());
                             startActivity(intent);
@@ -208,7 +208,6 @@ public class CustomManagerActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-       // Log.d(TAG, " result --- " + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {

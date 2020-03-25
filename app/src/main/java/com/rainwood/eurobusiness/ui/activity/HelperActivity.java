@@ -84,7 +84,6 @@ public class HelperActivity extends BaseActivity implements View.OnClickListener
                             content.append(helpData.getWord()).append("\r\n");
                         }
                     }
-
                     initWebView();
                     Log.d(TAG, "webView === " + content);
                 }

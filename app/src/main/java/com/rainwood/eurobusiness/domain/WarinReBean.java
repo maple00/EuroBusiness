@@ -19,7 +19,7 @@ public class WarinReBean implements Serializable {
     // 详情部分
     private String status;          // 商品状态
     private List<CommonUIBean> commonUIList;        // title_label -- 商品型号、商品分类、条码
-    private List<SizeBean> sizeList;        // 规格参数部分
+    private List<SpecificationBean> sizeList;        // 规格参数部分
     private List<CommonUIBean> paramsList;          // 详情参数部分 -- 批发价、商品规格、零售价、税率、增值税、最小起订量
 
     public String getImgPath() {
@@ -86,11 +86,11 @@ public class WarinReBean implements Serializable {
         this.commonUIList = commonUIList;
     }
 
-    public List<SizeBean> getSizeList() {
+    public List<SpecificationBean> getSizeList() {
         return sizeList;
     }
 
-    public void setSizeList(List<SizeBean> sizeList) {
+    public void setSizeList(List<SpecificationBean> sizeList) {
         this.sizeList = sizeList;
     }
 

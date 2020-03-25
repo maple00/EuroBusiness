@@ -9,9 +9,18 @@ import java.io.Serializable;
  */
 public class AddressBean implements Serializable {
 
+    private String id;              // 地址id
     private String name;            // 地址名称
     private String address;         // 地址
     private boolean checked;        // 是否是默认地址
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;

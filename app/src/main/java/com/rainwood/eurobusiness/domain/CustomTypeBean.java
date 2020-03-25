@@ -9,9 +9,28 @@ import java.io.Serializable;
  */
 public class CustomTypeBean implements Serializable {
 
-    private String id;                 // 序号
-    private String type;            // 类型
-    private String percent;         // 占比
+    private String id;                 // 分类id
+    private String order;           // 排序
+    private String name;            // 分类名称
+    private String discount;         // 占比
+    // 详情
+    private String list;            // 排序号
+
+    public String getList() {
+        return list;
+    }
+
+    public void setList(String list) {
+        this.list = list;
+    }
+
+    public String getOrder() {
+        return order;
+    }
+
+    public void setOrder(String order) {
+        this.order = order;
+    }
 
     public String getId() {
         return id;
@@ -21,19 +40,19 @@ public class CustomTypeBean implements Serializable {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public String getName() {
+        return name;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getPercent() {
-        return percent;
+    public String getDiscount() {
+        return discount;
     }
 
-    public void setPercent(String percent) {
-        this.percent = percent;
+    public void setDiscount(String discount) {
+        this.discount = discount;
     }
 }

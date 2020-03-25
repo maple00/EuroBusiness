@@ -26,7 +26,6 @@ public class GoodsStatusAdapter extends BaseAdapter {
     public GoodsStatusAdapter(Context mContext, List<PressBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
-        // Log.d("sxs", "--- " + mList.toString());
     }
 
     @Override

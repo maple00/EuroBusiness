@@ -1,6 +1,7 @@
 package com.rainwood.eurobusiness.ui.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class GoodsAddressAdapter extends BaseAdapter {
     public GoodsAddressAdapter(Context mContext, List<AddressBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
+        Log.d("sxs", " mList -==== " + mList.toString());
     }
 
     @Override

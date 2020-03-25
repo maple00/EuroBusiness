@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
+import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.ClientManagerBean;
 import com.rainwood.tools.common.FontDisplayUtil;
 
@@ -76,24 +77,24 @@ public class CustomAdapter extends BaseAdapter {
                 mContext.getResources().getColor(R.color.fontColor) + " size='" + FontDisplayUtil.dip2px(mContext, 12)
                 + "'>应收款：</font>" + "<font color=" + mContext.getResources().getColor(R.color.textColor)
                 + " size='" + FontDisplayUtil.dip2px(mContext, 14) + "'>" + getItem(position).getMoney() + "</font>"));
-//        if (getItem(position).getUiType() == 0) {
-//            holder.iv_point.setVisibility(View.GONE);
-//        } else {
-        holder.iv_point.setVisibility(View.VISIBLE);
-        holder.iv_point.setOnClickListener(v -> {
-            if (!count) {
-                holder.tv_delete_store.setVisibility(View.INVISIBLE);
-            } else {
-                holder.tv_delete_store.setVisibility(View.VISIBLE);
-                holder.tv_delete_store.setOnClickListener(v1 -> {
-                    mList.remove(position);
+        if (Contants.userType == 1) {           // 门店端不能删除
+            holder.iv_point.setVisibility(View.GONE);
+        } else {                // 批发商端可以删除
+            holder.iv_point.setVisibility(View.VISIBLE);
+            holder.iv_point.setOnClickListener(v -> {
+                if (!count) {
                     holder.tv_delete_store.setVisibility(View.INVISIBLE);
-                    notifyDataSetChanged();
-                });
-            }
-            count = !count;
-        });
-//        }
+                } else {
+                    holder.tv_delete_store.setVisibility(View.VISIBLE);
+                    holder.tv_delete_store.setOnClickListener(v1 -> {
+                        mList.remove(position);
+                        holder.tv_delete_store.setVisibility(View.INVISIBLE);
+                        notifyDataSetChanged();
+                    });
+                }
+                count = !count;
+            });
+        }
         // 点击事件
         holder.ll_item.setOnClickListener(v -> onClickContent.onClickContent(position));
         return convertView;

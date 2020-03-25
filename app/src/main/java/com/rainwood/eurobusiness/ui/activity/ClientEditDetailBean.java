@@ -17,6 +17,15 @@ public final class ClientEditDetailBean implements Serializable {
     private InvoiceDetailBean mInvoiceDetai;
     private TakeGoodsBean mTakeGoods;
 
+    @Override
+    public String toString() {
+        return "ClientEditDetailBean{" +
+                "mClientBase=" + mClientBase +
+                ", mInvoiceDetai=" + mInvoiceDetai +
+                ", mTakeGoods=" + mTakeGoods +
+                '}';
+    }
+
     public ClientBaseBean getClientBase() {
         return mClientBase;
     }

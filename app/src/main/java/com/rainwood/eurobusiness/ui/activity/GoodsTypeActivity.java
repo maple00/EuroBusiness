@@ -121,9 +121,6 @@ public class GoodsTypeActivity extends BaseActivity implements View.OnClickListe
         }
     };
 
-    /*
-    模拟数据
-     */
     private List<SelectedGoodsBean> mList;
     private String[] types = {"女士时装", "女士整包", "女士大码", "男士服装", "儿童服装", "鞋子",
             "箱包", "帽子/围巾", "内衣", "袜子", "配饰", "首饰", "男士服装", "儿童服装", "鞋子",

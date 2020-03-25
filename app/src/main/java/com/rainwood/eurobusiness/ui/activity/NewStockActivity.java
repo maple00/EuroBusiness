@@ -55,13 +55,25 @@ public class NewStockActivity extends BaseActivity implements View.OnClickListen
             }
         });
         stockAdapter.setOnClickItem((parentPos, position) -> {
-            // toast(mList.get(parentPos).getPressList().get(position).getTitle());
             boolean choose = mList.get(parentPos).getPressList().get(position).isChoose();
-            if (choose) {
+            if (choose) {            // 置反
                 mList.get(parentPos).getPressList().get(position).setChoose(false);
             } else {
+                // 选择
+                for (PressBean pressBean : mList.get(parentPos).getPressList()) {
+                    if (pressBean.isChoose()) {
+                        pressBean.setChoose(false);
+                        break;
+                    }
+                }
                 mList.get(parentPos).getPressList().get(position).setChoose(true);
             }
+//            boolean choose = mList.get(parentPos).getPressList().get(position).isChoose();
+//            if (choose) {
+//                mList.get(parentPos).getPressList().get(position).setChoose(false);
+//            } else {
+//                mList.get(parentPos).getPressList().get(position).setChoose(true);
+//            }
         });
     }
 
