@@ -9,8 +9,10 @@ public class CommonUIBean {
 
     /**
      * 类型
+     * 1: 可输入
+     * 0： 不可输入
      */
-    private int type = 0;            // 类型
+    private int type = 1;            // 类型
     private String title;           // 标题
     private String label;           // hint 提示
     private String showText;        // 显示文字

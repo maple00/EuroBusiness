@@ -161,10 +161,10 @@
         <attr name="android:checked"/>
         
         <attr name="android:enabled"/>
-    </declare-styleable><declare-styleable name="CustomViewStub">
-        
-        <attr name="android:layout"/>
     </declare-styleable><declare-styleable name="RatioFrameLayout">
         
         <attr format="float" name="sizeRatio"/>
+    </declare-styleable><declare-styleable name="CustomViewStub">
+        
+        <attr name="android:layout"/>
     </declare-styleable></configuration></mergedItems></merger>

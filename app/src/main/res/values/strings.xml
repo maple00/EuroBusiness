@@ -120,6 +120,9 @@
     <string name="purchase_custom" translatable="false">自定义</string>
     <string name="purchase_bulk_storage" translatable="false">批量入库</string>
     <string name="purchase_in_storage_num" translatable="false">入库数量</string>
+    <string name="purchase_in_storage_color" translatable="false">入库颜色</string>
+    <string name="purchase_in_storage_size" translatable="false">入库尺码</string>
+    <string name="purchase_refunds_special" translatable="false">退货规格</string>
     <string name="purchase_note" translatable="false">备注</string>
     <!-- 库存商品-->
     <string name="inventory_all_num" translatable="false">库存总数</string>
@@ -131,6 +134,8 @@
     <string name="order_stamp" translatable="false">打印</string>
     <string name="order_tips" translatable="false">没有更多订单了～</string>
     <string name="order_add_shop" translatable="false">添加商品</string>
+    <string name="order_num" translatable="false">数量</string>
+    <string name="order_price" translatable="false">批发价</string>
     <!-- 预警库存-->
     <string name="warn_replenish" translatable="false">补货</string>
     <!-- 退货管理-->

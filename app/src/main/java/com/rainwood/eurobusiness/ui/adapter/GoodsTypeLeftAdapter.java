@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
+import com.rainwood.eurobusiness.domain.ClassifyBean;
 import com.rainwood.eurobusiness.domain.SelectedGoodsBean;
 
 import java.util.List;
@@ -21,9 +22,9 @@ import java.util.List;
 public class GoodsTypeLeftAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<SelectedGoodsBean> mList;
+    private List<ClassifyBean> mList;
 
-    public GoodsTypeLeftAdapter(Context mContext, List<SelectedGoodsBean> mList) {
+    public GoodsTypeLeftAdapter(Context mContext, List<ClassifyBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -34,7 +35,7 @@ public class GoodsTypeLeftAdapter extends BaseAdapter {
     }
 
     @Override
-    public SelectedGoodsBean getItem(int position) {
+    public ClassifyBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -56,7 +57,7 @@ public class GoodsTypeLeftAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_type.setText(getItem(position).getType());
+        holder.tv_type.setText(getItem(position).getGoodsTypeOne());
         if (getItem(position).isChoose()) {
             holder.ll_item.setBackgroundResource(R.color.white);
             holder.tv_ver_line.setVisibility(View.VISIBLE);

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
+import com.rainwood.eurobusiness.domain.RefundGoodsBean;
 import com.rainwood.eurobusiness.domain.ReturnGoodsBean;
 
 import java.util.List;
@@ -25,9 +26,9 @@ import java.util.List;
 public class ReturnGoodsSalerAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<ReturnGoodsBean> mList;
+    private List<RefundGoodsBean> mList;
 
-    public ReturnGoodsSalerAdapter(Context mContext, List<ReturnGoodsBean> mList) {
+    public ReturnGoodsSalerAdapter(Context mContext, List<RefundGoodsBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -38,7 +39,7 @@ public class ReturnGoodsSalerAdapter extends BaseAdapter {
     }
 
     @Override
-    public ReturnGoodsBean getItem(int position) {
+    public RefundGoodsBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -66,24 +67,24 @@ public class ReturnGoodsSalerAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if (TextUtils.isEmpty(getItem(position).getImgPath())) {
+        if (TextUtils.isEmpty(getItem(position).getIco())) {
             Glide.with(convertView).load(R.drawable.icon_loadding_fail).into(holder.iv_img);
         } else {
-            Glide.with(convertView).load(getItem(position).getImgPath()).into(holder.iv_img);
+            Glide.with(convertView).load(getItem(position).getIco()).into(holder.iv_img);
         }
-        holder.tv_name.setText(getItem(position).getName());
-        holder.tv_params.setText(getItem(position).getParams());
+        holder.tv_name.setText(getItem(position).getGoodsName());
+        holder.tv_params.setText(getItem(position).getSkuName());
         holder.tv_return_num.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>退货：</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.red30) + " size='13px'>" + getItem(position).getReturnNum() + "</font>"));
+                + "<font color=" + mContext.getResources().getColor(R.color.red30) + " size='13px'>" + getItem(position).getRefundNum() + "</font>"));
         holder.tv_return_money.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>退款：</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>" + getItem(position).getMoney() + "</font>"));
-        if (getItem(position).getStatus().equals("草稿")) {
+                + "<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>" + getItem(position).getRefundMoney() + "</font>"));
+        if (getItem(position).getWorkFlow().equals("草稿")) {
             holder.tv_status.setTextColor(mContext.getResources().getColor(R.color.orange20));
         } else {
             holder.tv_status.setTextColor(mContext.getResources().getColor(R.color.blue5));
         }
-        holder.tv_status.setText(getItem(position).getStatus());
-        if (getItem(position).getStatus().equals("已完成")) {
+        holder.tv_status.setText(getItem(position).getWorkFlow());
+        if (getItem(position).getWorkFlow().equals("已完成")) {
             holder.tv_in_storage.setVisibility(View.VISIBLE);
             holder.tv_scrap.setVisibility(View.VISIBLE);
         } else {

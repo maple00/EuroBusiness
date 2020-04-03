@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,18 +16,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseFragment;
 import com.rainwood.eurobusiness.domain.ClassifyBean;
-import com.rainwood.eurobusiness.domain.ClassifySubBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.other.BaseDialog;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.SaleClassifyAdapter;
 import com.rainwood.eurobusiness.ui.dialog.InputDialog;
 import com.rainwood.eurobusiness.ui.dialog.MenuDialog;
 import com.rainwood.eurobusiness.ui.dialog.MessageDialog;
+import com.rainwood.eurobusiness.utils.ListUtils;
 import com.rainwood.eurobusiness.utils.RecyclerViewSpacesItemDecoration;
 import com.rainwood.tools.common.FontDisplayUtil;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -33,7 +39,7 @@ import java.util.Objects;
  * @Time: 2020/2/26 16:44
  * @Desc: 批发商 ---  商品管理(商品分类)
  */
-public class GoodsClassifyFragment extends BaseFragment implements View.OnClickListener {
+public class GoodsClassifyFragment extends BaseFragment implements View.OnClickListener, OnHttpListener {
     @Override
     protected int initLayout() {
         return R.layout.fragment_goods_classify;
@@ -43,46 +49,61 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
 
     private final int CLASSIFY_SIZE = 0x1124;
 
+    private List<ClassifyBean> mList;
+    // 底部弹窗
+    private String[] parentDialog = {"新增子分类", "重命名", "停用分类", "删除"};
+    private String[] subDialog = {"重命名", "停用分类", "删除"};
+
     @Override
     protected void initView(View view) {
         TextView newType = view.findViewById(R.id.tv_new_type);
         newType.setOnClickListener(this);
         newType.setText("新增首级分类");
-
         contentList = view.findViewById(R.id.rlv_content_list);
+    }
 
-        Message msg = new Message();
-        msg.what = CLASSIFY_SIZE;
-        mHandler.sendMessage(msg);
+    @Override
+    public void onResume() {
+        super.onResume();
+        // request
+        showLoading("");
+        RequestPost.getAllGoodsType(this);
     }
 
     @Override
     protected void initData(Context mContext) {
-        mList = new ArrayList<>();
-        for (int i = 0; i < parentName.length; i++) {
-            ClassifyBean classify = new ClassifyBean();
-            classify.setName(parentName[i]);
-            List<ClassifySubBean> subList = new ArrayList<>();
-            for (int j = 0; j < subNames.length; j++) {
-                ClassifySubBean subBean = new ClassifySubBean();
-                subBean.setName(subNames[j]);
-                if (subNames[j].equals("大衣")) {
-                    subBean.setStatus("已停用");
-                } else {
-                    subBean.setStatus("");
-                }
-                subList.add(subBean);
-            }
-            classify.setSubList(subList);
-            mList.add(classify);
-        }
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_new_type:
-                toast("新增首级分类");
+                new InputDialog.Builder(getActivity())
+                        .setTitle("新增首级分类")
+                        .setHint("请输入分类名称")
+                        .setConfirm(R.string.common_confirm)
+                        .setCancel(R.string.common_cancel)
+                        .setAutoDismiss(false)               // 设置点击按钮后关不闭弹窗
+                        .setCanceledOnTouchOutside(false)
+                        .setListener(new InputDialog.OnListener() {
+                            @Override
+                            public void onConfirm(BaseDialog dialog, String content) {
+                                if (TextUtils.isEmpty(content)) {
+                                    toast("请输入分类名称");
+                                } else {
+                                    dialog.dismiss();
+                                    // request
+                                    showLoading("");
+                                    RequestPost.newGoodsTypeOne("", content, GoodsClassifyFragment.this);
+                                }
+                            }
+
+                            @Override
+                            public void onCancel(BaseDialog dialog) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 break;
         }
     }
@@ -104,15 +125,14 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                         contentList.addItemDecoration(new RecyclerViewSpacesItemDecoration(stringIntegerHashMap));
                         contentList.setLayoutManager(managerVertical);
                         contentList.setHasFixedSize(true);
-                        contentList.setAdapter(adapter);
-                        adapter.setmList(mList);
                         count++;
-                        // 点击事件 --- 父类的底部弹窗
-                        adapter.setOnClickItem(position -> setParentDialog(position));
-                        // 点击事件 --- 子类的底部弹窗
-                        adapter.setOnClickPoint((parentPos, position) -> setSubDialog(parentPos, position));
                     }
-
+                    contentList.setAdapter(adapter);
+                    adapter.setmList(mList);
+                    // 点击事件 --- 父类的底部弹窗
+                    adapter.setOnClickItem(position -> setParentDialog(position));
+                    // 点击事件 --- 子类的底部弹窗
+                    adapter.setOnClickPoint((parentPos, position) -> setSubDialog(parentPos, position));
                     break;
             }
         }
@@ -147,11 +167,15 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                                     .setListener(new InputDialog.OnListener() {
                                         @Override
                                         public void onConfirm(BaseDialog dialog, String content) {
-                                            dialog.dismiss();
-                                            toast("重命名了：" + content);
-                                            Message msg = new Message();
-                                            msg.what = CLASSIFY_SIZE;
-                                            mHandler.sendMessage(msg);
+                                            if (TextUtils.isEmpty(content)){
+                                                toast("请输入分类名称");
+                                                return;
+                                            }
+                                            // request
+                                            showLoading("");
+                                            RequestPost.newGoodsTypeChild("update",
+                                                    mList.get(parentPos).getGoodsTypeTwolist().get(pos).getGoodsTypeTwoId(),
+                                                    content, GoodsClassifyFragment.this);
                                         }
 
                                         @Override
@@ -170,8 +194,11 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                                     .setListener(new MessageDialog.OnListener() {
                                         @Override
                                         public void onConfirm(BaseDialog dialog) {
-                                            toast("确定了");
                                             dialog.dismiss();
+                                            // request
+                                            showLoading("");
+                                            RequestPost.changeGoodsType(mList.get(parentPos).getGoodsTypeTwolist().get(pos).getGoodsTypeTwoId(),
+                                                    GoodsClassifyFragment.this);
                                         }
 
                                         @Override
@@ -191,12 +218,16 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                                         public void onConfirm(BaseDialog dialog) {
                                             dialog.dismiss();
                                             // 点击了删除
-                                            if (mList.get(parentPos).getSubList() == null && mList.get(parentPos).getSubList().size() == 0) {
+                                           /* if (mList.get(parentPos).getGoodsTypeTwolist() == null && mList.get(parentPos).getGoodsTypeTwolist().size() == 0) {
                                                 mList.remove(pos);
                                                 Message msg = new Message();
                                                 msg.what = CLASSIFY_SIZE;
                                                 mHandler.sendMessage(msg);
-                                            }
+                                            }*/
+                                            // request
+                                            showLoading("");
+                                            RequestPost.delGoodsType(mList.get(parentPos).getGoodsTypeTwolist().get(pos).getGoodsTypeTwoId(),
+                                                    GoodsClassifyFragment.this);
                                         }
 
                                         @Override
@@ -242,11 +273,10 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                                         public void onConfirm(BaseDialog dialog) {
                                             dialog.dismiss();
                                             // 点击了删除
-                                            if (mList.get(pos).getSubList() == null && mList.get(pos).getSubList().size() == 0) {
-                                                mList.remove(pos);
-                                                Message msg = new Message();
-                                                msg.what = CLASSIFY_SIZE;
-                                                mHandler.sendMessage(msg);
+                                            if (ListUtils.getSize(mList.get(pos).getGoodsTypeTwolist()) == 0) {
+                                                // request
+                                                showLoading("");
+                                                RequestPost.delGoodsType(mList.get(pos).getGoodsTypeOneId(), GoodsClassifyFragment.this);
                                             } else {
                                                 new MessageDialog.Builder(getActivity())
                                                         .setTitle("该分类下还有商品，不可删除")
@@ -258,8 +288,10 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                                                         .setListener(new MessageDialog.OnListener() {
                                                             @Override
                                                             public void onConfirm(BaseDialog dialog) {
-                                                                toast("停用了");
                                                                 dialog.dismiss();
+                                                                // request
+                                                                showLoading("");
+                                                                RequestPost.changeGoodsType(mList.get(pos).getGoodsTypeOneId(), GoodsClassifyFragment.this);
                                                             }
 
                                                             @Override
@@ -287,11 +319,14 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                                     .setListener(new InputDialog.OnListener() {
                                         @Override
                                         public void onConfirm(BaseDialog dialog, String content) {
+                                            if (TextUtils.isEmpty(content)) {
+                                                toast("请输入分类名称");
+                                                return;
+                                            }
+                                            // request
                                             dialog.dismiss();
-                                            toast("新增了子分类" + content);
-                                            Message msg = new Message();
-                                            msg.what = CLASSIFY_SIZE;
-                                            mHandler.sendMessage(msg);
+                                            showLoading("");
+                                            RequestPost.newGoodsTypeChild("new", mList.get(pos).getGoodsTypeOneId(), content, GoodsClassifyFragment.this);
                                         }
 
                                         @Override
@@ -310,11 +345,14 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                                     .setListener(new InputDialog.OnListener() {
                                         @Override
                                         public void onConfirm(BaseDialog dialog, String content) {
+                                            if (TextUtils.isEmpty(content)) {
+                                                toast("请输入分类名称");
+                                                return;
+                                            }
+                                            // request
                                             dialog.dismiss();
-                                            toast("重命名了：" + content);
-                                            Message msg = new Message();
-                                            msg.what = CLASSIFY_SIZE;
-                                            mHandler.sendMessage(msg);
+                                            showLoading("");
+                                            RequestPost.newGoodsTypeOne(mList.get(pos).getGoodsTypeOneId(), content, GoodsClassifyFragment.this);
                                         }
 
                                         @Override
@@ -333,8 +371,10 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                                     .setListener(new MessageDialog.OnListener() {
                                         @Override
                                         public void onConfirm(BaseDialog dialog) {
-                                            toast("确定了");
                                             dialog.dismiss();
+                                            // request
+                                            showLoading("");
+                                            RequestPost.changeGoodsType(mList.get(pos).getGoodsTypeOneId(), GoodsClassifyFragment.this);
                                         }
 
                                         @Override
@@ -352,13 +392,57 @@ public class GoodsClassifyFragment extends BaseFragment implements View.OnClickL
                 }).show();
     }
 
-    /*
-    模拟数据
-     */
-    private List<ClassifyBean> mList;
-    private String[] parentName = {"女士时装", "女士整包", "女士大码", "男士服装"};
-    private String[] subNames = {"大衣", "针织衫/毛衣", "卫衣", "打底衫"};
-    // 底部弹窗
-    private String[] parentDialog = {"新增子分类", "重命名", "停用分类", "删除"};
-    private String[] subDialog = {"重命名", "停用分类", "删除"};
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, " ======== result ======== " + result);
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 获取商品的一级二级分类
+                if (result.url().contains("wxapi/v1/goods.php?type=getGoodsType")) {
+                    mList = JsonParser.parseJSONArray(ClassifyBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodsTypelist"));
+
+                    Message msg = new Message();
+                    msg.what = CLASSIFY_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+
+                // 新增或更新一级分类
+                if (result.url().contains("wxapi/v1/goods.php?type=newGoodsTypeOne")) {
+                    toast(body.get("warn"));
+                    // request
+                    RequestPost.getAllGoodsType(this);
+                }
+
+                // 新增或者更新二级分类
+                if (result.url().contains("wxapi/v1/goods.php?type=newGoodsTypeChild")) {
+                    toast(body.get("warn"));
+                    // request
+                    RequestPost.getAllGoodsType(this);
+                }
+
+                // 停用或启用
+                if (result.url().contains("wxapi/v1/goods.php?type=changeGoodsType")){
+                    toast(body.get("warn"));
+                    // request
+                    RequestPost.getAllGoodsType(this);
+                }
+
+                // 删除分类
+                if (result.url().contains("wxapi/v1/goods.php?type=delGoodsType")){
+                    toast(body.get("warn"));
+                    // request
+                    RequestPost.getAllGoodsType(this);
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+            dismissLoading();
+        }
+    }
 }

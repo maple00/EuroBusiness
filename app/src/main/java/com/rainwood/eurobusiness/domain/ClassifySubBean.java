@@ -9,8 +9,28 @@ import java.io.Serializable;
  */
 public class ClassifySubBean implements Serializable {
 
-    private String name;
-    private String status;
+    private String goodsTypeTwoId;              // 分类id
+    private String name;                // 分类名称
+    private String state;                       // 分类状态 -- 是否停用
+    private boolean choose;                     // 选中
+
+    @Override
+    public String toString() {
+        return "ClassifySubBean{" +
+                "goodsTypeTwoId='" + goodsTypeTwoId + '\'' +
+                ", name='" + name + '\'' +
+                ", state='" + state + '\'' +
+                ", choose=" + choose +
+                '}';
+    }
+
+    public String getGoodsTypeTwoId() {
+        return goodsTypeTwoId;
+    }
+
+    public void setGoodsTypeTwoId(String goodsTypeTwoId) {
+        this.goodsTypeTwoId = goodsTypeTwoId;
+    }
 
     public String getName() {
         return name;
@@ -20,11 +40,19 @@ public class ClassifySubBean implements Serializable {
         this.name = name;
     }
 
-    public String getStatus() {
-        return status;
+    public String getState() {
+        return state;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public boolean isChoose() {
+        return choose;
+    }
+
+    public void setChoose(boolean choose) {
+        this.choose = choose;
     }
 }

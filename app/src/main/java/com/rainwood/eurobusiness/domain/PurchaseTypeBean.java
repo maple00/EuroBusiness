@@ -5,19 +5,53 @@ import java.io.Serializable;
 /**
  * @Author: a797s
  * @Date: 2020/2/18
- * @Desc:
+ * @Desc: 采购订单详情
  */
 public class PurchaseTypeBean implements Serializable {
 
     private boolean selected;              // 是否被选中
     private boolean bulkSelect;             // 是否批量选中
-    private String imgPath;                 // 商品图片
-    private String paramSize;               // 规格参数
+    private String mxId;                    // 规格id
+    private String ico;                     // 商品图片
+    private String goodsSkuNAme;            // 规格参数
+    private String isSku;                   // 是否是混装
     private String price;                   // 单价
-    private String purchase;                // 采购数
-    private String inStorage;               // 入库数
-    private String returnNum;               // 退货数量
-    private String allMoney;                // 合计金额
+    private String num;                     // 采购数
+    private String inStoreNum;             // 入库数
+    private String refundNum;               // 退货数量
+    private String totalMoney;               // 合计金额
+
+    @Override
+    public String toString() {
+        return "PurchaseTypeBean{" +
+                "selected=" + selected +
+                ", bulkSelect=" + bulkSelect +
+                ", ico='" + ico + '\'' +
+                ", goodsSkuNAme='" + goodsSkuNAme + '\'' +
+                ", isSku='" + isSku + '\'' +
+                ", price='" + price + '\'' +
+                ", num='" + num + '\'' +
+                ", inStoreNum='" + inStoreNum + '\'' +
+                ", refundNum='" + refundNum + '\'' +
+                ", totalMoney='" + totalMoney + '\'' +
+                '}';
+    }
+
+    public String getMxId() {
+        return mxId;
+    }
+
+    public void setMxId(String mxId) {
+        this.mxId = mxId;
+    }
+
+    public String getIsSku() {
+        return isSku;
+    }
+
+    public void setIsSku(String isSku) {
+        this.isSku = isSku;
+    }
 
     public boolean isSelected() {
         return selected;
@@ -35,24 +69,20 @@ public class PurchaseTypeBean implements Serializable {
         this.bulkSelect = bulkSelect;
     }
 
-    public void setSerlected(boolean selected) {
-        this.selected = selected;
+    public String getIco() {
+        return ico;
     }
 
-    public String getImgPath() {
-        return imgPath;
+    public void setIco(String ico) {
+        this.ico = ico;
     }
 
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
+    public String getGoodsSkuNAme() {
+        return goodsSkuNAme;
     }
 
-    public String getParamSize() {
-        return paramSize;
-    }
-
-    public void setParamSize(String paramSize) {
-        this.paramSize = paramSize;
+    public void setGoodsSkuNAme(String goodsSkuNAme) {
+        this.goodsSkuNAme = goodsSkuNAme;
     }
 
     public String getPrice() {
@@ -63,35 +93,35 @@ public class PurchaseTypeBean implements Serializable {
         this.price = price;
     }
 
-    public String getPurchase() {
-        return purchase;
+    public String getNum() {
+        return num;
     }
 
-    public void setPurchase(String purchase) {
-        this.purchase = purchase;
+    public void setNum(String num) {
+        this.num = num;
     }
 
-    public String getInStorage() {
-        return inStorage;
+    public String getInStoreNum() {
+        return inStoreNum;
     }
 
-    public void setInStorage(String inStorage) {
-        this.inStorage = inStorage;
+    public void setInStoreNum(String inStoreNum) {
+        this.inStoreNum = inStoreNum;
     }
 
-    public String getReturnNum() {
-        return returnNum;
+    public String getRefundNum() {
+        return refundNum;
     }
 
-    public void setReturnNum(String returnNum) {
-        this.returnNum = returnNum;
+    public void setRefundNum(String refundNum) {
+        this.refundNum = refundNum;
     }
 
-    public String getAllMoney() {
-        return allMoney;
+    public String getTotalMoney() {
+        return totalMoney;
     }
 
-    public void setAllMoney(String allMoney) {
-        this.allMoney = allMoney;
+    public void setTotalMoney(String totalMoney) {
+        this.totalMoney = totalMoney;
     }
 }

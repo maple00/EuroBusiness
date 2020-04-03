@@ -1,6 +1,8 @@
 package com.rainwood.eurobusiness.ui.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.domain.ImageBean;
+import com.rainwood.eurobusiness.domain.ImagesBean;
 
 import java.util.List;
 
@@ -23,11 +26,12 @@ import java.util.List;
 public class GoodsImageAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<ImageBean> mList;
+    private List<ImagesBean> mList;
 
-    public GoodsImageAdapter(Context mContext, List<ImageBean> mList) {
+    public GoodsImageAdapter(Context mContext, List<ImagesBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
+        Log.d("Sxs", " ===== mList ==== " + mList.toString());
     }
 
     @Override
@@ -36,7 +40,7 @@ public class GoodsImageAdapter extends BaseAdapter {
     }
 
     @Override
-    public ImageBean getItem(int position) {
+    public ImagesBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -56,7 +60,7 @@ public class GoodsImageAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Glide.with(convertView).load(getItem(position).getImgPath())
+        Glide.with(convertView).load(getItem(position).getSrc())
                 .error(mContext.getResources().getDrawable(R.drawable.icon_loadding_fail))
                 .apply(RequestOptions.bitmapTransform(new RoundedCorners(4)).override(80, 80))
                 .into(holder.iv_img);

@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
@@ -55,15 +56,15 @@ public class WranSizeAdapter extends BaseAdapter {
             holder.tv_below = convertView.findViewById(R.id.tv_below);
             holder.tv_price = convertView.findViewById(R.id.tv_price);
             holder.tv_repertory = convertView.findViewById(R.id.tv_repertory);
-            holder.ll_item = convertView.findViewById(R.id.ll_item);
+            holder.rl_item = convertView.findViewById(R.id.rl_item);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         if (position % 2 == 0){
-            holder.ll_item.setBackgroundColor(mContext.getResources().getColor(R.color.white));
+            holder.rl_item.setBackgroundColor(mContext.getResources().getColor(R.color.white));
         }else {
-            holder.ll_item.setBackgroundColor(mContext.getResources().getColor(R.color.gold05));
+            holder.rl_item.setBackgroundColor(mContext.getResources().getColor(R.color.gold05));
         }
         holder.tv_color.setText(getItem(position).getGoodsColor());
         holder.tv_size.setText(getItem(position).getGoodsSize());
@@ -79,6 +80,6 @@ public class WranSizeAdapter extends BaseAdapter {
 
     private class ViewHolder {
         private TextView tv_color, tv_size, tv_below, tv_price, tv_repertory;
-        private LinearLayout ll_item;
+        private RelativeLayout rl_item;
     }
 }

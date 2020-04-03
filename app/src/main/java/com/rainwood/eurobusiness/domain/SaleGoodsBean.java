@@ -20,6 +20,18 @@ public class SaleGoodsBean implements Serializable {
     private String storeName;           // 门店名称
     private List<CommonUIBean> priceList;           // 进价、批发价、零售价
 
+    @Override
+    public String toString() {
+        return "SaleGoodsBean{" +
+                "type=" + type +
+                ", imgPath='" + imgPath + '\'' +
+                ", status='" + status + '\'' +
+                ", name='" + name + '\'' +
+                ", storeName='" + storeName + '\'' +
+                ", priceList=" + priceList +
+                '}';
+    }
+
     public int getType() {
         return type;
     }

@@ -56,10 +56,15 @@ public class SubGoodsDetailAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         if (getItem(position).getTitle() == null) {
-            holder.tv_title.setText(Html.fromHtml("<font color='" + mContext.getResources().getColor(R.color.red30)
-                    + "' size='40px'><b>" +
-                    getItem(position).getShowText() + "</b></font>"));
-            holder.tv_show_text.setText("");
+            if (getItem(position).getShowText() == null){
+                holder.tv_title.setVisibility(View.GONE);
+                holder.tv_show_text.setVisibility(View.GONE);
+            }else {
+                holder.tv_title.setText(Html.fromHtml("<font color='" + mContext.getResources().getColor(R.color.red30)
+                        + "' size='40px'><b>" +
+                        getItem(position).getShowText() + "</b></font>"));
+                holder.tv_show_text.setText("");
+            }
         } else {
             holder.tv_title.setText(getItem(position).getTitle());
             holder.tv_show_text.setText(getItem(position).getShowText());

@@ -1,5 +1,6 @@
 package com.rainwood.eurobusiness.ui.activity;
 
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -7,8 +8,11 @@ import android.widget.ImageView;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.common.Contants;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.utils.CountDownTimerUtils;
-import com.rainwood.eurobusiness.utils.DialogUtils;
 import com.rainwood.eurobusiness.utils.TipsSizeUtils;
 import com.rainwood.tools.permission.OnPermission;
 import com.rainwood.tools.permission.Permission;
@@ -18,13 +22,14 @@ import com.rainwood.tools.view.InputTextHelper;
 import com.rainwood.tools.viewinject.ViewById;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/6
  * @Desc: 手机号验证
  */
-public class CheckPhoneActivity extends BaseActivity implements View.OnClickListener {
+public class CheckPhoneActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
     @Override
     protected int getLayoutId() {
@@ -37,8 +42,6 @@ public class CheckPhoneActivity extends BaseActivity implements View.OnClickList
     private ClearEditText checkPhone;
     @ViewById(R.id.btn_get_code)
     private Button getCode;
-
-    private DialogUtils dialog;
 
     @Override
     protected void initView() {
@@ -58,7 +61,8 @@ public class CheckPhoneActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    protected void initData() {
+    protected void onResume() {
+        super.onResume();
         // 获取之前输入过最近的一次手机号,填写在EditTExt上
         if (Contants.PhoneCheckVerify != null) {
             checkPhone.setText(Contants.PhoneCheckVerify);
@@ -79,6 +83,10 @@ public class CheckPhoneActivity extends BaseActivity implements View.OnClickList
                 finish();
                 break;
             case R.id.btn_get_code:
+                if (TextUtils.isEmpty(checkPhone.getText())) {
+                    toast("请输入手机号");
+                    return;
+                }
                 XXPermissions.with(getActivity())
                         // 可设置被拒绝后继续申请，直到用户授权或者永久拒绝
                         .constantRequest()
@@ -87,11 +95,17 @@ public class CheckPhoneActivity extends BaseActivity implements View.OnClickList
                             @Override
                             public void hasPermission(List<String> granted, boolean isAll) {
                                 if (isAll) {
-//                                    dialog = new DialogUtils(CheckPhoneActivity.this, "加载中");
-//                                    dialog.showDialog();
                                     // 记录最新填写的手机号
                                     Contants.PhoneCheckVerify = checkPhone.getText().toString().trim();
-                                    openActivity(CodeVerifyActivity.class);
+                                    String type;
+                                    if (Contants.userType == 0) {
+                                        type = "saler";
+                                    } else {
+                                        type = "store";
+                                    }
+                                    // request
+                                    showLoading("");
+                                    RequestPost.getVerifyCode(checkPhone.getText().toString().trim(), type,CheckPhoneActivity.this);
                                 } else {
                                     toast("权限不足，请开启");
                                 }
@@ -111,6 +125,28 @@ public class CheckPhoneActivity extends BaseActivity implements View.OnClickList
                 break;
             default:
                 break;
+        }
+    }
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 获取手机验证码
+                if (result.url().contains("wxapi/v1/login.php?type=getCode")) {
+                    toast(body.get("warn"));
+                    postDelayed(() -> openActivity(CodeVerifyActivity.class), 500);
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+            dismissLoading();
         }
     }
 }

@@ -18,7 +18,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.eurobusiness.R;
@@ -93,6 +92,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
             StatusBarUtil.setStatusBarDarkTheme(getActivity(), false);
             callPolice.setVisibility(View.VISIBLE);
             callPolice.setText("一键报警");
+            callPolice.setBackground(getContext().getResources().getDrawable(R.drawable.shape_radius_red_full_14));
             callPolice.setOnClickListener(v -> new InputDialog.Builder(getActivity())
                     .setTitle("确认后报警生效，请谨慎操作！")
                     .setHint("请输入您的密码")
@@ -105,13 +105,17 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                         public void onConfirm(BaseDialog dialog, String content) {
                             if (TextUtils.isEmpty(content)) {
                                 toast("请输入密码");
-                            } else {
-                                toast("确定了");
-                                callPolice.setText("正在处理报警");
-                                callPolice.setBackground(getContext().getResources().getDrawable(R.drawable.shape_radius_gray_white_14));
-
-                                dialog.dismiss();
+                                return;
                             }
+                            dialog.dismiss();
+
+                            //  request
+                            showLoading("");
+                            RequestPost.callPlat(content, PersonalFragment.this);
+
+                            callPolice.setClickable(false);
+                            callPolice.setText("正在处理报警");
+                            callPolice.setBackground(getContext().getResources().getDrawable(R.drawable.shape_radius_gray_white_14));
                         }
 
                         @Override
@@ -394,11 +398,11 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
     private String[] addPictures = {"相机", "相册"};
 
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case INITIAL_SIZE:
 
                     break;
@@ -418,26 +422,25 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
         if (body != null) {
             if ("1".equals(body.get("code"))) {
                 if (result.url().contains("wxapi/v1/index.php?type=getPerson")) {           // 个人中心
-                    // 供应商
-                    if (Contants.userType == 0){
-                    }
-                    // 门店
-                    if (Contants.userType == 1){
-                        Map<String, String> data = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("info"));
-                        Log.d(TAG, "data --- " + data);
-                        Glide.with(Objects.requireNonNull(getActivity()))
-                                .load(data.get("ico"))
-                                .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
-                                .error(R.drawable.icon_loadding_fail)        //异常时候显示的图片
-                                .placeholder(R.drawable.icon_loadding_fail) //加载成功前显示的图片
-                                .fallback(R.drawable.icon_loadding_fail)  //url为空的时候,显示的图片
-                                .into(headPhoto);
-                        location.setText(data.get("storeName"));
-                        userName.setText(data.get("name"));
-                    }
+                    Map<String, String> data = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("info"));
+                    Log.d(TAG, "data --- " + data);
+                    Glide.with(Objects.requireNonNull(getActivity()))
+                            .load(data.get("ico"))
+                            .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+                            .error(R.drawable.icon_loadding_fail)        //异常时候显示的图片
+                            .placeholder(R.drawable.icon_loadding_fail) //加载成功前显示的图片
+                            .fallback(R.drawable.icon_loadding_fail)  //url为空的时候,显示的图片
+                            .into(headPhoto);
+                    location.setText(data.get("storeName"));
+                    userName.setText(data.get("name"));
                 }
-            }else {
-                toast(body.get("data"));
+
+                // 一键报警
+                if (result.url().contains("wxapi/v1/index.php?type=callPlat")) {
+                    toast(body.get("warn"));
+                }
+            } else {
+                toast(body.get("warn"));
             }
             dismissLoading();
         }

@@ -3,6 +3,7 @@ package com.rainwood.eurobusiness.ui.activity;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,6 +16,7 @@ import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.domain.CommonUIBean;
 import com.rainwood.eurobusiness.domain.GoodsDetailBean;
 import com.rainwood.eurobusiness.domain.ImageBean;
+import com.rainwood.eurobusiness.domain.ImagesBean;
 import com.rainwood.eurobusiness.domain.SpecialBean;
 import com.rainwood.eurobusiness.json.JsonParser;
 import com.rainwood.eurobusiness.okhttp.HttpResponse;
@@ -25,6 +27,9 @@ import com.rainwood.eurobusiness.ui.adapter.SpecialAdapter;
 import com.rainwood.eurobusiness.utils.ListUtils;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +63,17 @@ public class InventoryGoodsActivity extends BaseActivity implements View.OnClick
 
     private final int INVENTORY_SIZE = 0x1124;        // 默认码(库存信息码)
     private final int GOODS_SIZE = 0x0929;          // 商品信息码
+
+    private List<GoodsDetailBean> mList;
+    private String[] mainTitles = {"基本信息", "商品定价", "规格参数", "商品图片"};  //， "创建者"
+    // 基本信息
+    private String[] baseTitle = {"商品名称", "商品型号", "商品分类", "条码"};
+    // 商品定价
+    private String[] priceTitles = {"批发价", "零售价", "增值税"};
+    // 规格参数
+    private String[] specialTitles = {"商品尺码", "商品规格", "最小起订量", "税率"};
+    // 库存信息
+    private List<SpecialBean> mSpeciaList;
 
     @Override
     protected void initView() {
@@ -100,13 +116,6 @@ public class InventoryGoodsActivity extends BaseActivity implements View.OnClick
                 commonUI.setTitle(specialTitles[j]);
                 commLists.add(commonUI);
             }
-            List<ImageBean> imgList = new ArrayList<>();    // 商品图片
-            for (int j = 0; j < 10 && i == 3; j++) {
-                ImageBean image = new ImageBean();
-                image.setImgPath(String.valueOf(R.drawable.icon_loadding_fail));
-                imgList.add(image);
-            }
-            goodsDetail.setImgList(imgList);
             goodsDetail.setCommList(commLists);
             mList.add(goodsDetail);
         }
@@ -167,17 +176,6 @@ public class InventoryGoodsActivity extends BaseActivity implements View.OnClick
         }
     };
 
-    private List<GoodsDetailBean> mList;
-    private String[] mainTitles = {"基本信息", "商品定价", "规格参数", "商品图片"};  //， "创建者"
-    // 基本信息
-    private String[] baseTitle = {"商品名称", "商品型号", "商品分类", "条码"};
-    // 商品定价
-    private String[] priceTitles = {"批发价", "零售价", "增值税"};
-    // 规格参数
-    private String[] specialTitles = {"商品尺码", "商品规格", "最小起订量", "税率"};
-    // 库存信息
-    private List<SpecialBean> mSpeciaList;
-
     @Override
     public void onHttpFailure(HttpResponse result) {
 
@@ -185,6 +183,7 @@ public class InventoryGoodsActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, " ---- result ---- " + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
@@ -250,8 +249,17 @@ public class InventoryGoodsActivity extends BaseActivity implements View.OnClick
                                 }
                                 break;
                             case 3:         // 商品图片
-                                List<ImageBean> imageList = JsonParser.parseJSONArray(ImageBean.class,
-                                        JsonParser.parseJSONObject(body.get("data")).get("icolist"));
+                                JSONArray jsonArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObject(body.get("data")).get("icolist"));
+                                List<ImagesBean> imageList = new ArrayList<>();
+                                for (int j = 0; j < jsonArray.length(); j++) {
+                                    ImagesBean images = new ImagesBean();
+                                    try {
+                                        images.setSrc(jsonArray.getString(j));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    imageList.add(images);
+                                }
                                 mList.get(i).setImgList(imageList);
                                 break;
                         }

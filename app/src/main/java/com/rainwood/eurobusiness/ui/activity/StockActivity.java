@@ -172,6 +172,21 @@ public class StockActivity extends BaseActivity implements View.OnClickListener,
                                 pressBean.setChoose(false);
                             }
                             topList.get(position).setChoose(true);
+                            // change top type request
+                            String type = "";
+                            switch (position) {
+                                case 0:
+                                    type = "";
+                                    break;
+                                case 1:
+                                    type = "complete";
+                                    break;
+                                case 2:
+                                    type = "waitAudit";
+                                    break;
+                            }
+                            showLoading("loading");
+                            RequestPost.getStockChecklist(type, "", StockActivity.this);
                         });
                         // content
                         ItemStockAdapter stockAdapter = new ItemStockAdapter(StockActivity.this, mList);

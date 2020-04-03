@@ -57,9 +57,11 @@ public class SubSaleGoodsAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if (TextUtils.isEmpty(getItem(position).getTitle())) {
+
+        if (TextUtils.isEmpty(getItem(position).getShowText())) {
             holder.ll_item.setVisibility(View.GONE);
         } else {
+            holder.ll_item.setVisibility(View.VISIBLE);
             holder.tv_price_type.setText(getItem(position).getTitle());
             holder.tv_price.setText(getItem(position).getShowText());
         }

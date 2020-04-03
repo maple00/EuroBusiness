@@ -91,7 +91,7 @@ public class ItemGoodsDetailAdapter extends BaseAdapter {
                     holder.ll_params_view.setVisibility(View.VISIBLE);
                     holder.lv_size_list.setVisibility(View.VISIBLE);
                 }
-                SizeAdapter sizeAdapter = new SizeAdapter(mContext, getItem(position).getParamsList());
+                SizeAdapter sizeAdapter = new SizeAdapter(mContext, getItem(position).getParamsList(), "");
                 holder.lv_size_list.setAdapter(sizeAdapter);
                 SubGoodsDetailAdapter paramsAdapter = new SubGoodsDetailAdapter(mContext, getItem(position).getCommList());
                 holder.lv_comm_list.setAdapter(paramsAdapter);

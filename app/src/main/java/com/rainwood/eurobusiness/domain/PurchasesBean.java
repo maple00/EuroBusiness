@@ -9,12 +9,21 @@ import java.io.Serializable;
  */
 public class PurchasesBean implements Serializable {
 
+    private String id;              // 订单id
     private String orderNo;         // 订单号
     private String ico;             // 图片地址
     private String name;            // 商品名称
     private String buyTotal;        // 采购数
     private String inTotal;         // 入库数
     private String workFlow;        // 状态
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getOrderNo() {
         return orderNo;

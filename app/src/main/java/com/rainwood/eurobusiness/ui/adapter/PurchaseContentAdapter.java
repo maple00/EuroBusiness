@@ -65,7 +65,7 @@ public class PurchaseContentAdapter extends BaseAdapter {
         // 商品按照类型分类
         PurchaseTypeAdapter typeAdapter = new PurchaseTypeAdapter(mContext, getItem(position).getTypeList());
         holder.lv_type_list.setAdapter(typeAdapter);
-        typeAdapter.setOnClickItem(position, onClickItem);
+//        typeAdapter.setOnClickItem(position, onClickItem);
         return convertView;
     }
 

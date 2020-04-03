@@ -44,17 +44,7 @@ public class SaleClassifyAdapter extends RecyclerView.Adapter<SaleClassifyAdapte
 
     @Override
     public void onBindViewHolder(@NonNull VerticalViewHolder holder, int position) {
-        holder.tv_name.setText(mList.get(position).getName());
-        // 显示子级目录
-        SaleSubClassifyAdapter subAdapter = new SaleSubClassifyAdapter(mContext, mList.get(position).getSubList());
-        holder.lv_sub_classify.setAdapter(subAdapter);
-        subAdapter.setOnClickPoint(position, onClickPoint);
-        // 默认不展示子级目录
-        if (mList.get(position).getSelected() == 0){
-            holder.lv_sub_classify.setVisibility(View.GONE);
-        }else {
-            holder.lv_sub_classify.setVisibility(View.VISIBLE);
-        }
+        holder.tv_name.setText(mList.get(position).getGoodsTypeOne());
         // 点击展开
         holder.ll_line_item.setOnClickListener(v -> {
             int count = mList.get(position).getSelected() % 2;
@@ -68,6 +58,16 @@ public class SaleClassifyAdapter extends RecyclerView.Adapter<SaleClassifyAdapte
                 holder.lv_sub_classify.setVisibility(View.GONE);
             }
         });
+        // 显示子级目录
+        SaleSubClassifyAdapter subAdapter = new SaleSubClassifyAdapter(mContext, mList.get(position).getGoodsTypeTwolist());
+        holder.lv_sub_classify.setAdapter(subAdapter);
+        subAdapter.setOnClickPoint(position, onClickPoint);
+        // 默认不展示子级目录
+        if (mList.get(position).getSelected() == 0) {
+            holder.lv_sub_classify.setVisibility(View.GONE);
+        } else {
+            holder.lv_sub_classify.setVisibility(View.VISIBLE);
+        }
         // 点击点
         holder.iv_point.setOnClickListener(v -> {
             onClickItem.onClickPoint(position);

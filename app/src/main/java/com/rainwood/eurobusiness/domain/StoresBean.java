@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public class StoresBean implements Serializable {
 
-    private String id;              // 门店编号
+    private String storeId;              // 门店id
     private String name;            // 门店名称
     private String telName;         // 联系人
     private String email;           // 邮箱
@@ -24,7 +24,7 @@ public class StoresBean implements Serializable {
     @Override
     public String toString() {
         return "StoresBean{" +
-                "id='" + id + '\'' +
+                "storeId='" + storeId + '\'' +
                 ", name='" + name + '\'' +
                 ", telName='" + telName + '\'' +
                 ", email='" + email + '\'' +
@@ -34,23 +34,16 @@ public class StoresBean implements Serializable {
                 ", taxP='" + taxP + '\'' +
                 ", taxCF='" + taxCF + '\'' +
                 ", note='" + note + '\'' +
+                ", delete=" + delete +
                 '}';
     }
 
-    public boolean isDelete() {
-        return delete;
+    public String getStoreId() {
+        return storeId;
     }
 
-    public void setDelete(boolean delete) {
-        this.delete = delete;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+    public void setStoreId(String storeId) {
+        this.storeId = storeId;
     }
 
     public String getName() {
@@ -123,5 +116,13 @@ public class StoresBean implements Serializable {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 }

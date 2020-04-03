@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
+import com.rainwood.eurobusiness.domain.ClassifySubBean;
 import com.rainwood.eurobusiness.domain.PressBean;
 
 import java.util.List;
@@ -22,9 +23,9 @@ import java.util.List;
 public class GoodsTypeRightAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<PressBean> mList;
+    private List<ClassifySubBean> mList;
 
-    public GoodsTypeRightAdapter(Context mContext, List<PressBean> mList) {
+    public GoodsTypeRightAdapter(Context mContext, List<ClassifySubBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -35,7 +36,7 @@ public class GoodsTypeRightAdapter extends BaseAdapter {
     }
 
     @Override
-    public PressBean getItem(int position) {
+    public ClassifySubBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -57,7 +58,7 @@ public class GoodsTypeRightAdapter extends BaseAdapter {
         }else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_sub_type.setText(getItem(position).getTitle());
+        holder.tv_sub_type.setText(getItem(position).getName());
         if (getItem(position).isChoose()){      // 显示图标
             holder.tv_sub_type.setTextColor(mContext.getResources().getColor(R.color.red30));
             holder.iv_checked.setVisibility(View.VISIBLE);

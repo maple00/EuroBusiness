@@ -28,7 +28,8 @@ import com.rainwood.tools.toast.ToastUtils;
 public abstract class BaseFragment extends Fragment {
 
     //获取TAG的fragment名称
-    protected final String TAG = this.getClass().getSimpleName();
+    //protected final String TAG = this.getClass().getSimpleName();
+    protected final String TAG = "sxs";
 
     /**
      * 全局ViewGroup
@@ -181,7 +182,7 @@ public abstract class BaseFragment extends Fragment {
     private DialogUtils mDialog;
 
     public void showLoading(String tips){
-        mDialog = new DialogUtils(getmContext(), tips);
+        mDialog = new DialogUtils(getContext(), tips);
         mDialog.showDialog();
     }
 

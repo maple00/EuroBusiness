@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
+import com.rainwood.eurobusiness.domain.GoodsBean;
 import com.rainwood.eurobusiness.domain.ShopBean;
 
 import java.util.List;
@@ -24,9 +25,9 @@ import java.util.List;
 public class ShopListContentListAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<ShopBean> mList;
+    private List<GoodsBean> mList;
 
-    public ShopListContentListAdapter(Context mContext, List<ShopBean> mList) {
+    public ShopListContentListAdapter(Context mContext, List<GoodsBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -37,7 +38,7 @@ public class ShopListContentListAdapter extends BaseAdapter {
     }
 
     @Override
-    public ShopBean getItem(int position) {
+    public GoodsBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -65,16 +66,16 @@ public class ShopListContentListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Glide.with(convertView).load(getItem(position).getImgPath()).into(holder.iv_shop_img);
+        Glide.with(convertView).load(getItem(position).getIco()).into(holder.iv_shop_img);
         holder.tv_name.setText(getItem(position).getName());
-        holder.tv_wholesale_price.setText(getItem(position).getWholesalePrice());
+        holder.tv_wholesale_price.setText(getItem(position).getTradePrice());
         holder.tv_retail_price.setText(getItem(position).getRetailPrice());
         // 商品状态分为三种：已在售、已下架和草稿
-        if (getItem(position).getStatus().equals("在售中")) {       // 只显示下架
+        if (getItem(position).getState().equals("在售中")) {       // 只显示下架
             holder.tv_status.setVisibility(View.VISIBLE);
             holder.tv_source.setVisibility(View.VISIBLE);
-            holder.tv_status.setText(getItem(position).getStatus());
-            holder.tv_source.setText(getItem(position).getSource());
+            holder.tv_status.setText(getItem(position).getState());
+            holder.tv_source.setText(getItem(position).getStore());
             // button
             holder.btn_edit.setVisibility(View.GONE);
             holder.btn_shelves.setText("下架");
@@ -82,11 +83,11 @@ public class ShopListContentListAdapter extends BaseAdapter {
             holder.btn_shelves.setBackgroundResource(R.drawable.shape_radius_gray_14);
             // 状态背景
             holder.tv_status.setBackgroundResource(R.drawable.shape_radius_20);
-        } else if (getItem(position).getStatus().equals("已下架")) {     // 显示编辑和上架
+        } else if (getItem(position).getState().equals("已下架")) {     // 显示编辑和上架
             holder.tv_status.setVisibility(View.VISIBLE);
             holder.tv_source.setVisibility(View.VISIBLE);
-            holder.tv_status.setText(getItem(position).getStatus());
-            holder.tv_source.setText(getItem(position).getSource());
+            holder.tv_status.setText(getItem(position).getState());
+            holder.tv_source.setText(getItem(position).getStore());
             // button
             holder.btn_edit.setVisibility(View.VISIBLE);
             holder.btn_edit.setText("编辑");

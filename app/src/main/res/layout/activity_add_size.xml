@@ -7,25 +7,218 @@
 
     <include layout="@layout/activity_title" />
 
-    <com.rainwood.tools.widget.MeasureListView
-        android:id="@+id/lv_add_size"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:divider="@color/transparent"
-        android:dividerHeight="30dp"
-        android:scrollbars="none" />
+    <!--   <com.rainwood.tools.widget.MeasureListView
+           android:id="@+id/lv_add_size"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginLeft="15dp"
+           android:layout_marginRight="15dp"
+           android:divider="@color/transparent"
+           android:dividerHeight="30dp"
+           android:scrollbars="none" />-->
 
-    <Button
-        android:id="@+id/btn_save"
-        style="@style/RedButtonStyle"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="15dp"
-        android:text="@string/common_save"
-        android:textSize="14sp" />
+        android:layout_marginRight="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp"
+                    android:text="颜色"/>
+
+                <EditText
+                    android:id="@+id/et_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@+id/tv_title"
+                    android:background="@null"
+                    android:hint="@string/common_choose"
+                    android:textColor="@color/textColor"
+                    android:textColorHint="@color/fontColor"
+                    android:textSize="17sp" />
+
+                <ImageView
+                    android:id="@+id/iv_right_arrow"
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/et_color"
+                    android:src="@drawable/ic_right_arrow" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp">
+
+                <TextView
+                    android:id="@+id/tv_size"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp"
+                    android:text="尺码"/>
+
+                <EditText
+                    android:id="@+id/et_size"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@+id/rl_size"
+                    android:background="@null"
+                    android:textColor="@color/textColor"
+                    android:textColorHint="@color/fontColor"
+                    android:hint="@string/common_choose"
+                    android:textSize="17sp" />
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_right_arrow" />
+
+                <RelativeLayout
+                    android:id="@+id/rl_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@+id/tv_size">
+
+                    <LinearLayout
+                        android:id="@+id/ll_pre_size"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_img"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/radio_checked_shape" />
+
+                        <TextView
+                            android:id="@+id/tv_re_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="@string/purchase_pre_size"
+                            android:textColor="@color/textColor"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ll_custom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/ll_pre_size"
+                        android:layout_marginTop="30dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_img1"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/radio_uncheck_shape" />
+
+                        <TextView
+                            android:id="@+id/tv_cus_size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:text="@string/purchase_custom"
+                            android:textColor="@color/textColor"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp">
+
+                <TextView
+                    android:id="@+id/tv_inventory"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp"
+                    android:text="库存下限"/>
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_inventory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@+id/tv_inventory"
+                    android:background="@null"
+                    android:hint="@string/common_input"
+                    android:textColor="@color/textColor"
+                    android:textColorHint="@color/fontColor"
+                    android:textSize="17sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp">
+
+                <TextView
+                    android:id="@+id/tv_retail_price"
+                    android:layout_width="60dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp"
+                    android:text="批发价"/>
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/et_retail_price"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@+id/tv_retail_price"
+                    android:background="@null"
+                    android:hint="@string/common_input"
+                    android:textColor="@color/textColor"
+                    android:textColorHint="@color/fontColor"
+                    android:textSize="17sp" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/btn_save"
+                style="@style/RedButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="@string/common_save"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
 
 </LinearLayout>

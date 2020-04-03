@@ -97,11 +97,89 @@
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/ll_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/purchase_refunds_special"
+                    android:textColor="@color/gray_white"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="15dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.rainwood.tools.view.ClearEditText
+                        android:id="@+id/et_refunds_color"
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/common_choose" />
+
+                    <ImageView
+                        android:layout_width="7dp"
+                        android:layout_height="13dp"
+                        android:src="@drawable/ic_right_arrow" />
+                </LinearLayout>
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/tv_return_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp" />
+
+            <LinearLayout
+                android:id="@+id/ll_refunds_order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:id="@+id/iv_inventory"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:src="@drawable/radio_checked_shape" />
+
+                <TextView
+                    android:id="@+id/tv_inventory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="入库"
+                    android:textColor="@color/textColor"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/iv_scrap"
+                    android:layout_width="17dp"
+                    android:layout_height="17dp"
+                    android:layout_marginStart="40dp"
+                    android:src="@drawable/radio_uncheck_shape" />
+
+                <TextView
+                    android:id="@+id/tv_scrap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="报废"
+                    android:textColor="@color/textColor"
+                    android:textSize="15sp" />
+            </LinearLayout>
 
             <com.rainwood.tools.view.ClearEditText
                 android:id="@+id/et_return_num"
@@ -155,53 +233,11 @@
                     style="@style/EditTextStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
                     android:layout_weight="1"
                     android:hint="@string/common_input"
                     android:inputType="number"
-                    android:textSize="17sp"
-                    android:layout_marginEnd="10dp"/>
-
-                <LinearLayout
-                    android:id="@+id/ll_custom_pay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/iv_unchecked"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:src="@drawable/radio_uncheck_shape" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:text="客户支付"
-                        android:textColor="@color/textColor"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_others_pay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <ImageView
-                        android:id="@+id/iv_checked"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginStart="20dp"
-                        android:src="@drawable/radio_checked_shape" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:text="批发商支付"
-                        android:textColor="@color/textColor"
-                        android:textSize="15sp" />
-
-                </LinearLayout>
+                    android:textSize="17sp" />
 
             </LinearLayout>
 

@@ -42,11 +42,11 @@
             android:drawableTop="@drawable/tab_contact_selector"
             android:text="@string/goods_store_create" />
 
-        <RadioButton
+        <!--<RadioButton
             android:id="@+id/rb_draft"
             style="@style/Custom.TabRadioButton"
             android:drawableTop="@drawable/tab_contact_selector"
-            android:text="@string/goods_draft" />
+            android:text="@string/goods_draft" />-->
 
         <RadioButton
             android:id="@+id/rb_classify"

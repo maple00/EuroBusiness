@@ -131,7 +131,7 @@ public class HomeFragment extends BaseFragment {
         // 供应商端
         if (Contants.userType == 0) {                   // 供应商端
             StatusBarUtil.setCommonUI(getActivity(), false);
-            StatusBarUtil.setStatusBarColor(getActivity(), R.color.textColor);
+            StatusBarUtil.setStatusBarColor(getActivity(), getResources().getColor(R.color.textColor));
             xBanner.setVisibility(View.VISIBLE);
             setXBanner();
             ItemListViewAdapter adapter = new ItemListViewAdapter(getActivity(), mList);

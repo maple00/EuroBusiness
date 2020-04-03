@@ -1,6 +1,7 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -14,14 +15,19 @@ import androidx.annotation.NonNull;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
-import com.rainwood.eurobusiness.domain.CommonUIBean;
 import com.rainwood.eurobusiness.domain.ItemGridBean;
-import com.rainwood.eurobusiness.domain.OrderContentBean;
+import com.rainwood.eurobusiness.domain.OrderListBean;
 import com.rainwood.eurobusiness.domain.PressBean;
 import com.rainwood.eurobusiness.domain.PrintBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.other.BaseDialog;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.GoodsStatusAdapter;
 import com.rainwood.eurobusiness.ui.adapter.LevelTypeAdapter;
 import com.rainwood.eurobusiness.ui.adapter.OrderContentAdapter;
+import com.rainwood.eurobusiness.ui.dialog.MenuDialog;
 import com.rainwood.eurobusiness.ui.widget.CustomDialog;
 import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.view.ClearEditText;
@@ -29,15 +35,19 @@ import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureGridView;
 import com.rainwood.tools.widget.MeasureListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/19
  * @Desc: 订单管理
  */
-public class OrderManagerActivity extends BaseActivity implements View.OnClickListener {
+public class OrderManagerActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
     @Override
     protected int getLayoutId() {
@@ -66,6 +76,18 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
     private TextView orderTips;                 // 提示没有更多订单了
     // mHandler
     private final int PRINT_SIZE = 0x1124;
+    private final int INITIAL_SIZE = 0x101;
+
+    private List<OrderListBean> mOrderList;
+    //
+    private List<ItemGridBean> orderPayList;
+    private String[] orderPays = {"订单状态", "支付方式"};
+    // 订单状态
+    private List<PressBean> statuList;
+    private String[] status = {"全部", "线上订单", "线下订单"};
+    // 支付方式
+    private List<String> payMethodList;
+    private List<String> orderStateList;
 
     @Override
     protected void initView() {
@@ -73,27 +95,10 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
         newOreder.setOnClickListener(this);
         print.setOnClickListener(this);
         screening.setOnClickListener(this);
-        // 订单状态、支付方式
-        LevelTypeAdapter typeAdapter = new LevelTypeAdapter(this, orderPayList);
-        orderPay.setAdapter(typeAdapter);
-        orderPay.setNumColumns(3);
-        // 线上订单，线下订单
-        GoodsStatusAdapter statusAdapter = new GoodsStatusAdapter(this, statuList);
-        orderType.setAdapter(statusAdapter);
-        orderType.setNumColumns(4);
-        statusAdapter.setOnClickItem(position -> {
-            for (PressBean pressBean : statuList) {
-                pressBean.setChoose(false);
-            }
-            statuList.get(position).setChoose(true);
-        });
-        // 订单内容
-        OrderContentAdapter contentAdapter = new OrderContentAdapter(this, mList);
-        contentList.setAdapter(contentAdapter);
-        contentAdapter.setOnClickItem(position -> {
-            // toast("订单详情：" + position);
-            openActivity(OrderDetailActivity.class);
-        });
+
+        // request
+        showLoading("loading");
+        RequestPost.getOrderList("", "", "", "", this);
     }
 
     @Override
@@ -117,23 +122,6 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                 press.setChoose(true);
             }
             statuList.add(press);
-        }
-        // 订单内容
-        mList = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            OrderContentBean content = new OrderContentBean();
-            content.setMethod("线上");
-            content.setNum("5515320560100");
-            content.setStatus("待发货");
-            List<CommonUIBean> labelList = new ArrayList<>();
-            for (int j = 0; j < labelsTitle.length; j++) {
-                CommonUIBean commonUI = new CommonUIBean();
-                commonUI.setTitle(labelsTitle[j]);
-                commonUI.setShowText(labels[j]);
-                labelList.add(commonUI);
-            }
-            content.setManagerList(labelList);
-            mList.add(content);
         }
     }
 
@@ -167,8 +155,8 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                 case PRINT_SIZE:
                     View view = getLayoutInflater().inflate(R.layout.dialog_print, null);
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.setMargins(FontDisplayUtil.dip2px(OrderManagerActivity.this, 30 ), 0,
-                            FontDisplayUtil.dip2px(OrderManagerActivity.this, 30 ), 0);
+                    params.setMargins(FontDisplayUtil.dip2px(OrderManagerActivity.this, 30), 0,
+                            FontDisplayUtil.dip2px(OrderManagerActivity.this, 30), 0);
                     CustomDialog customDialog = new CustomDialog(OrderManagerActivity.this, 0, 0, view, R.style.BaseDialogStyle);
                     if (view.getParent() != null) {
                         ((ViewGroup) view.getParent()).removeView(view);
@@ -200,21 +188,150 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                         toast("打印方式：" + print.getMethod());
                     });
                     break;
+                case INITIAL_SIZE:
+                    // 订单状态、支付方式
+                    LevelTypeAdapter typeAdapter = new LevelTypeAdapter(OrderManagerActivity.this, orderPayList);
+                    orderPay.setAdapter(typeAdapter);
+                    orderPay.setNumColumns(3);
+                    typeAdapter.setOnClickItem(position -> {
+                        // toast(orderPayList.get(position).getItemName());
+                        switch (position) {
+                            case 0:                     // 订单状态
+                                new MenuDialog.Builder(OrderManagerActivity.this)
+                                        .setCancel(R.string.common_cancel)
+                                        .setAutoDismiss(false)
+                                        .setList(orderStateList)
+                                        .setCanceledOnTouchOutside(false)
+                                        .setListener(new MenuDialog.OnListener<String>() {
+                                            @Override
+                                            public void onSelected(BaseDialog dialog, int position, String text) {
+                                                dialog.dismiss();
+                                                switch (text) {
+                                                    case "待发货":
+                                                        text = "waitSend";
+                                                        break;
+                                                    case "待付款":
+                                                        text = "waitRec";
+                                                        break;
+                                                    case "已完成":
+                                                        text = "complete";
+                                                        break;
+                                                }
+                                                // request
+                                                showLoading("loading");
+                                                RequestPost.getOrderList("", "", text, "", OrderManagerActivity.this);
+                                            }
+
+                                            @Override
+                                            public void onCancel(BaseDialog dialog) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+                                break;
+                            case 1:                     // 支付方式
+                                new MenuDialog.Builder(OrderManagerActivity.this)
+                                        .setCancel(R.string.common_cancel)
+                                        .setAutoDismiss(false)
+                                        .setList(payMethodList)
+                                        .setCanceledOnTouchOutside(false)
+                                        .setListener(new MenuDialog.OnListener<String>() {
+                                            @Override
+                                            public void onSelected(BaseDialog dialog, int position, String text) {
+                                                dialog.dismiss();
+                                                // request
+                                                showLoading("loading");
+                                                RequestPost.getOrderList("", text, "", "", OrderManagerActivity.this);
+                                            }
+
+                                            @Override
+                                            public void onCancel(BaseDialog dialog) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+                                break;
+                        }
+                    });
+                    // 线上订单，线下订单
+                    GoodsStatusAdapter statusAdapter = new GoodsStatusAdapter(OrderManagerActivity.this, statuList);
+                    orderType.setAdapter(statusAdapter);
+                    orderType.setNumColumns(4);
+                    statusAdapter.setOnClickItem(position -> {
+                        for (PressBean pressBean : statuList) {
+                            pressBean.setChoose(false);
+                        }
+                        statuList.get(position).setChoose(true);
+                        String type;
+                        switch (position) {
+                            case 1:
+                                type = "online";
+                                break;
+                            case 2:
+                                type = "offline";
+                                break;
+                            default:
+                                type = "";
+                                break;
+                        }
+                        // request
+                        showLoading("loading");
+                        RequestPost.getOrderList(type, "", "", "", OrderManagerActivity.this);
+                    });
+                    // 订单内容
+                    OrderContentAdapter contentAdapter = new OrderContentAdapter(OrderManagerActivity.this, mOrderList);
+                    contentList.setAdapter(contentAdapter);
+                    contentAdapter.setOnClickItem(position -> {
+                        // toast("订单详情：" + position);
+                        Intent intent = new Intent(OrderManagerActivity.this, OrderDetailActivity.class);
+                        intent.putExtra("orderId", mOrderList.get(position).getId());
+                        startActivity(intent);
+                    });
+                    break;
             }
         }
     };
 
-    /*
-    模拟数据
-     */
-    //
-    private List<ItemGridBean> orderPayList;
-    private String[] orderPays = {"订单状态", "支付方式"};
-    // 订单状态
-    private List<PressBean> statuList;
-    private String[] status = {"全部", "线上订单", "线下订单"};
-    // 订单内容
-    private List<OrderContentBean> mList;
-    private String[] labelsTitle = {"商品数量", "合计", "支付方式"};
-    private String[] labels = {"1000", "2502.00€", "现金支付"};
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 订单列表
+                if (result.url().contains("wxapi/v1/order.php?type=getBuyCarlist")) {
+                    mOrderList = JsonParser.parseJSONArray(OrderListBean.class, JsonParser.parseJSONObject(body.get("data")).get("list"));
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
+                    // 支付方式
+                    JSONArray jsonArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObject(body.get("data")).get("payOption"));
+                    payMethodList = new ArrayList<>();
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        try {
+                            payMethodList.add(jsonArray.getString(i));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    // 订单状态
+                    JSONArray orderState = JsonParser.parseJSONArrayString(JsonParser.parseJSONObject(body.get("data")).get("orderStatelist"));
+                    orderStateList = new ArrayList<>();
+                    for (int i = 0; i < orderState.length(); i++) {
+                        try {
+                            orderStateList.add(orderState.getString(i));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //Log.d(TAG, "=========== " + JsonParser.parseJSONObject(body.get("data")).get("orderStatelist"));
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+            dismissLoading();
+        }
+    }
 }

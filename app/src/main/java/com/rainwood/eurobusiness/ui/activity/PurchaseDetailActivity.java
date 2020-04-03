@@ -1,9 +1,11 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,9 +19,12 @@ import androidx.annotation.NonNull;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.domain.CommonUIBean;
-import com.rainwood.eurobusiness.domain.PurchaseGoodsBean;
+import com.rainwood.eurobusiness.domain.PurchaseInfos;
 import com.rainwood.eurobusiness.domain.PurchaseTypeBean;
-import com.rainwood.eurobusiness.ui.adapter.PurchaseContentAdapter;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.PurchaseLabelsAdapter;
 import com.rainwood.eurobusiness.ui.adapter.PurchaseTypeAdapter;
 import com.rainwood.tools.common.FontDisplayUtil;
@@ -29,13 +34,16 @@ import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/18
  * @Desc: 采购单详情 --- 门店端
  */
-public class PurchaseDetailActivity extends BaseActivity implements View.OnClickListener {
+public class PurchaseDetailActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
+
+    private PurchaseInfos mPurchaseInfos;
 
     @Override
     protected int getLayoutId() {
@@ -53,7 +61,15 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
     @ViewById(R.id.tv_status)
     private TextView status;
     // content
-    @ViewById(R.id.lv_purchase_list)
+    @ViewById(R.id.tv_goods_name)
+    private TextView goodsName;
+    @ViewById(R.id.tv_model)
+    private TextView model;
+    @ViewById(R.id.tv_discount)
+    private TextView discount;
+    @ViewById(R.id.tv_rate)
+    private TextView rate;
+    @ViewById(R.id.mlv_type_list)
     private MeasureListView purchaseList;
     // bottom label
     @ViewById(R.id.lv_purchase_label)
@@ -71,76 +87,40 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
     private final int CHECKED_SIZE = 0x1124;
     private int selectedCount = 0;
 
+    private List<PurchaseTypeBean> mList;
+    // Label
+    private List<CommonUIBean> labeList;
+    private String[] titles = {"总计", "采购订单", "下单时间", "订单类型"};
+
     @Override
     protected void initView() {
         // 初始化本Activity
         initContext();
-        status.setText("待入库");
-        // content
-        Message msg = new Message();
-        msg.what = CHECKED_SIZE;
-        mHandler.sendMessage(msg);
+
         selectedBulk.setText("批量入库（已选0件）");
-        // label
-        PurchaseLabelsAdapter labelsAdapter = new PurchaseLabelsAdapter(this, labeList);
-        purchaseLabel.setAdapter(labelsAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // request
+        String orderId = getIntent().getStringExtra("orderId");
+        if (orderId != null) {
+            showLoading("loading");
+            RequestPost.getPurchaseOrderDetail(orderId, this);
+        }
     }
 
     @Override
     protected void initData() {
         super.initData();
-        mGoodsList = new ArrayList<>();
-        for (int i = 0; i < goodsName.length; i++) {
-            PurchaseGoodsBean purchaseGoods = new PurchaseGoodsBean();
-            List<PurchaseTypeBean> typeList = new ArrayList<>();
-            if (i == 0) {
-                purchaseGoods.setName(goodsName[i]);
-                purchaseGoods.setDiscount(discount[i]);
-                purchaseGoods.setModel(models[i]);
-                purchaseGoods.setRate(rate[i]);
-                for (int j = 0; j < paramsSize.length; j++) {
-                    PurchaseTypeBean type = new PurchaseTypeBean();
-                    type.setAllMoney("49000.00€ ");
-                    type.setParamSize(paramsSize[j]);
-                    type.setImgPath(null);
-                    type.setPurchase("500");
-                    if (j == 1) {
-                        type.setInStorage("300");
-                    } else {
-                        type.setInStorage("0");
-                    }
-                    type.setReturnNum("0");
-                    type.setPrice("98.00€ ");
-                    typeList.add(type);
-                }
-            }
-            if (i == 1) {
-                purchaseGoods.setName(goodsName[i]);
-                purchaseGoods.setDiscount(discount[i]);
-                purchaseGoods.setModel(models[i]);
-                purchaseGoods.setRate(rate[i]);
-                for (String paramSize : paramSizes) {
-                    PurchaseTypeBean type = new PurchaseTypeBean();
-                    type.setParamSize(paramSize);
-                    type.setImgPath(null);
-                    type.setPrice("98.00€ ");
-                    type.setPurchase("500");
-                    type.setInStorage("300");
-                    type.setReturnNum("20");
-                    type.setAllMoney("49000.00€ ");
-                    typeList.add(type);
-                }
-            }
-            purchaseGoods.setTypeList(typeList);
-            mGoodsList.add(purchaseGoods);
-        }
-
+        // 采购订单规格list
+        mList = new ArrayList<>();
         // Label
         labeList = new ArrayList<>();
         for (int i = 0; i < titles.length; i++) {
             CommonUIBean commonUI = new CommonUIBean();
             commonUI.setTitle(titles[i]);
-            commonUI.setShowText(showTexts[i]);
             labeList.add(commonUI);
         }
     }
@@ -177,9 +157,14 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
                 finish();
                 break;
             case R.id.btn_bulk_storage:
-                selected.setVisibility(View.VISIBLE);
-                bulkStorage.setVisibility(View.GONE);
-                setSelector(true);
+                if ("waitIn".equals(mPurchaseInfos.getWorkFlow())) {            // 待入库
+                    selected.setVisibility(View.VISIBLE);
+                    bulkStorage.setVisibility(View.GONE);
+                    setSelector(true);
+                }else {                                                             // 待收款
+                    // request
+                    toast("确认收款");
+                }
                 break;
             case R.id.btn_cancel:
                 selected.setVisibility(View.GONE);
@@ -198,10 +183,8 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
      * @param b
      */
     private void setSelector(boolean b) {
-        for (PurchaseGoodsBean bean : mGoodsList) {
-            for (PurchaseTypeBean typeBean : bean.getTypeList()) {
-                typeBean.setBulkSelect(b);
-            }
+        for (PurchaseTypeBean typeBean : mList) {
+            typeBean.setBulkSelect(b);
         }
         Message msg = new Message();
         msg.what = CHECKED_SIZE;
@@ -214,28 +197,32 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case CHECKED_SIZE:
-                    PurchaseContentAdapter contentAdapter = new PurchaseContentAdapter(PurchaseDetailActivity.this, mGoodsList);
-                    purchaseList.setAdapter(contentAdapter);
-                    contentAdapter.setOnClickItem(new PurchaseTypeAdapter.OnClickItem() {
+                case CHECKED_SIZE:              // 显示不同的状态
+                    PurchaseTypeAdapter typeAdapter = new PurchaseTypeAdapter(PurchaseDetailActivity.this, mList);
+                    purchaseList.setAdapter(typeAdapter);
+                    typeAdapter.setOnClickItem(new PurchaseTypeAdapter.OnClickItem() {
                         @Override
-                        public void onClickReturnGoods(int parentPos, int position) {
-                            toast("退货：" + parentPos + " --- " + position);
+                        public void onClickReturnGoods(int position) {      // 退货
+                            Intent intent = new Intent(PurchaseDetailActivity.this, ReGoodsApplyActivity.class);
+                            intent.putExtra("specialId", mList.get(position).getMxId());
+                            startActivity(intent);
                         }
 
                         @Override
-                        public void onClickInStorage(int parentPos, int position) {
-                            openActivity(InStorageActivity.class);
+                        public void onClickInStorage(int position) {        // 入库
+                            Intent intent = new Intent(PurchaseDetailActivity.this, InStorageActivity.class);
+                            intent.putExtra("specialId", mList.get(position).getMxId());
+                            startActivity(intent);
                         }
 
                         @Override
-                        public void onClickChecked(int parentPos, int position) {
-                            if (mGoodsList.get(parentPos).getTypeList().get(position).isSelected()) {
-                                mGoodsList.get(parentPos).getTypeList().get(position).setSelected(false);
-                                selectedCount -= Integer.parseInt(mGoodsList.get(parentPos).getTypeList().get(position).getPurchase());
+                        public void onClickChecked(int position) {
+                            if (mList.get(position).isSelected()) {
+                                mList.get(position).setSelected(false);
+                                selectedCount -= Integer.parseInt(mList.get(position).getNum());
                             } else {
-                                mGoodsList.get(parentPos).getTypeList().get(position).setSelected(true);
-                                selectedCount += Integer.parseInt(mGoodsList.get(parentPos).getTypeList().get(position).getPurchase());
+                                mList.get(position).setSelected(true);
+                                selectedCount += Integer.parseInt(mList.get(position).getNum());
                             }
                             // 局部UI刷新
                             selectedBulk.setText(Html.fromHtml("<font color=" + getResources().getColor(R.color.white) + " size='14px'>批量入库</font>"
@@ -245,23 +232,78 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
                             mHandler.sendMessage(msg);
                         }
                     });
+                    // label
+                    PurchaseLabelsAdapter labelsAdapter = new PurchaseLabelsAdapter(PurchaseDetailActivity.this, labeList);
+                    purchaseLabel.setAdapter(labelsAdapter);
+                    //
+                    if ("waitIn".equals(mPurchaseInfos.getWorkFlow())) {
+                        bulkStorage.setVisibility(View.VISIBLE);
+                    }else if ("waitPay".equals(mPurchaseInfos.getWorkFlow())){
+                        bulkStorage.setVisibility(View.VISIBLE);
+                        bulkStorage.setText("确认收款");
+                    }else {
+                        bulkStorage.setVisibility(View.GONE);
+                    }
                     break;
             }
         }
     };
 
-    /*
-    模拟数据
-     */
-    private List<PurchaseGoodsBean> mGoodsList;
-    private String[] goodsName = {"西装外套式系缀扣连衣裙", "西装外套式系缀扣连衣裙"};
-    private String[] models = {"XDF-256165", "XDF-256165"};
-    private String[] discount = {"25%折扣", "25%折扣"};
-    private String[] rate = {"16%税率", "16%税率"};
-    private String[] paramsSize = {"杏色/XL", "杏色/XL"};
-    private String[] paramSizes = {"混装"};
-    // Label
-    private List<CommonUIBean> labeList;
-    private String[] titles = {"总计", "采购订单", "下单时间", "订单类型"};
-    private String[] showTexts = {"49000.00€ ", "55215002200026202", "2020.01.02 15:04:00", "批发商采购"};
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, " --- result --- " + result);
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 采购记录详情
+                if (result.url().contains("wxapi/v1/order.php?type=getPurchaseOrderInfo")) {
+                    mList = JsonParser.parseJSONArray(PurchaseTypeBean.class, JsonParser.parseJSONObject(body.get("data")).get("skulist"));
+                    mPurchaseInfos = JsonParser.parseJSONObject(PurchaseInfos.class, JsonParser.parseJSONObject(body.get("data")).get("info"));
+
+                    if ("waitIn".equals(mPurchaseInfos.getWorkFlow())) {
+                        status.setText("待入库");
+                    }else if ("waitPay".equals(mPurchaseInfos.getWorkFlow())){
+                        status.setText("待付款");
+                    }else {
+                        status.setText("已完成");
+                    }
+
+                    goodsName.setText(mPurchaseInfos.getGoodsName());
+                    model.setText(mPurchaseInfos.getModel());
+                    discount.setText(mPurchaseInfos.getDiscount() + "%折扣");
+                    rate.setText((Double.parseDouble(mPurchaseInfos.getTaxRate()) * 100) + "%税率");
+
+                    for (int i = 0; i < labeList.size(); i++) {
+                        switch (i) {
+                            case 0:
+                                labeList.get(i).setShowText(mPurchaseInfos.getTotalMoney());
+                                break;
+                            case 1:
+                                labeList.get(i).setShowText(mPurchaseInfos.getOrderNo());
+                                break;
+                            case 2:
+                                labeList.get(i).setShowText(mPurchaseInfos.getTime());
+                                break;
+                            case 3:
+                                labeList.get(i).setShowText(mPurchaseInfos.getClassify());
+                                break;
+                        }
+                    }
+
+                    Message msg = new Message();
+                    msg.what = CHECKED_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+            dismissLoading();
+        }
+    }
 }

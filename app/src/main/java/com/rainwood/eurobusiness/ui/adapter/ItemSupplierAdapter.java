@@ -61,12 +61,12 @@ public class ItemSupplierAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_id.setText(getItem(position).getId());
+        holder.tv_id.setText(getItem(position).getNum());
         holder.tv_name.setText(getItem(position).getName());
         holder.tv_all_money.setText(Html.fromHtml("<font color='" + R.color.fontColor
                 + "' size='" + FontDisplayUtil.dip2px(mContext, 12) + "'>累计应付款：</font>"
                 + "<font color='" + R.color.textColor + "'size='" + FontDisplayUtil.dip2px(mContext, 15)
-                + "'><b>" + getItem(position).getAllMoney() + "</b></font>"));
+                + "'><b>" + getItem(position).getMoney() + "</b></font>"));
         // 点击事件
         holder.ll_item.setOnClickListener(v -> onClickItem.onClickItem(position));
         return convertView;

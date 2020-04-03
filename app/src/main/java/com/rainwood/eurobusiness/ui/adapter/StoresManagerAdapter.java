@@ -62,7 +62,7 @@ public class StoresManagerAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.tv_name.setText(getItem(position).getName());
-        holder.tv_id.setText("编号：" + getItem(position).getId());
+        holder.tv_id.setText("编号：" + getItem(position).getStoreId());
         // 点击事件
         holder.iv_point.setOnClickListener(v -> {
             onClickPoint.onClickPoint(position);

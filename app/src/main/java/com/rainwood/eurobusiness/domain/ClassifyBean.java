@@ -10,10 +10,31 @@ import java.util.List;
  */
 public class ClassifyBean implements Serializable {
 
+    private String goodsTypeOneId;      // 父类分类id
     private String imgPath;             // 图片地址
     private int selected = 0;               // 点击记录
-    private String name;                // 名称
-    private List<ClassifySubBean> subList;      // 子项分类
+    private String goodsTypeOne;                // 分类名称
+    private boolean choose;
+    private List<ClassifySubBean> goodsTypeTwolist;      // 子项分类
+
+    @Override
+    public String toString() {
+        return "ClassifyBean{" +
+                "goodsTypeOneId='" + goodsTypeOneId + '\'' +
+                ", imgPath='" + imgPath + '\'' +
+                ", selected=" + selected +
+                ", goodsTypeOne='" + goodsTypeOne + '\'' +
+                ", goodsTypeTwolist=" + goodsTypeTwolist +
+                '}';
+    }
+
+    public boolean isChoose() {
+        return choose;
+    }
+
+    public void setChoose(boolean choose) {
+        this.choose = choose;
+    }
 
     public int getSelected() {
         return selected;
@@ -31,19 +52,27 @@ public class ClassifyBean implements Serializable {
         this.imgPath = imgPath;
     }
 
-    public String getName() {
-        return name;
+    public String getGoodsTypeOneId() {
+        return goodsTypeOneId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setGoodsTypeOneId(String goodsTypeOneId) {
+        this.goodsTypeOneId = goodsTypeOneId;
     }
 
-    public List<ClassifySubBean> getSubList() {
-        return subList;
+    public String getGoodsTypeOne() {
+        return goodsTypeOne;
     }
 
-    public void setSubList(List<ClassifySubBean> subList) {
-        this.subList = subList;
+    public void setGoodsTypeOne(String goodsTypeOne) {
+        this.goodsTypeOne = goodsTypeOne;
+    }
+
+    public List<ClassifySubBean> getGoodsTypeTwolist() {
+        return goodsTypeTwolist;
+    }
+
+    public void setGoodsTypeTwolist(List<ClassifySubBean> goodsTypeTwolist) {
+        this.goodsTypeTwolist = goodsTypeTwolist;
     }
 }

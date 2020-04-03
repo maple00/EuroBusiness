@@ -1,6 +1,9 @@
 package com.rainwood.eurobusiness.ui.adapter;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +29,7 @@ public class AddSizeAdapter extends BaseAdapter {
 
     private Context mContext;
     private List<CommonUIBean> mList;
+    private int VALUE = 8888;
 
     public AddSizeAdapter(Context mContext, List<CommonUIBean> mList) {
         this.mContext = mContext;
@@ -67,7 +71,15 @@ public class AddSizeAdapter extends BaseAdapter {
         }
 
         holder.tv_title.setText(getItem(position).getTitle());
-        holder.et_hint.setHint(getItem(position).getLabel());
+        if (TextUtils.isEmpty(getItem(position).getShowText())) {
+            holder.et_hint.setHint(getItem(position).getLabel());
+        }else {
+            holder.et_hint.setText(getItem(position).getShowText());
+        }
+        // 设置文本变化监听
+        holder.et_hint.setTag(position + VALUE);
+        holder.et_hint.addTextChangedListener(new TextChangeListener(this, position, holder.et_hint, holder));
+
         // 隐藏右箭头
         if (getItem(position).getTitle().equals("颜色") || getItem(position).getTitle().equals("尺码")) {
             holder.iv_right_arrow.setVisibility(View.VISIBLE);
@@ -91,14 +103,17 @@ public class AddSizeAdapter extends BaseAdapter {
             holder.iv_img.setImageResource(R.drawable.radio_checked_shape);
             holder.iv_img1.setImageResource(R.drawable.radio_uncheck_shape);
             holder.et_hint.setFocusableInTouchMode(false);
+            holder.et_hint.setFocusable(false);
         } else {
             holder.et_hint.setFocusableInTouchMode(true);
+            holder.et_hint.setFocusable(true);
             holder.iv_img.setImageResource(R.drawable.radio_uncheck_shape);
             holder.iv_img1.setImageResource(R.drawable.radio_checked_shape);
         }
         // 预设尺寸  -- 取消焦点，去选择
         holder.ll_pre_size.setOnClickListener(v -> {
             holder.et_hint.setFocusableInTouchMode(false);
+            holder.et_hint.setFocusable(false);
             onClickEditText.onClickPreSize(position);
             holder.et_hint.setOnClickListener(v1 -> {
                 onClickEditText.onClickChooseSize(position);
@@ -109,11 +124,45 @@ public class AddSizeAdapter extends BaseAdapter {
         // 自定义尺寸 -- 设置焦点，填写
         holder.ll_custom.setOnClickListener(v -> {
             holder.et_hint.setFocusableInTouchMode(true);
+            holder.et_hint.setFocusable(true);
             onClickEditText.onClickCusSize(position);
             notifyDataSetChanged();
         });
         // 去选择
         return convertView;
+    }
+
+    class TextChangeListener implements TextWatcher{
+
+        private AddSizeAdapter adapter;
+        private int position;
+        private EditText mText;
+        private ViewHolder mHolder;
+
+        public TextChangeListener(AddSizeAdapter adapter, int position, EditText text, ViewHolder holder) {
+            this.adapter = adapter;
+            this.position = position;
+            mText = text;
+            mHolder = holder;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            int tag = (int) mHolder.et_hint.getTag();
+            if (tag == position + VALUE) {
+                adapter.getItem(position).setShowText(s.toString());
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            onClickEditText.onTextWatcher(adapter, position);
+        }
     }
 
     public interface OnClickEditText {
@@ -125,6 +174,8 @@ public class AddSizeAdapter extends BaseAdapter {
         void onClickChooseSize(int position);
         // 选择自定义尺寸
         void onClickCusSize(int position);
+        // 文本监听回调
+        void onTextWatcher(AddSizeAdapter adapter, int position);
     }
 
     private OnClickEditText onClickEditText;

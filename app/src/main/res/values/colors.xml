@@ -58,6 +58,8 @@
     <color name="gray_a0">#A0A0A0</color>
     <color name="gray15">#D7D7D7</color>
     <color name="gray20">#E9E9E9</color>
+    <color name="gray25">#FAFAFA</color>
+    <color name="gray30">#CCCCCC</color>
 
     <!-- 红色 -->
     <color name="red30">#CC302C</color>
@@ -89,6 +91,7 @@
     <color name="blue15">#47C2FB</color>
     <color name="blue20">#3F7AF2</color>
     <!-- 紫色 -->
+    <color name="purple">#B763FF</color>
     <!-- 粉色 -->
     <!-- 橙色 -->
     <color name="orange5">#E0AF45</color>

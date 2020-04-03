@@ -8,142 +8,239 @@
 
     <include layout="@layout/activity_title" />
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="15dp">
-
-        <ImageView
-            android:id="@+id/iv_img"
-            android:layout_width="85dp"
-            android:layout_height="85dp"
-            android:scaleType="fitXY" />
-
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_toEndOf="@+id/iv_img"
-            android:textColor="@color/textColor"
-            android:textSize="17sp" />
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/ll_hor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_name"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@+id/iv_img">
+            android:layout_marginBottom="15dp"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp">
+
+                <ImageView
+                    android:id="@+id/iv_img"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:scaleType="fitXY" />
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@+id/iv_img"
+                    android:textColor="@color/textColor"
+                    android:textSize="17sp" />
+
+                <LinearLayout
+                    android:id="@+id/ll_hor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_name"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@+id/iv_img">
+
+                    <TextView
+                        android:id="@+id/tv_model"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/fontColor"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/tv_discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:background="@drawable/shape_yellow_2"
+                        android:paddingLeft="3dp"
+                        android:paddingTop="2dp"
+                        android:paddingRight="3dp"
+                        android:paddingBottom="2dp"
+                        android:textColor="@color/yellow05"
+                        android:textSize="10sp"
+                        tools:ignore="SmallSp" />
+
+                    <TextView
+                        android:id="@+id/tv_rate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7dp"
+                        android:background="@drawable/shape_green_2"
+                        android:paddingLeft="3dp"
+                        android:paddingTop="2dp"
+                        android:paddingRight="3dp"
+                        android:paddingBottom="2dp"
+                        android:textColor="@color/green15"
+                        android:textSize="10sp"
+                        tools:ignore="SmallSp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ll_hor"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_toEndOf="@+id/iv_img"
+                    android:textColor="@color/gray_white"
+                    android:textSize="13sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:text="@string/purchase_in_storage_color"
+                    android:textColor="@color/gray_white"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="15dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <com.rainwood.tools.view.ClearEditText
+                        android:id="@+id/et_in_storage_color"
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_weight="1"
+                        android:hint="@string/common_input" />
+
+                    <ImageView
+                        android:layout_width="7dp"
+                        android:layout_height="13dp"
+                        android:src="@drawable/ic_right_arrow" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:text="@string/purchase_in_storage_size"
+                    android:textColor="@color/gray_white"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="15dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+
+                    <com.rainwood.tools.view.ClearEditText
+                        android:id="@+id/et_in_storage_size"
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginEnd="15dp"
+                        android:layout_weight="1"
+                        android:hint="@string/common_input" />
+
+                    <ImageView
+                        android:layout_width="7dp"
+                        android:layout_height="13dp"
+                        android:src="@drawable/ic_right_arrow" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_model"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/fontColor"
-                android:textSize="12sp" />
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="40dp"
+                android:text="@string/purchase_in_storage_num"
+                android:textColor="@color/gray_white"
+                android:textSize="14sp" />
+
+            <com.rainwood.tools.view.ClearEditText
+                android:id="@+id/et_in_storage"
+                style="@style/EditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:inputType="number"
+                android:layout_marginEnd="15dp"
+                android:hint="@string/common_input" />
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp" />
 
             <TextView
-                android:id="@+id/tv_discount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/shape_yellow_2"
-                android:paddingLeft="3dp"
-                android:paddingTop="2dp"
-                android:paddingRight="3dp"
-                android:paddingBottom="2dp"
-                android:textColor="@color/yellow05"
-                android:textSize="10sp"
-                tools:ignore="SmallSp" />
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="40dp"
+                android:text="@string/purchase_note"
+                android:textColor="@color/gray_white"
+                android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tv_rate"
-                android:layout_width="wrap_content"
+            <com.rainwood.tools.view.ClearEditText
+                android:id="@+id/et_note"
+                style="@style/EditTextStyle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/shape_green_2"
-                android:paddingLeft="3dp"
-                android:paddingTop="2dp"
-                android:paddingRight="3dp"
-                android:paddingBottom="2dp"
-                android:textColor="@color/green15"
-                android:textSize="10sp"
-                tools:ignore="SmallSp" />
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                android:hint="@string/common_input" />
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="15dp" />
+
+            <Button
+                android:id="@+id/btn_confirm"
+                style="@style/RedButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginRight="15dp"
+                android:text="@string/common_confirm" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/ll_hor"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_toEndOf="@+id/iv_img"
-            android:textColor="@color/gray_white"
-            android:textSize="13sp" />
-    </RelativeLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="40dp"
-        android:text="@string/purchase_in_storage_num"
-        android:textColor="@color/gray_white"
-        android:textSize="14sp" />
-
-    <com.rainwood.tools.view.ClearEditText
-        android:id="@+id/et_in_storage"
-        style="@style/EditTextStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="15dp"
-        android:hint="@string/common_input" />
-
-    <View
-        style="@style/HorizontalLineStyle"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="15dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="40dp"
-        android:text="@string/purchase_note"
-        android:textColor="@color/gray_white"
-        android:textSize="14sp" />
-
-    <com.rainwood.tools.view.ClearEditText
-        android:id="@+id/et_note"
-        style="@style/EditTextStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="15dp"
-        android:hint="@string/common_input" />
-
-    <View
-        style="@style/HorizontalLineStyle"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="15dp" />
-
-    <Button
-        android:id="@+id/btn_confirm"
-        style="@style/RedButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="15dp"
-        android:text="@string/common_confirm" />
-
+    </ScrollView>
 </LinearLayout>

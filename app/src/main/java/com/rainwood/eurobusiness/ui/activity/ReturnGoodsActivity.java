@@ -17,7 +17,6 @@ import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.PressBean;
 import com.rainwood.eurobusiness.domain.RefundGoodsBean;
-import com.rainwood.eurobusiness.domain.ReturnGoodsBean;
 import com.rainwood.eurobusiness.json.JsonParser;
 import com.rainwood.eurobusiness.okhttp.HttpResponse;
 import com.rainwood.eurobusiness.okhttp.OnHttpListener;
@@ -77,7 +76,7 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
     private String[] orderTypes = {"全部", "已完成", "审核中", "草稿"};
     private List<PressBean> saleTypeList;
     private String[] saleType = {"全部", "已完成", "确认中"};
-    private List<ReturnGoodsBean> mList;
+    private List<RefundGoodsBean> mList;
     // 批发商
     private String[] orderType = {"全部", "已完成", "待审核"};
     private String[] saleTypes = {"全部", "已完成", "确认中", "待审核"};
@@ -92,12 +91,14 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
         pageBack.setOnClickListener(this);
         screening.setOnClickListener(this);
 
+        // 门店端
         if (Contants.CHOOSE_MODEL_SIZE == 9) {
             searchTips.setText("退货单号");
             searchHint.setHint("请输入退货单号");
             search1.setVisibility(View.GONE);
             newFound.setVisibility(View.GONE);
         }
+        // 批发商端
         if (Contants.CHOOSE_MODEL_SIZE == 108) {
             search.setVisibility(View.GONE);
             newFound.setVisibility(View.GONE);
@@ -145,25 +146,6 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
             }
             orderTypeList.add(press);
         }
-        // content
-        mList = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            ReturnGoodsBean goods = new ReturnGoodsBean();
-            goods.setImgPath(null);
-            goods.setName("西装外套式系缀扣连衣裙");
-            goods.setParams("红色/XL");
-            goods.setReturnNum("50");
-            goods.setMoney("156.00€");
-            if (i == 3) {
-                goods.setStatus("草稿");
-            } else if (i == 0) {
-                goods.setStatus("审核中");
-            } else {
-                goods.setStatus("已完成");
-            }
-            mList.add(goods);
-        }
-
         // request
         requestPost();
     }
@@ -230,6 +212,7 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
                         requestPost();
                         posCount = position;
                     });
+                    // 加载不同的状态
                     GoodsStatusAdapter statusAdapter;
                     if (posCount == 0) {
                         statusAdapter = new GoodsStatusAdapter(ReturnGoodsActivity.this, orderTypeList);
@@ -283,16 +266,30 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
                             pressBean.setChoose(false);
                         }
                         topTypeList.get(position).setChoose(true);
+                        mClassify = topTypeList.get(position).getTitle();
+                        // request
+                        requestPost();
+                        posCount = position;
                     });
+                    // 加载不同的状态
+                    GoodsStatusAdapter topStateAdapter;
+                    if (posCount == 0) {
+                        topStateAdapter = new GoodsStatusAdapter(ReturnGoodsActivity.this, orderTypeList);
+                    } else {
+                        topStateAdapter = new GoodsStatusAdapter(ReturnGoodsActivity.this, saleTypeList);
+                    }
                     // 订单类型
-                    GoodsStatusAdapter statuAdapter = new GoodsStatusAdapter(ReturnGoodsActivity.this, orderTypeList);
-                    typeList.setAdapter(statuAdapter);
+                    // GoodsStatusAdapter statuAdapter = new GoodsStatusAdapter(ReturnGoodsActivity.this, orderTypeList);
+                    typeList.setAdapter(topStateAdapter);
                     typeList.setNumColumns(5);
-                    statuAdapter.setOnClickItem(position -> {
+                    topStateAdapter.setOnClickItem(position -> {
                         for (PressBean pressBean : orderTypeList) {
                             pressBean.setChoose(false);
                         }
                         orderTypeList.get(position).setChoose(true);
+
+                        // request
+                        requestPost();
                     });
                     // content
                     ReturnGoodsSalerAdapter salerAdapter = new ReturnGoodsSalerAdapter(ReturnGoodsActivity.this, mList);
@@ -329,15 +326,16 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
         if (body != null) {
             if ("1".equals(body.get("code"))) {
                 if (result.url().contains("wxapi/v1/order.php?type=getRefundOrder")) {            // 查询退货列表
-                    goodsList = JsonParser.parseJSONArray(RefundGoodsBean.class,
-                            JsonParser.parseJSONObject(body.get("data")).get("refundlist"));
-                    dismissLoading();
                     if (Contants.CHOOSE_MODEL_SIZE == 9) {
+                        goodsList = JsonParser.parseJSONArray(RefundGoodsBean.class,
+                                JsonParser.parseJSONObject(body.get("data")).get("refundlist"));
                         Message msg = new Message();
                         msg.what = DEFAULT_SIZE;
                         mHandler.sendMessage(msg);
                     }
                     if (Contants.CHOOSE_MODEL_SIZE == 108) {
+                        mList = JsonParser.parseJSONArray(RefundGoodsBean.class,
+                                JsonParser.parseJSONObject(body.get("data")).get("refundlist"));
                         Message msg = new Message();
                         msg.what = SALER_SIZE;
                         mHandler.sendMessage(msg);

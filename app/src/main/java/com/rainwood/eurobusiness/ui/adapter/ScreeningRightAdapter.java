@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.domain.PressBean;
+import com.rainwood.eurobusiness.domain.PressTypeRightBean;
 
 import java.util.List;
 
@@ -22,9 +23,9 @@ import java.util.List;
 public class ScreeningRightAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<PressBean> mList;
+    private List<PressTypeRightBean> mList;
 
-    public ScreeningRightAdapter(Context mContext, List<PressBean> mList) {
+    public ScreeningRightAdapter(Context mContext, List<PressTypeRightBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -35,7 +36,7 @@ public class ScreeningRightAdapter extends BaseAdapter {
     }
 
     @Override
-    public PressBean getItem(int position) {
+    public PressTypeRightBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -57,7 +58,7 @@ public class ScreeningRightAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_title.setText(getItem(position).getTitle());
+        holder.tv_title.setText(getItem(position).getName());
         if (getItem(position).isChoose()) {
             holder.iv_checked.setImageResource(R.drawable.ic_choose);
         } else {

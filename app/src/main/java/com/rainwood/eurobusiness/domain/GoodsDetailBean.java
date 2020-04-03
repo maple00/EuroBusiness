@@ -13,8 +13,8 @@ public class GoodsDetailBean implements Serializable {
     private int type;                           //加载的类别
     private String title;                       // 标题
     private List<CommonUIBean> commList;         // 常见标准的列表
-    private List<SizeBean> paramsList;          // 规格参数列表
-    private List<ImageBean> imgList;            // 图片列表
+    private List<SpecialBean> paramsList;          // 规格参数列表
+    private List<ImagesBean> imgList;            // 图片列表
     /**
      * 101: 库存商品 --- 商品信息
      *
@@ -65,19 +65,19 @@ public class GoodsDetailBean implements Serializable {
         this.commList = commList;
     }
 
-    public List<SizeBean> getParamsList() {
+    public List<SpecialBean> getParamsList() {
         return paramsList;
     }
 
-    public void setParamsList(List<SizeBean> paramsList) {
+    public void setParamsList(List<SpecialBean> paramsList) {
         this.paramsList = paramsList;
     }
 
-    public List<ImageBean> getImgList() {
+    public List<ImagesBean> getImgList() {
         return imgList;
     }
 
-    public void setImgList(List<ImageBean> imgList) {
+    public void setImgList(List<ImagesBean> imgList) {
         this.imgList = imgList;
     }
 }

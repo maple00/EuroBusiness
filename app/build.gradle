@@ -47,7 +47,7 @@ dependencies {
 
     // 图片加载框架：https://github.com/bumptech/glide
     implementation 'com.github.bumptech.glide:glide:4.10.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
 
     // xBanner
     implementation 'jp.wasabeef:glide-transformations:3.0.1'

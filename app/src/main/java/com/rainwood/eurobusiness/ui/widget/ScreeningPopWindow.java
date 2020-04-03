@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +17,28 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.rainwood.eurobusiness.R;
-import com.rainwood.eurobusiness.domain.PressBean;
-import com.rainwood.eurobusiness.ui.adapter.ScreeningLeftAdapter;
+import com.rainwood.eurobusiness.domain.PressTypeBean;
+import com.rainwood.eurobusiness.domain.PressTypeRightBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.request.RequestPost;
+import com.rainwood.eurobusiness.ui.adapter.ScreeningLeftTypeAdapter;
 import com.rainwood.eurobusiness.ui.adapter.ScreeningRightAdapter;
 import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/17
  * @Desc: 筛选弹窗
  */
-public class ScreeningPopWindow extends PopupWindow {
+public class ScreeningPopWindow extends PopupWindow implements OnHttpListener {
 
     /**
      * 上下文对象
@@ -45,9 +55,27 @@ public class ScreeningPopWindow extends PopupWindow {
      */
     private MeasureListView rightType;
 
+    private static List<PressTypeBean> mLeftList;
+    private static List<PressTypeRightBean> mRightList;
+    private final int RIGHT_SIZE = 0x101;
+    private final int PopSize = 1124;
+    private static int count = -1;
+
     public ScreeningPopWindow(Context context) {
         super(context);
         mContext = context;
+    }
+
+    public ScreeningPopWindow(List<PressTypeRightBean> rightList, Context context) {
+        this(null, rightList, context);
+    }
+
+    public ScreeningPopWindow(List<PressTypeBean> leftList, List<PressTypeRightBean> rightList, Context context) {
+        super(context);
+        mContext = context;
+        mLeftList = leftList == null ? mLeftList : leftList;
+        mRightList = rightList;
+        // Log.d("sxs", "顶部 ===== " + leftList.toString());
         initView();
     }
 
@@ -62,66 +90,49 @@ public class ScreeningPopWindow extends PopupWindow {
                 null, false);
         setContentView(contentView);
         // 初始化数据
-        initData();
         leftType = contentView.findViewById(R.id.lv_left_type);
         rightType = contentView.findViewById(R.id.lv_right_type);
+
+        //
+        if (count >= 0) {
+
+        } else {
+            count++;
+            initData();
+        }
 
         Message msg = new Message();
         msg.what = PopSize;
         mHandler.sendMessage(msg);
+        Log.d("sxs", mRightList.toString());
 
         TextView reset = contentView.findViewById(R.id.tv_reset);
         TextView confirm = contentView.findViewById(R.id.tv_confirm);
-
         // 重置
-        reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickChecked.onClickChecked("重置");
-            }
-        });
+        reset.setOnClickListener(v -> onClickChecked.onClickChecked("重置"));
         // 确定
         confirm.setOnClickListener(v -> {
-            int checkedSize = 0;     // 消息提示count
-            for (PressBean pressBean : mLeftList) {
-                if (pressBean.isChoose()) {
-                    for (PressBean right : mRightList) {
-                        if (right.isChoose()) {
-                            checkedSize++;
-                            onClickChecked.onClickChecked(pressBean.getTitle() + "/" + right.getTitle());
-                            break;
-                        }
+            List<PressTypeRightBean> newRightList = new ArrayList<>();
+            for (PressTypeBean pressBean : mLeftList) {
+                if (pressBean.isChoose()) {         // 找到一级分类
+                    // 筛选选中的二级分类
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        newRightList = mRightList.stream().filter(PressTypeRightBean::isChoose).collect(Collectors.toList());
                     }
                     break;
                 }
             }
-
-            if (checkedSize == 0){
-                onClickChecked.onClickChecked("请选择好再确认哟！");
+            List<String> idList = new ArrayList<>();
+            for (PressTypeRightBean typeRightBean : newRightList) {
+                idList.add(typeRightBean.getGoodsTypeTwoId());
             }
+            onClickChecked.getSubTypeList(idList);
         });
     }
 
     private void initData() {
-        // 左边商品类型
-        mLeftList = new ArrayList<>();
-        for (String title : leftTitles) {
-            PressBean press = new PressBean();
-            press.setChoose(false);
-            press.setTitle(title);
-            mLeftList.add(press);
-        }
-        // 右边商品类型
-        mRightList = new ArrayList<>();
-        for (String title : rightTitles) {
-            PressBean press = new PressBean();
-            press.setChoose(false);
-            press.setTitle(title);
-            mRightList.add(press);
-        }
+        mLeftList.get(0).setChoose(true);
     }
-
-    private final int PopSize = 1124;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -131,44 +142,66 @@ public class ScreeningPopWindow extends PopupWindow {
             switch (msg.what) {
                 case PopSize:
                     // 左边商品类型
-                    ScreeningLeftAdapter leftAdapter = new ScreeningLeftAdapter(mContext, mLeftList);
+                    ScreeningLeftTypeAdapter leftAdapter = new ScreeningLeftTypeAdapter(mContext, mLeftList);
                     leftType.setAdapter(leftAdapter);
                     leftAdapter.setOnClickLeft(position -> {
-                        for (PressBean pressBean : mLeftList) {
+                        // 一级分类只能单选
+                        for (PressTypeBean pressBean : mLeftList) {
                             pressBean.setChoose(false);
                         }
                         mLeftList.get(position).setChoose(true);
-                        // 加载右边类型
-                        ScreeningRightAdapter rightAdapter = new ScreeningRightAdapter(mContext, mRightList);
-                        rightType.setAdapter(rightAdapter);
-                        rightAdapter.setOnClickRight(position1 -> {
-                            for (PressBean pressBean : mRightList) {
-                                pressBean.setChoose(false);
-                            }
-                            mRightList.get(position1).setChoose(true);
-                        });
+                        // request --- 查询二级分类
+                        RequestPost.getGoodsTypeTwo(mLeftList.get(position).getGoodsTypeOneId(), ScreeningPopWindow.this);
+                    });
+                    // 加载右边类型
+                    if (mRightList != null && mRightList.size() != 0) {
+                        Message rightMsg = new Message();
+                        rightMsg.what = RIGHT_SIZE;
+                        mHandler.sendMessage(rightMsg);
+                    }
+                    break;
+                case RIGHT_SIZE:
+                    ScreeningRightAdapter rightAdapter = new ScreeningRightAdapter(mContext, mRightList);
+                    rightType.setAdapter(rightAdapter);
+                    rightAdapter.setOnClickRight(position -> {
+                        // 二级分类可以多选
+                        // 置反
+                        mRightList.get(position).setChoose(!mRightList.get(position).isChoose());
                     });
                     break;
             }
         }
     };
 
-    /*
-    模拟数据
-     */
-    // 左边类型
-    private List<PressBean> mLeftList;
-    private String[] leftTitles = {"女士时装", "女士整包", "女士大码", "男士服装", "儿童服装", "鞋子",
-            "箱包", "帽子/围巾", "内衣"};
-    // 右边类型
-    private List<PressBean> mRightList;
-    private String[] rightTitles = {"大衣", "针织衫/毛衣", "卫衣", "套头卫衣", "T恤", "打底衫", "双面尼大衣"};
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Log.d("sxs", " ----- result ----- " + result);
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                if (result.url().contains("wxapi/v1/goods.php?type=getNewGoodsTypeTwo")) {
+                    Log.d("sxs", body.get("data"));
+                    mRightList = JsonParser.parseJSONArray(PressTypeRightBean.class,
+                            JsonParser.parseJSONObject(body.get("data")).get("goodsTypeTwo"));
+
+                    Message msg = new Message();
+                    msg.what = RIGHT_SIZE;
+                    mHandler.sendMessage(msg);
+                }
+            }
+        }
+    }
 
     public interface OnClickChecked {
-        /**
-         * 选中消息回调
-         */
         void onClickChecked(String msg);
+
+        // 返回找到的二级分类
+        void getSubTypeList(List<String> rightList);
     }
 
     private OnClickChecked onClickChecked;

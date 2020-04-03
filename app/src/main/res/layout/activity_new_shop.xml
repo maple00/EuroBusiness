@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -10,50 +11,687 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp">
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="15dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.rainwood.tools.widget.MeasureListView
+            <!--<com.rainwood.tools.widget.MeasureListView
                 android:id="@+id/lv_shop_params"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="@color/transparent"
-                android:dividerHeight="20dp" />
+                android:dividerHeight="20dp" />-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="基本信息"
+                android:textColor="@color/white66"
+                android:textSize="13sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="15dp"
-                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="商品名称"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_goods_name"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请输入"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="商品型号"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_goods_model"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请输入"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="商品分类"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_goods_type"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请选择"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/iv_right_arrow"
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_right_arrow" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="条码"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_goods_codebar"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请输入"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/iv_scan"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="15dp"
+                    android:src="@drawable/ic_icon_bar_code" />
+
+            </LinearLayout>
+
+            <View style="@style/HorizontalLineStyle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="商品定价"
+                android:textColor="@color/white66"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="批发价"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_wholesale_price"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请输入"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="零售价"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_retail_price"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请输入"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="增值税"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/iv_tax_checked"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/radio_checked_shape" />
+
+                <TextView
+                    android:id="@+id/tv_tax_checked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="不含税"
+                    android:textColor="@color/textColor"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/iv_tax_unchecked"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="30dp"
+                    android:src="@drawable/radio_uncheck_shape" />
+
+                <TextView
+                    android:id="@+id/tv_tax_unchecked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="含税"
+                    android:textColor="@color/textColor"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="规格参数"
+                android:textColor="@color/white66"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="商品尺码"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/iv_not_size"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/radio_checked_shape" />
+
+                <TextView
+                    android:id="@+id/tv_not_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="混装"
+                    android:textColor="@color/textColor"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:id="@+id/iv_has_size"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="30dp"
+                    android:src="@drawable/radio_uncheck_shape" />
+
+                <TextView
+                    android:id="@+id/tv_has_size"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="有尺码"
+                    android:textColor="@color/textColor"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_add_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <Space
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_add_size"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请输入"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_right_arrow" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="商品规格"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_goods_special"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请选择"
+                    android:inputType="text"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_right_arrow" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="税率"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_tax_rate"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请输入"
+                    android:inputType="numberDecimal"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="%" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="最小起订量"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_min_book"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请输入"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="商品图片"
+                android:textColor="@color/white66"
+                android:textSize="13sp" />
+
+            <com.rainwood.tools.widget.MeasureGridView
+                android:id="@+id/mgv_goods_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:horizontalSpacing="15dp"
+                android:verticalSpacing="15sp" />
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="促销信息"
+                    android:textColor="@color/white66"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="设为促销商品"
+                        android:textColor="@color/textColor"
+                        android:textSize="15sp" />
+
+                    <com.rainwood.tools.widget.SwitchButton
+                        android:id="@+id/sb_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:checked="true" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="开始时间"
+                        android:textColor="@color/fontColor"
+                        android:textSize="15sp" />
+
+                    <com.rainwood.tools.view.ClearEditText
+                        android:id="@+id/cet_start_time"
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="请选择"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColorHint="@color/gray_white"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:layout_width="7dp"
+                        android:layout_height="13dp"
+                        android:src="@drawable/ic_right_arrow" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="结束时间"
+                        android:textColor="@color/fontColor"
+                        android:textSize="15sp" />
+
+                    <com.rainwood.tools.view.ClearEditText
+                        android:id="@+id/cet_end_time"
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="请选择"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColorHint="@color/gray_white"
+                        android:textSize="15sp" />
+
+                    <ImageView
+                        android:layout_width="7dp"
+                        android:layout_height="13dp"
+                        android:src="@drawable/ic_right_arrow" />
+                </LinearLayout>
+
+                <!--<LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="批发价"
+                        android:textColor="@color/fontColor"
+                        android:textSize="15sp" />
+
+                    <com.rainwood.tools.view.ClearEditText
+
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="请输入"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColorHint="@color/gray_white"
+                        android:textSize="15sp" />
+
+                </LinearLayout>-->
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="促销价"
+                        android:textColor="@color/fontColor"
+                        android:textSize="15sp" />
+
+                    <com.rainwood.tools.view.ClearEditText
+                        android:id="@+id/cet_promotion_price"
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="请输入"
+                        android:inputType="numberDecimal"
+                        android:singleLine="true"
+                        android:textColorHint="@color/gray_white"
+                        android:textSize="15sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:text="折扣"
+                        android:textColor="@color/fontColor"
+                        android:textSize="15sp" />
+
+                    <com.rainwood.tools.view.ClearEditText
+                        android:id="@+id/cet_discount"
+                        style="@style/EditTextStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="@string/common_input"
+                        android:inputType="number"
+                        android:singleLine="true"
+                        android:textColorHint="@color/gray_white"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="%" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+                </LinearLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="20dp">
 
                 <Button
                     android:id="@+id/btn_save_draft"
                     android:layout_width="0dp"
-                    android:layout_weight="2"
                     android:layout_height="wrap_content"
-                    android:text="@string/goods_save_draft"
-                    android:textColor="@color/red30"
-                    android:textSize="14sp"
+                    android:layout_weight="2"
+                    android:background="@drawable/shape_text_red30"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
-                    android:background="@drawable/shape_text_red30"/>
+                    android:text="@string/goods_save_draft"
+                    android:textColor="@color/red30"
+                    android:textSize="14sp" />
 
                 <Button
                     android:id="@+id/btn_commit"
-                    android:layout_width="0dp"
-                    android:layout_weight="3"
-                    android:layout_height="wrap_content"
                     style="@style/RedButtonStyle"
-                    android:textColor="@color/white"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="3"
                     android:text="@string/common_step_commit"
-                    android:textSize="14sp"
-                    android:layout_marginStart="10dp"/>
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
 
             </LinearLayout>
 

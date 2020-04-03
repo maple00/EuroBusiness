@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
+import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.json.JsonParser;
 import com.rainwood.eurobusiness.okhttp.HttpResponse;
 import com.rainwood.eurobusiness.okhttp.OnHttpListener;
@@ -75,9 +76,15 @@ public class ModifyPwdActivity extends BaseActivity implements View.OnClickListe
                     toast("请输入手机号");
                     return;
                 }
+                String type;
+                if (Contants.userType == 0) {
+                    type = "saler";
+                } else {
+                    type = "store";
+                }
                 // request
                 showLoading("loading");
-                RequestPost.getVerifyCode(editPhone.getText().toString().trim(), this);
+                RequestPost.getVerifyCode(editPhone.getText().toString().trim(), type,this);
                 break;
             case R.id.btn_confirm:
                 if (TextUtils.isEmpty(editVerify.getText())){

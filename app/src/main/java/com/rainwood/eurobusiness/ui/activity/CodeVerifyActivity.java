@@ -12,15 +12,21 @@ import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.utils.CountDownTimerUtils;
 import com.rainwood.tools.viewinject.ViewById;
+
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/2/6
  * @Desc: 输入手机验证码
  */
-public class CodeVerifyActivity extends BaseActivity implements OnClickListener {
+public class CodeVerifyActivity extends BaseActivity implements OnClickListener, OnHttpListener {
 
     @Override
     protected int getLayoutId() {
@@ -86,15 +92,20 @@ public class CodeVerifyActivity extends BaseActivity implements OnClickListener 
                 finish();
                 break;
             case R.id.btn_confirm:
-                openActivity(ResetPassword.class);
+                if (verifyCode == null) {
+                    toast("请输入验证码");
+                    return;
+                }
+                // request
+                showLoading("");
+                RequestPost.compareCode(verifyCode, this);
                 break;
             default:
                 break;
         }
     }
 
-
-    int index = 1;
+    private String verifyCode;
     private EditText[] mArray;
 
     /**
@@ -146,10 +157,15 @@ public class CodeVerifyActivity extends BaseActivity implements OnClickListener 
                 && !TextUtils.isEmpty(editText5.getText().toString().trim()) && !TextUtils.isEmpty(editText6.getText().toString().trim())) {
 
             // 获取输入的验证码
-            toast("输入的验证码: " + editText1.getText().toString().trim() + editText2.getText().toString().trim() +
+//            toast("输入的验证码: " + editText1.getText().toString().trim() + editText2.getText().toString().trim() +
+//                    editText3.getText().toString().trim() + editText4.getText().toString().trim()
+//                    + editText5.getText().toString().trim() + editText6.getText().toString().trim());
+
+            verifyCode = editText1.getText().toString().trim() + editText2.getText().toString().trim() +
                     editText3.getText().toString().trim() + editText4.getText().toString().trim()
-                    + editText5.getText().toString().trim() + editText6.getText().toString().trim());
-            index++;
+                    + editText5.getText().toString().trim() + editText6.getText().toString().trim();
+
+            /*index++;
             if (index % 2 == 0) {
                 for (EditText editText : mArray) {
                     editText.setText("");
@@ -157,7 +173,29 @@ public class CodeVerifyActivity extends BaseActivity implements OnClickListener 
                 editText1.setFocusable(true);
                 editText1.setFocusableInTouchMode(true);
                 editText1.requestFocus();
+            }*/
+        }
+    }
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 比较验证码
+                if (result.url().contains("wxapi/v1/login.php?type=compareCode")) {
+                    toast(body.get("warn"));
+                    postDelayed(() -> openActivity(ResetPassword.class), 500);
+                }
+            } else {
+                toast(body.get("warn"));
             }
+            dismissLoading();
         }
     }
 }

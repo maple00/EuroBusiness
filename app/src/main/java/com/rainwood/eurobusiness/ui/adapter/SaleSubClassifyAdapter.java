@@ -59,11 +59,16 @@ public class SaleSubClassifyAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.tv_name.setText(getItem(position).getName());
-        if (TextUtils.isEmpty(getItem(position).getStatus())) {
+        if (TextUtils.isEmpty(getItem(position).getState())) {
             holder.tv_status.setVisibility(View.GONE);
         } else {
             holder.tv_status.setVisibility(View.VISIBLE);
-            holder.tv_status.setText(getItem(position).getStatus());
+            if ("1".equals(getItem(position).getState())){
+                holder.tv_status.setVisibility(View.INVISIBLE);
+            }else {
+                holder.tv_status.setVisibility(View.VISIBLE);
+                holder.tv_status.setText("已停用");
+            }
         }
         // 点击事件
         holder.iv_point.setOnClickListener(v -> {

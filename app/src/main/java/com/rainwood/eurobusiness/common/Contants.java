@@ -42,8 +42,14 @@ public final class Contants {
      * 批发商端：
      *  初始化： 101 - 116 为首页项目模块
      *
+     * 点击的位置记录：
+     *  0x1001:      从供应商列表查看详情
+     *  0x1002:       供应商列表新建供应商
+     *  0x1003:       编辑门店
+     *
      */
     public static int CHOOSE_MODEL_SIZE = -1;
+
 
     /**
      * 选择颜色或者尺寸

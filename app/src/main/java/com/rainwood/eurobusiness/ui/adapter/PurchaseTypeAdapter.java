@@ -3,6 +3,7 @@ package com.rainwood.eurobusiness.ui.adapter;
 import android.content.Context;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,6 @@ public class PurchaseTypeAdapter extends BaseAdapter {
 
     private Context mContext;
     private List<PurchaseTypeBean> mList;
-    private int parentPosition;
 
     public PurchaseTypeAdapter(Context mContext, List<PurchaseTypeBean> mList) {
         this.mContext = mContext;
@@ -67,22 +67,26 @@ public class PurchaseTypeAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        if (TextUtils.isEmpty(getItem(position).getImgPath())) {
-            Glide.with(convertView).load(mContext.getResources().getDrawable(R.drawable.icon_loadding_fail)).into(holder.iv_img);
-        } else {
-            Glide.with(convertView).load(getItem(position).getImgPath()).into(holder.iv_img);
-        }
-        holder.tv_param_size.setText(getItem(position).getParamSize());
+        Glide.with(convertView)
+                .load(TextUtils.isEmpty(getItem(position).getIco()) ? mContext.getResources().getDrawable(R.drawable.icon_loadding_fail) : getItem(position).getIco())
+                .into(holder.iv_img);
+        // 不是混装
+        holder.tv_param_size.setText("0".equals(getItem(position).getIsSku()) ? getItem(position).getGoodsSkuNAme() : "混装");
+
         holder.tv_price.setText(getItem(position).getPrice());
         holder.tv_purchase.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>采购&#160;</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>" + getItem(position).getPurchase() + "</font>"));
+                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>"
+                + (getItem(position).getNum() == null ? "0" : getItem(position).getNum()) + "</font>"));
         holder.tv_in_storage.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>入库&#160;</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>" + getItem(position).getInStorage() + "</font>"));
+                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>"
+                + (getItem(position).getInStoreNum() == null ? "0" : getItem(position).getInStoreNum()) + "</font>"));
         holder.tv_return_num.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>退货&#160;</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>" + getItem(position).getReturnNum() + "</font>"));
+                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>"
+                + (getItem(position).getRefundNum() == null ? "0" : getItem(position).getRefundNum()) + "</font>"));
         holder.tv_all_money.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='13px'>合计：</font>"
-                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>" + getItem(position).getAllMoney() + "</font>"));
-        if (Integer.parseInt(getItem(position).getInStorage()) != 0) {
+                + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='13px'>"
+                + (getItem(position).getTotalMoney() == null ? "0" : getItem(position).getTotalMoney()) + "</font>"));
+        if (!"0".equals(getItem(position).getTotalMoney())) {
             holder.tv_return_goods.setVisibility(View.VISIBLE);
         } else {
             holder.tv_return_goods.setVisibility(View.GONE);
@@ -91,49 +95,50 @@ public class PurchaseTypeAdapter extends BaseAdapter {
         // 点击退货
         holder.tv_return_goods.setText("退货");
         holder.tv_return_goods.setOnClickListener(v -> {
-            onClickItem.onClickReturnGoods(parentPosition, position);
+            onClickItem.onClickReturnGoods(position);
             notifyDataSetChanged();
         });
         // 点击入库
         holder.tv_storage.setText("入库");
         holder.tv_storage.setOnClickListener(v -> {
-            onClickItem.onClickInStorage(parentPosition, position);
+            onClickItem.onClickInStorage(position);
             notifyDataSetChanged();
         });
         // 点击选中
-        if (getItem(position).isBulkSelect()){           // 是否批量选中
+        if (getItem(position).isBulkSelect()) {           // 是否批量选中
             holder.iv_selector.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             holder.iv_selector.setVisibility(View.GONE);
         }
-        if (getItem(position).isSelected()){            // 选中
+        if (getItem(position).isSelected()) {            // 选中
             holder.iv_selector.setImageResource(R.drawable.radio_checked_shape);
-        }else {
+        } else {
             holder.iv_selector.setImageResource(R.drawable.radio_uncheck_shape);
         }
+        // 设置全选
         holder.iv_selector.setOnClickListener(v -> {
-            onClickItem.onClickChecked(parentPosition, position);
+            onClickItem.onClickChecked(position);
             notifyDataSetChanged();
         });
         return convertView;
     }
 
+
     public interface OnClickItem {
         // 退货
-        void onClickReturnGoods(int parentPos, int position);
+        void onClickReturnGoods(int position);
 
         // 入库
-        void onClickInStorage(int parentPos, int position);
+        void onClickInStorage(int position);
 
         // 选中
-        void onClickChecked(int parentPos, int position);
+        void onClickChecked(int position);
     }
 
     private OnClickItem onClickItem;
 
-    public void setOnClickItem(int parentPosition, OnClickItem onClickItem) {
+    public void setOnClickItem(OnClickItem onClickItem) {
         this.onClickItem = onClickItem;
-        this.parentPosition = parentPosition;
     }
 
     private class ViewHolder {
