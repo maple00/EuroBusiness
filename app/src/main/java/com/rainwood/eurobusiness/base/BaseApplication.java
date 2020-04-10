@@ -6,9 +6,11 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.helper.ActivityStackManager;
 import com.rainwood.eurobusiness.ui.activity.CrashActivity;
 import com.rainwood.eurobusiness.ui.activity.HomeActivity;
+import com.rainwood.eurobusiness.utils.DeviceIdUtils;
 import com.rainwood.tools.toast.ToastInterceptor;
 import com.rainwood.tools.toast.ToastUtils;
 
@@ -82,6 +84,8 @@ public class BaseApplication extends Application {
                 //.eventListener(new YourCustomEventListener())
                 .apply();
 
+        // 启动时生成token
+        Contants.token = DeviceIdUtils.getDeviceId(this);
     }
 
     /**

@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_item"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fl_item"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shape_gray05_4">
 
     <TextView
         android:id="@+id/tv_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:gravity="center" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="19dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="19dp"
+        android:paddingBottom="10dp"
+        android:gravity="center"/>
 
     <ImageView
         android:id="@+id/iv_checked"
         android:layout_width="12dp"
         android:layout_height="11dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_icon_choice" />
+        android:layout_gravity="end"
+        android:src="@drawable/ic_icon_choice2" />
 
-</RelativeLayout>
+</FrameLayout>

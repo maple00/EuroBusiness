@@ -155,7 +155,6 @@
     <!-- 商品管理-->
     <string name="goods_my_create" translatable="false">我创建的商品</string>
     <string name="goods_store_create" translatable="false">门店创建的商品</string>
-    <string name="goods_draft" translatable="false">我的草稿</string>
     <string name="goods_classify" translatable="false">商品分类</string>
     
 </resources>

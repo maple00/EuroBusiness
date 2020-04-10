@@ -3,6 +3,7 @@ package com.rainwood.eurobusiness.ui.activity;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -192,6 +193,7 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, "======= result ======= " + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {

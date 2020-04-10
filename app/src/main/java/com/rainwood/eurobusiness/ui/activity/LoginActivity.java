@@ -55,22 +55,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login_commit:
-                if (Contants.userType == 0) {        // 供应商
-                    openActivity(HomeActivity.class);
-                } else {                             // 门店
-                    openActivity(HomeActivity.class);
+                if (TextUtils.isEmpty(loginAccount.getText())) {
+                    toast("请输入用户名");
+                    return;
                 }
-//                if (TextUtils.isEmpty(loginAccount.getText())) {
-//                    toast("请输入用户名");
-//                    return;
-//                }
-//                if (TextUtils.isEmpty(loginPwd.getText())) {
-//                    toast("请输入密码");
-//                    return;
-//                }
-                // request
-//                showLoading("");
-//                RequestPost.loginIn(loginAccount.getText().toString().trim(), loginPwd.getText().toString().trim(), this);
+                if (TextUtils.isEmpty(loginPwd.getText())) {
+                    toast("请输入密码");
+                    return;
+                }
+                // TODO : login
+                showLoading("");
+                RequestPost.loginIn(loginAccount.getText().toString().trim(), loginPwd.getText().toString().trim(), this);
                 break;
             default:
                 break;

@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.rainwood.eurobusiness.common.Contants.ADDRESS_REQUEST_SIZE;
+import static com.rainwood.eurobusiness.common.Contants.INVOICE_ADDRESS_REQUEST;
+
 /**
  * @Author: shearson
  * @Time: 2020/2/24 15:49
@@ -73,18 +76,20 @@ public class GoodsAddressActivity extends BaseActivity implements View.OnClickLi
         pageBack.setOnClickListener(this);
 
         mCustomId = getIntent().getStringExtra("customId");
-        if (Contants.CHOOSE_MODEL_SIZE == 13) {          // 收货地址
+
+        if (Contants.CHOOSE_MODEL_SIZE == 13 && mCustomId != null) {          // 收货地址
             setDefaultUI("收货地址", "新增收货地址");
             // request
             showLoading("loading");
             RequestPost.getClientAddresslist(mCustomId, this);
-        }
-
-        if (Contants.CHOOSE_MODEL_SIZE == 14) {              // 开票地址
+        }else if (Contants.CHOOSE_MODEL_SIZE == 14 && mCustomId != null) {              // 开票地址
             setDefaultUI("开票地址", "新增开票地址");
             // request
             showLoading("loading");
             RequestPost.getClientInvoicelist(mCustomId, this);
+        }else {
+            toast("数据异常");
+            finish();
         }
     }
 
@@ -153,14 +158,14 @@ public class GoodsAddressActivity extends BaseActivity implements View.OnClickLi
                         @Override
                         public void onClickEdit(int position) {
                             // 开票地址
-                            if (Contants.CHOOSE_MODEL_SIZE == 14) {
+                            if (Contants.CHOOSE_MODEL_SIZE == 14 || Contants.CHOOSE_MODEL_SIZE == 18) {
                                 Contants.CHOOSE_MODEL_SIZE = 18;
                                 Intent intent = new Intent(GoodsAddressActivity.this, NewGoodsAddressActivity.class);
                                 intent.putExtra("invoice", mInvoiceList.get(position));
                                 startActivity(intent);
                             }
                             // 收货地址
-                            if (Contants.CHOOSE_MODEL_SIZE == 13) {
+                            if (Contants.CHOOSE_MODEL_SIZE == 13 || Contants.CHOOSE_MODEL_SIZE == 19) {
                                 Contants.CHOOSE_MODEL_SIZE = 19;
                                 Intent intent = new Intent(GoodsAddressActivity.this, NewGoodsAddressActivity.class);
                                 intent.putExtra("invoice", mClientAddressList.get(position));
@@ -184,20 +189,15 @@ public class GoodsAddressActivity extends BaseActivity implements View.OnClickLi
 
                         @Override
                         public void onClickItem(int position) {
-                            // 开票地址
-                            if (Contants.CHOOSE_MODEL_SIZE == 14) {
-                                Contants.CHOOSE_MODEL_SIZE = 18;
-                                Intent intent = new Intent(GoodsAddressActivity.this, NewGoodsAddressActivity.class);
-                                intent.putExtra("invoice", mInvoiceList.get(position));
-                                startActivity(intent);
+                            Intent intent = new Intent();
+                            intent.putExtra("address", mList.get(position));
+                            if (Contants.CHOOSE_MODEL_SIZE == 13){
+                                setResult(ADDRESS_REQUEST_SIZE, intent);
                             }
-                            // 收货地址
-                            if (Contants.CHOOSE_MODEL_SIZE == 13) {
-                                Contants.CHOOSE_MODEL_SIZE = 19;
-                                Intent intent = new Intent(GoodsAddressActivity.this, NewGoodsAddressActivity.class);
-                                intent.putExtra("invoice", mClientAddressList.get(position));
-                                startActivity(intent);
+                            if (Contants.CHOOSE_MODEL_SIZE == 14){
+                                setResult(INVOICE_ADDRESS_REQUEST, intent);
                             }
+                            finish();
                         }
                     });
                     break;

@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
+import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.ItemGridBean;
 import com.rainwood.eurobusiness.domain.OrderListBean;
 import com.rainwood.eurobusiness.domain.PressBean;
@@ -62,6 +63,8 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
     private ClearEditText searchContent;        // 搜索框
     @ViewById(R.id.iv_new)
     private ImageView newOreder;                // 新建订单
+    @ViewById(R.id.iv_screen)
+    private ImageView screen;
     @ViewById(R.id.gv_order)
     private MeasureGridView orderPay;           // 订单状态、订单支付
     @ViewById(R.id.tv_print)
@@ -95,7 +98,21 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
         newOreder.setOnClickListener(this);
         print.setOnClickListener(this);
         screening.setOnClickListener(this);
+        if (Contants.CHOOSE_MODEL_SIZE == 106) {         // 批发商端
+            newOreder.setVisibility(View.GONE);
+            screen.setVisibility(View.VISIBLE);
+            screening.setVisibility(View.GONE);
+        }
+        if (Contants.CHOOSE_MODEL_SIZE == 4) {           // 门店端
+            newOreder.setVisibility(View.VISIBLE);
+            screen.setVisibility(View.GONE);
+            screening.setVisibility(View.VISIBLE);
+        }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         // request
         showLoading("loading");
         RequestPost.getOrderList("", "", "", "", this);
@@ -184,8 +201,8 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                     cancel.setOnClickListener(v -> customDialog.dismiss());
                     Button confirm = view.findViewById(R.id.btn_confirm);
                     confirm.setOnClickListener(v -> {
-                        // toast("确定");
-                        toast("打印方式：" + print.getMethod());
+                        // 打印方式默认是A4
+                        toast("打印方式：" + (print.getMethod() == null ? "A4" : print.getMethod()));
                     });
                     break;
                 case INITIAL_SIZE:

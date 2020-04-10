@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -50,7 +51,7 @@ public class ChooseParamsAdapter extends BaseAdapter {
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = LayoutInflater.from(mContext).inflate(R.layout.item_choose_params, parent, false);
-            holder.rl_item = convertView.findViewById(R.id.rl_item);
+            holder.fl_item = convertView.findViewById(R.id.fl_item);
             holder.tv_text = convertView.findViewById(R.id.tv_text);
             holder.iv_checked = convertView.findViewById(R.id.iv_checked);
             convertView.setTag(holder);
@@ -59,15 +60,15 @@ public class ChooseParamsAdapter extends BaseAdapter {
         }
         holder.tv_text.setText(getItem(position).getTitle());
         if (getItem(position).isChoose()) {
-            holder.rl_item.setBackgroundResource(R.drawable.shape_red65_4);
+            holder.fl_item.setBackgroundResource(R.drawable.shape_red65_4);
             holder.iv_checked.setImageResource(R.drawable.ic_icon_choice);
         } else {
-            holder.rl_item.setBackgroundResource(R.drawable.shape_gray05_4);
+            holder.fl_item.setBackgroundResource(R.drawable.shape_gray05_4);
             holder.iv_checked.setImageResource(R.drawable.ic_icon_choice2);
         }
 
         // 点击事件
-        holder.rl_item.setOnClickListener(v -> {
+        holder.fl_item.setOnClickListener(v -> {
             onClickItem.onClickItem(position);
             notifyDataSetChanged();
         });
@@ -85,7 +86,7 @@ public class ChooseParamsAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
-        private RelativeLayout rl_item;
+        private FrameLayout fl_item;
         private TextView tv_text;
         private ImageView iv_checked;
     }

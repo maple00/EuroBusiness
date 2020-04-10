@@ -3,6 +3,8 @@ package com.rainwood.eurobusiness.request;
 import android.util.Log;
 
 import com.rainwood.eurobusiness.common.Contants;
+import com.rainwood.eurobusiness.domain.ISpecialBean;
+import com.rainwood.eurobusiness.okhttp.JsonParser;
 import com.rainwood.eurobusiness.okhttp.OkHttp;
 import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.okhttp.RequestParams;
@@ -17,6 +19,13 @@ import java.util.List;
  */
 public final class RequestPost {
 
+    // 获取首页轮播图
+    public static void getBannerlist(OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=getBannerlist", params, listener);
+    }
+
     // 退货管理
 
     /**
@@ -29,6 +38,7 @@ public final class RequestPost {
      */
     public static void returnGoodsList(String classify, String workFlow, String refundNo, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("classify", classify);
         params.add("workFlow", workFlow);
         params.add("refundNo", refundNo);
@@ -44,6 +54,7 @@ public final class RequestPost {
      */
     public static void returnGoodsDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getRefundOrderInfo", params, listener);
     }
@@ -53,6 +64,7 @@ public final class RequestPost {
      */
     public static void saleTotal(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/statistics.php?type=getTotal", params, listener);
     }
 
@@ -61,6 +73,7 @@ public final class RequestPost {
      */
     public static void saleRanking(String type, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("type", type);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/statistics.php?type=getSaleRank", params, listener);
     }
@@ -70,6 +83,7 @@ public final class RequestPost {
      */
     public static void UnPaylist(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/statistics.php?type=getPayclist", params, listener);
     }
 
@@ -78,6 +92,7 @@ public final class RequestPost {
      */
     public static void UnRecList(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/statistics.php?type=getReclist", params, listener);
     }
 
@@ -92,6 +107,7 @@ public final class RequestPost {
      */
     public static void getClientList(String name, String kehuTypeId, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("name", name);
         params.add("kehuTypeId", kehuTypeId);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getClientlist", params, listener);
@@ -104,6 +120,7 @@ public final class RequestPost {
      */
     public static void getClientTypeList(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getKehuTypelist", params, listener);
     }
 
@@ -115,6 +132,7 @@ public final class RequestPost {
      */
     public static void getClientDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getClientInfo", params, listener);
     }
@@ -127,6 +145,7 @@ public final class RequestPost {
      */
     public static void getClientInvoicelist(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getClientInvoicelist", params, listener);
     }
@@ -139,6 +158,7 @@ public final class RequestPost {
      */
     public static void clearInvoice(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=delClientInvoice", params, listener);
     }
@@ -151,6 +171,7 @@ public final class RequestPost {
      */
     public static void getClientAddresslist(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getClientAddresslist", params, listener);
     }
@@ -163,6 +184,7 @@ public final class RequestPost {
      */
     public static void clearClientAddress(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=delClientAddress", params, listener);
     }
@@ -176,6 +198,7 @@ public final class RequestPost {
      */
     public static void setDefaultAddress(String type, String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("type", type);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=setDefaultAddress", params, listener);
@@ -186,6 +209,7 @@ public final class RequestPost {
      */
     public static void getClientManagerTypeList(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getKehuTypelist", params, listener);
     }
 
@@ -194,6 +218,7 @@ public final class RequestPost {
      */
     public static void clearCustomType(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=delKehuType", params, listener);
     }
@@ -206,6 +231,7 @@ public final class RequestPost {
      */
     public static void getClientTypeDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getKehuTypeInfo", params, listener);
     }
@@ -221,6 +247,7 @@ public final class RequestPost {
      */
     public static void clientTypeEdit(String id, String name, String discount, String list, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=kehuTypeEdit", params, listener);
     }
@@ -238,6 +265,7 @@ public final class RequestPost {
      */
     public static void getInventoryOut(String classify, String goodsName, String storeId, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("classify", classify);
         params.add("goodsName", goodsName);
         params.add("storeId", storeId);
@@ -254,6 +282,7 @@ public final class RequestPost {
      */
     public static void getInventoryIn(String classify, String goodsName, String storeId, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("classify", classify);
         params.add("goodsName", goodsName);
         params.add("storeId", storeId);
@@ -268,6 +297,7 @@ public final class RequestPost {
      */
     public static void getStockChecklist(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getInventoryMxInfo", params, listener);
     }
@@ -283,6 +313,7 @@ public final class RequestPost {
      */
     public static void getStockChecklist(String workFlow, String goodsName, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("workFlow", workFlow);
         params.add("goodsName", goodsName);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getStockChecklist", params, listener);
@@ -296,6 +327,7 @@ public final class RequestPost {
      */
     public static void getInventoryInfo(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getInventoryInfo", params, listener);
     }
@@ -309,6 +341,7 @@ public final class RequestPost {
      */
     public static void getAllStock(String keyWord, String barCode, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("keyWord", keyWord);
         params.add("barCode", barCode);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getAllStock", params, listener);
@@ -323,6 +356,7 @@ public final class RequestPost {
      */
     public static void getStockDetail(String id, String barCode, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("barCode", barCode);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getStockInfo", params, listener);
@@ -344,6 +378,7 @@ public final class RequestPost {
     public static void getPurchaseOrderlist(String classify, String orderNo, String goodsName, String workFlow,
                                             String startDate, String endDate, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("classify", classify);
         params.add("orderNo", orderNo);
         params.add("goodsName", goodsName);
@@ -361,8 +396,20 @@ public final class RequestPost {
      */
     public static void getPurchaseOrderDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("orderNo", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getPurchaseOrderInfo", params, listener);
+    }
+
+    /**
+     * 新建采购单页面数据
+     *
+     * @param listener
+     */
+    public static void newPurchaseInfo(OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=newOrderPage", params, listener);
     }
 
     /**
@@ -373,6 +420,7 @@ public final class RequestPost {
      */
     public static void getRefundOrder(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getRefundPage", params, listener);
     }
@@ -389,6 +437,7 @@ public final class RequestPost {
      */
     public static void refundPurchaseOrder(String id, String num, String skuId, String text, String freightMoney, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("num", num);
         params.add("skuId", skuId);
@@ -402,6 +451,7 @@ public final class RequestPost {
      */
     public static void inStockEdit(String id, String num, String text, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("num", num);
         params.add("text", text);
@@ -416,6 +466,7 @@ public final class RequestPost {
      */
     public static void getInStockPage(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getInStockPage", params, listener);
     }
@@ -433,6 +484,7 @@ public final class RequestPost {
      */
     public static void getGoodsList(String type, String state, String storelist, List<String> classifylist, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("type", type);
         params.add("state", state);
         params.add("storelist", storelist);
@@ -451,6 +503,7 @@ public final class RequestPost {
      */
     public static void onSaleGoods(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=onSaleGoods", params, listener);
     }
@@ -463,6 +516,7 @@ public final class RequestPost {
      */
     public static void getGoodsDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getGoodsInfo", params, listener);
     }
@@ -474,6 +528,7 @@ public final class RequestPost {
      */
     public static void getAllGoodsType(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getGoodsType", params, listener);
     }
 
@@ -484,6 +539,7 @@ public final class RequestPost {
      */
     public static void newGoodsTypeOne(String id, String name, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("name", name);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=newGoodsTypeOne", params, listener);
@@ -497,6 +553,7 @@ public final class RequestPost {
      */
     public static void changeGoodsType(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=changeGoodsType", params, listener);
     }
@@ -509,6 +566,7 @@ public final class RequestPost {
      */
     public static void delGoodsType(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=delGoodsType", params, listener);
     }
@@ -523,6 +581,7 @@ public final class RequestPost {
      */
     public static void newGoodsTypeChild(String type, String id, String name, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("name", name);
         params.add("type", type);
@@ -536,6 +595,7 @@ public final class RequestPost {
      */
     public static void getGoodsType(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getNewGoodsType", params, listener);
     }
 
@@ -547,6 +607,7 @@ public final class RequestPost {
      */
     public static void getGoodsTypeTwo(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         Log.d("sxs", "id ======== " + id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getNewGoodsTypeTwo", params, listener);
@@ -561,6 +622,7 @@ public final class RequestPost {
      */
     public static void getStorelist(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getStorelist", params, listener);
     }
 
@@ -572,6 +634,7 @@ public final class RequestPost {
      */
     public static void getStoreDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/store.php?type=getStoreInfo", params, listener);
     }
@@ -584,6 +647,7 @@ public final class RequestPost {
      */
     public static void delStore(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/store.php?type=delStore", params, listener);
     }
@@ -611,6 +675,7 @@ public final class RequestPost {
                                   String password, String email, String tel, String region, String address,
                                   String companyTaxNum, String taxNum, String contactName, String text, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("name", name);
         params.add("adDutyId", adDutyId);
@@ -635,6 +700,7 @@ public final class RequestPost {
      */
     public static void newStorePage(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/store.php?type=newStorePage", params, listener);
     }
 
@@ -652,6 +718,7 @@ public final class RequestPost {
      */
     public static void getOrderList(String type, String payType, String workFlow, String keyWord, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("type", type);
         params.add("payType", payType);
         params.add("workFlow", workFlow);
@@ -667,6 +734,7 @@ public final class RequestPost {
      */
     public static void getBuyCarDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getBuyCarInfo", params, listener);
     }
@@ -681,6 +749,7 @@ public final class RequestPost {
      */
     public static void changeBuyCarWorkFlow(String id, String workFlow, String payType, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("workFlow", workFlow);
         params.add("payType", payType);
@@ -695,6 +764,7 @@ public final class RequestPost {
      */
     public static void getBuyCarRefundPage(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getBuyCarRefundPage", params, listener);
     }
@@ -710,6 +780,7 @@ public final class RequestPost {
      */
     public static void commitBuyCarRefundOrder(String id, String num, String text, String freightMoney, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("num", num);
         params.add("text", text);
@@ -718,12 +789,26 @@ public final class RequestPost {
     }
 
     /**
+     * 新建订单页面数据
+     *
+     * @param listener
+     */
+    public static void newBuyCarPage(OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=newBuyCarPage", params, listener);
+    }
+
+    // 个人中心
+
+    /**
      * 个人中心
      *
      * @param listener
      */
     public static void getPersonalInfo(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=getPerson", params, listener);
     }
 
@@ -734,6 +819,7 @@ public final class RequestPost {
      */
     public static void storeOrInvoice(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=getStoreInfo", params, listener);
     }
 
@@ -746,6 +832,7 @@ public final class RequestPost {
      */
     public static void getVerifyCode(String tel, String type, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("tel", tel);
         params.add("type", type);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/login.php?type=getCode", params, listener);
@@ -758,6 +845,7 @@ public final class RequestPost {
      */
     public static void modifyPwd(String prove, String newPas, String surePas, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("prove", prove);
         params.add("newPas", newPas);
         params.add("surePas", surePas);
@@ -769,6 +857,7 @@ public final class RequestPost {
      */
     public static void helpCenter(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=getHelp", params, listener);
     }
 
@@ -782,6 +871,7 @@ public final class RequestPost {
      */
     public static void warnStockList(String keyWord, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("keyWord", keyWord);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getWarnStocklist", params, listener);
     }
@@ -794,6 +884,7 @@ public final class RequestPost {
      */
     public static void warnStockDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getWarnStockInfo", params, listener);
     }
@@ -809,6 +900,7 @@ public final class RequestPost {
      */
     public static void commitChargeOrder(String skuId, String num, String text, String deliveryDate, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("skuId", skuId);
         params.add("num", num);
         params.add("text", text);
@@ -826,6 +918,7 @@ public final class RequestPost {
      */
     public static void getSupplierlist(String name, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("name", name);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/supplier.php?type=getSupplierlist", params, listener);
     }
@@ -837,6 +930,7 @@ public final class RequestPost {
      */
     public static void newSupplierPage(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/supplier.php?type=newSupplierPage", params, listener);
     }
 
@@ -848,6 +942,7 @@ public final class RequestPost {
      */
     public static void getSupplierDetail(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/supplier.php?type=getSupplierInfo", params, listener);
     }
@@ -869,6 +964,7 @@ public final class RequestPost {
     public static void supplierEdit(String id, String name, String tel, String chargeNamem, String bankNum,
                                     String email, String area, String address, String payType, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("name", name);
         params.add("tel", tel);
@@ -889,6 +985,7 @@ public final class RequestPost {
      */
     public static void delSupplier(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/supplier.php?type=delSupplier", params, listener);
     }
@@ -903,6 +1000,7 @@ public final class RequestPost {
      */
     public static void loginIn(String userName, String pwd, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("userName", userName);
         params.add("pwd", pwd);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/login.php?type=loginIn", params, listener);
@@ -916,6 +1014,7 @@ public final class RequestPost {
      */
     public static void compareCode(String prove, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("prove", prove);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/login.php?type=compareCode", params, listener);
     }
@@ -929,6 +1028,7 @@ public final class RequestPost {
      */
     public static void resetPwd(String newPas, String surePas, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("newPas", newPas);
         params.add("surePas", surePas);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/login.php?type=changePwd", params, listener);
@@ -942,6 +1042,7 @@ public final class RequestPost {
      */
     public static void callPlat(String pwd, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("pwd", pwd);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=callPlat", params, listener);
     }
@@ -953,6 +1054,7 @@ public final class RequestPost {
      */
     public static void getNewGoodsPage(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getNewGoodsPage", params, listener);
     }
 
@@ -984,6 +1086,7 @@ public final class RequestPost {
                                      String retailPrice, String startNum, String isTax, String isPromotion, String startDate,
                                      String endDate, String promotionPrice, String discount, List<File> goodsWinAll, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("type", type);
         params.add("name", name);
@@ -1004,7 +1107,6 @@ public final class RequestPost {
         /*for (int i = 0; i < ListUtils.getSize(goodsWinAll); i++) {
             params.add("goodsWinAll["+ i +"]", goodsWinAll.get(i));
         }*/
-
         // params.add("goodsWinAll", goodsWinAll.get(0));
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=goodsInfoEdit", params, listener);
     }
@@ -1017,6 +1119,7 @@ public final class RequestPost {
      */
     public static void getGoodsSkulist(String id, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getGoodsSkulist", params, listener);
     }
@@ -1028,12 +1131,24 @@ public final class RequestPost {
      */
     public static void getGoodsSizeColor(OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getGoodsSizeColor", params, listener);
     }
 
-    //
+    /**
+     * 商品规格新建或编辑
+     *
+     * @param id
+     * @param goodsId
+     * @param goodsSize
+     * @param goodsColor
+     * @param tradePrice
+     * @param iowerLimit
+     * @param listener
+     */
     public static void goodsSkuEdit(String id, String goodsId, String goodsSize, String goodsColor, String tradePrice, String iowerLimit, OnHttpListener listener) {
         RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
         params.add("id", id);
         params.add("goodsId", goodsId);
         params.add("goodsSize", goodsSize);
@@ -1041,5 +1156,103 @@ public final class RequestPost {
         params.add("tradePrice", tradePrice);
         params.add("iowerLimit", iowerLimit);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=goodsSkuEdit", params, listener);
+    }
+
+    /**
+     * 获取商品列表
+     *
+     * @param keyWord    搜索关键字
+     * @param classifyId 商品分类id
+     * @param listener
+     */
+    public static void getGoodsList(String keyWord, String classifyId, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("keyWord", keyWord);
+        params.add("classifyId", classifyId);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=getGoods", params, listener);
+    }
+
+    /**
+     * 获取商品规格
+     *
+     * @param goodsId  商品id
+     * @param listener
+     */
+    public static void getGoodsSpecial(String goodsId, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("goodsId", goodsId);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getGoodsSku", params, listener);
+    }
+
+    /**
+     * 新建采购订单
+     *
+     * @param supplierId    供应商id
+     * @param goodsId       商品id
+     * @param taxRate       税率
+     * @param deliveryDate  交付日期
+     * @param payType       支付方式
+     * @param text          备注
+     * @param discount      折扣
+     * @param newPrice      优惠单价
+     * @param discountMoney 折扣总价
+     * @param skuAll        规格数组
+     * @param listener
+     */
+    public static void purchaseOrderEdit(String supplierId, String goodsId, String taxRate, String deliveryDate,
+                                         String payType, String text, String discount, String newPrice, String discountMoney,
+                                         List<ISpecialBean> skuAll, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("supplierId", supplierId);
+        params.add("goodsId", goodsId);
+        params.add("taxRate", taxRate);
+        params.add("deliveryDate", deliveryDate);
+        params.add("text", text);
+        params.add("discount", discount);
+        params.add("newPrice", newPrice);
+        params.add("payType", payType);
+        params.add("skuAll", JsonParser.parseObject(skuAll));
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=purchaseOrderEdit", params, listener);
+    }
+
+    /**
+     * 新建订单
+     *
+     * @param khid         客户id
+     * @param goodsId      商品id
+     * @param freightMoney 运费
+     * @param discount     折扣
+     * @param newPrice     优惠单价
+     * @param text         备注
+     * @param orderTime    下单时间
+     * @param taxRate      税率
+     * @param invoiceId    发票地址id
+     * @param addressId    收货地址id
+     * @param freightType  配送方式
+     * @param skuAll       规格数组
+     * @param listener
+     */
+    public static void buyCarEdit(String khid, String goodsId, String freightMoney, String discount, String newPrice,
+                                  String text, String orderTime, String taxRate, String invoiceId, String addressId, String freightType,
+                                  List<ISpecialBean> skuAll, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("khid", khid);
+        params.add("goodsId", goodsId);
+        params.add("freightMoney", freightMoney);
+        params.add("discount", discount);
+        params.add("newPrice", newPrice);
+        params.add("text", text);
+        params.add("orderTime", orderTime);
+        params.add("taxRate", taxRate);
+        params.add("invoiceId", invoiceId);
+        params.add("addressId", addressId);
+        params.add("freightType", freightType);
+        params.add("skuAll", JsonParser.parseObject(skuAll));
+        //params.addStringBody(JsonParser.parseObject(skuAll));
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=buyCarEdit", params, listener);
     }
 }

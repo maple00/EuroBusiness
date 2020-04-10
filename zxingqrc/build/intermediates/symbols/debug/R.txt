@@ -1066,13 +1066,8 @@ int drawable notification_tile_bg 0x7f090079
 int drawable notify_panel_notification_icon_bg 0x7f09007a
 int drawable scan_light 0x7f09007b
 int drawable selector_capture_back 0x7f09007c
-int drawable selector_main_button 0x7f09007d
-int drawable shape_main_button 0x7f09007e
-int drawable shape_main_edit 0x7f09007f
-int drawable shape_main_imageview 0x7f090080
-int drawable shape_main_title 0x7f090081
-int drawable tooltip_frame_dark 0x7f090082
-int drawable tooltip_frame_light 0x7f090083
+int drawable tooltip_frame_dark 0x7f09007d
+int drawable tooltip_frame_light 0x7f09007e
 int id accessibility_action_clickable_span 0x7f0c0001
 int id accessibility_custom_action_0 0x7f0c0002
 int id accessibility_custom_action_1 0x7f0c0003

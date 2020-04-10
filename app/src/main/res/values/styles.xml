@@ -26,10 +26,6 @@
     </style>
 
     <!-- 解决启动页白屏的问题 -->
-    <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-    </style>
 
     <!-- 崩溃页面按钮样式-->
     <style name="CrashButtonStyle" parent="Widget.AppCompat.Button.Borderless">

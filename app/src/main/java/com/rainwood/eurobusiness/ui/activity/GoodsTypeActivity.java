@@ -28,7 +28,7 @@ import com.rainwood.tools.viewinject.ViewById;
 import java.util.List;
 import java.util.Map;
 
-import static com.rainwood.eurobusiness.ui.activity.NewShopActivity.GOODS_REQUEST;
+import static com.rainwood.eurobusiness.common.Contants.GOODS_REQUEST;
 
 /**
  * @Author: a797s

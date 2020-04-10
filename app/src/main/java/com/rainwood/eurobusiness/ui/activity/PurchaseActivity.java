@@ -179,7 +179,7 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 getCusTomDialog();
                 break;
             case R.id.iv_new_found:             // 新建采购订单
-                openActivity(OrderNewActivity.class);
+                openActivity(NewPurchaseActivity.class);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + v.getId());
@@ -434,7 +434,6 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
     @Override
     public void onHttpSucceed(HttpResponse result) {
         Log.d(TAG, " --- result --- " + result);
-        dismissLoading();
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
@@ -453,5 +452,6 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 toast(body.get("data"));
             }
         }
+        dismissLoading();
     }
 }

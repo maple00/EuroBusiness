@@ -355,7 +355,6 @@ public class NewSupplierActivity extends BaseActivity implements View.OnClickLis
                             break;
                         }
                     }
-
                     // request
                     showLoading("");
                     RequestPost.storerEdit(supperId, storeName, permission, account, accountTel, accountPwd, email, tel, regoin,

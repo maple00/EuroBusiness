@@ -108,11 +108,9 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                                 return;
                             }
                             dialog.dismiss();
-
                             //  request
                             showLoading("");
                             RequestPost.callPlat(content, PersonalFragment.this);
-
                             callPolice.setClickable(false);
                             callPolice.setText("正在处理报警");
                             callPolice.setBackground(getContext().getResources().getDrawable(R.drawable.shape_radius_gray_white_14));

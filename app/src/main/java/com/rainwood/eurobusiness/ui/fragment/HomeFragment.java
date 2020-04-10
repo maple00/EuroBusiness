@@ -12,6 +12,10 @@ import com.rainwood.eurobusiness.base.BaseFragment;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.ItemGridBean;
 import com.rainwood.eurobusiness.domain.ItemIndexListViewBean;
+import com.rainwood.eurobusiness.json.JsonParser;
+import com.rainwood.eurobusiness.okhttp.HttpResponse;
+import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.activity.CustomManagerActivity;
 import com.rainwood.eurobusiness.ui.activity.InventoryActivity;
 import com.rainwood.eurobusiness.ui.activity.NewShopActivity;
@@ -33,16 +37,20 @@ import com.rainwood.tools.widget.MeasureListView;
 import com.stx.xhb.xbanner.XBanner;
 import com.stx.xhb.xbanner.transformers.Transformer;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2019/12/4 15:28
  * @Desc: 门店首页碎片
  */
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements OnHttpListener {
 
     @Override
     protected int initLayout() {
@@ -50,6 +58,41 @@ public class HomeFragment extends BaseFragment {
     }
 
     private XBanner xBanner;
+    // 初始化数据
+    private List<ItemIndexListViewBean> mList;
+    /*** 门店端 数据初始化*/
+    // 模块
+    private static final String[] moduleTitle = {"管理", "数据统计"};
+    // 管理
+    private static final String[] managerText = {"新建商品", "商品管理", "采购记录",
+            "库存商品", "订单管理", "出库记录", "入库记录", "盘点记录", "预警库存", "退货管理", "客户管理"};
+    private static final int[] managerImg = {
+            R.drawable.ic_icon_new_found, R.drawable.ic_icon_commodity, R.drawable.ic_icon_purchase,
+            R.drawable.ic_icon_stock, R.drawable.ic_icon_order, R.drawable.ic_icon_out,
+            R.drawable.ic_icon_in, R.drawable.ic_icon_inventory, R.drawable.ic_icon_alert,
+            R.drawable.ic_icon_refund, R.drawable.ic_icon_customer};
+    // 数据统计
+    private static final String[] recordText = {"销售统计", "销售排行榜"};
+    private static final int[] recordImg = {R.drawable.ic_icon_sales_statistics, R.drawable.ic_icon_ranking_list};
+
+    /**
+     * 批发商端
+     */
+    private String[] salerTitles = {"管理", "记录", "数据统计"};
+    private String[] managerTitles = {"新建商品", "供应商管理", "门店管理", "商品管理", "库存商品",
+            "订单管理", "客户管理", "退货管理"};
+    private final int[] managerImgs = {
+            R.drawable.ic_icon_new_found, R.drawable.ic_icon_commodity, R.drawable.ic_icon_purchase,
+            R.drawable.ic_icon_stock, R.drawable.ic_icon_order, R.drawable.ic_icon_out,
+            R.drawable.ic_icon_in, R.drawable.ic_icon_inventory
+    };
+    private String[] recordTitles = {"采购记录", "出库记录", "入库记录", "盘点记录"};
+    private final int[] recordImgs = {
+            R.drawable.ic_icon_purchase, R.drawable.ic_icon_out, R.drawable.ic_icon_in, R.drawable.ic_icon_stock
+    };
+    private String[] dataTitles = {"销售统计", "销售排行榜", "未付款项", "未收款项"};
+    private final int[] dataImg = {
+            R.drawable.ic_icon_purchase, R.drawable.ic_icon_out, R.drawable.ic_icon_in, R.drawable.ic_icon_stock};
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -130,10 +173,12 @@ public class HomeFragment extends BaseFragment {
         }
         // 供应商端
         if (Contants.userType == 0) {                   // 供应商端
+            // 获取轮播图
+            showLoading("");
+            RequestPost.getBannerlist(this);
             StatusBarUtil.setCommonUI(getActivity(), false);
             StatusBarUtil.setStatusBarColor(getActivity(), getResources().getColor(R.color.textColor));
             xBanner.setVisibility(View.VISIBLE);
-            setXBanner();
             ItemListViewAdapter adapter = new ItemListViewAdapter(getActivity(), mList);
             final MeasureListView mListView = view.findViewById(R.id.lv_list_index);
             mListView.setAdapter(adapter);
@@ -227,7 +272,6 @@ public class HomeFragment extends BaseFragment {
                 itemGrid = new ItemGridBean();
                 itemGrid.setItemName(recordText[i]);
                 itemGrid.setImgId(recordImg[i]);
-
                 recordList.add(itemGrid);
             }
 
@@ -280,19 +324,16 @@ public class HomeFragment extends BaseFragment {
     /**
      * XBanner
      */
+    private List<String> mImgList;
     private void setXBanner() {
         // 初始化XBanner中展示的数据
-        final ArrayList<Integer> images = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            images.add(R.drawable.icon_loadding_fail);
-        }
         if (xBanner != null) {
             xBanner.removeAllViews();
         }
         // 为XBanner绑定数据
-        xBanner.setData(images, null);
+        xBanner.setData(mImgList, null);
         // XBanner适配数据
-        xBanner.setmAdapter((banner, view, position) -> Glide.with(getActivity()).load(images.get(position)).into((ImageView) view));
+        xBanner.setmAdapter((banner, view, position) -> Glide.with(getActivity()).load(mImgList.get(position)).into((ImageView) view));
         // 设置XBanner的页面切换特效
         xBanner.setPageTransformer(Transformer.Default);
         // 设置XBanner页面切换的时间，即动画时长
@@ -311,39 +352,36 @@ public class HomeFragment extends BaseFragment {
         xBanner.stopAutoPlay();
     }
 
-    // 初始化数据
-    private List<ItemIndexListViewBean> mList;
-    /*** 门店端 数据初始化*/
-    // 模块
-    private static final String[] moduleTitle = {"管理", "数据统计"};
-    // 管理
-    private static final String[] managerText = {"新建商品", "商品管理", "采购记录",
-            "库存商品", "订单管理", "出库记录", "入库记录", "盘点记录", "预警库存", "退货管理", "客户管理"};
-    private static final int[] managerImg = {
-            R.drawable.ic_icon_new_found, R.drawable.ic_icon_commodity, R.drawable.ic_icon_purchase,
-            R.drawable.ic_icon_stock, R.drawable.ic_icon_order, R.drawable.ic_icon_out,
-            R.drawable.ic_icon_in, R.drawable.ic_icon_inventory, R.drawable.ic_icon_alert,
-            R.drawable.ic_icon_refund, R.drawable.ic_icon_customer};
-    // 数据统计
-    private static final String[] recordText = {"销售统计", "销售排行榜"};
-    private static final int[] recordImg = {R.drawable.ic_icon_sales_statistics, R.drawable.ic_icon_ranking_list};
+    @Override
+    public void onHttpFailure(HttpResponse result) {
 
-    /**
-     * 批发商端
-     */
-    private String[] salerTitles = {"管理", "记录", "数据统计"};
-    private String[] managerTitles = {"新建商品", "供应商管理", "门店管理", "商品管理", "库存商品",
-            "订单管理", "客户管理", "退货管理"};
-    private final int[] managerImgs = {
-            R.drawable.ic_icon_new_found, R.drawable.ic_icon_commodity, R.drawable.ic_icon_purchase,
-            R.drawable.ic_icon_stock, R.drawable.ic_icon_order, R.drawable.ic_icon_out,
-            R.drawable.ic_icon_in, R.drawable.ic_icon_inventory
-    };
-    private String[] recordTitles = {"采购记录", "出库记录", "入库记录", "盘点记录"};
-    private final int[] recordImgs = {
-            R.drawable.ic_icon_purchase, R.drawable.ic_icon_out, R.drawable.ic_icon_in, R.drawable.ic_icon_stock
-    };
-    private String[] dataTitles = {"销售统计", "销售排行榜", "未付款项", "未收款项"};
-    private final int[] dataImg = {
-            R.drawable.ic_icon_purchase, R.drawable.ic_icon_out, R.drawable.ic_icon_in, R.drawable.ic_icon_stock};
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                // 首页轮播图
+                if (result.url().contains("wxapi/v1/index.php?type=getBannerlist")) {
+                    JSONArray imgList = JsonParser.parseJSONArrayString(JsonParser.parseJSONObject(body.get("data")).get("imglist"));
+                    if (imgList != null) {
+                        mImgList = new ArrayList<>();
+                        for (int i = 0; i < imgList.length(); i++) {
+                            try {
+                                mImgList.add(imgList.getString(i));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        // 批发商端首页轮播图
+                        setXBanner();
+                    }
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+        }
+        dismissLoading();
+    }
 }

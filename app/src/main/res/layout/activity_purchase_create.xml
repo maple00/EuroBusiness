@@ -7,10 +7,9 @@
 
     <include layout="@layout/activity_title" />
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,7 +36,7 @@
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="公司名称"
+                    android:text="供应商"
                     android:textColor="@color/fontColor"
                     android:textSize="15sp" />
 
@@ -68,69 +67,8 @@
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="收货地址"
-                    android:textColor="@color/fontColor"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tv_shipping_address"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:hint="@string/common_choose"
-                    android:textColor="@color/textColor"
-                    android:textColorHint="@color/gray_white"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:layout_width="7dp"
-                    android:layout_height="13dp"
-                    android:src="@drawable/ic_right_arrow" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="15dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:text="发票地址"
-                    android:textColor="@color/fontColor"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tv_invoice_address"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:hint="@string/common_choose"
-                    android:textColor="@color/textColor"
-                    android:textColorHint="@color/gray_white"
-                    android:textSize="15sp" />
-
-                <ImageView
-                    android:layout_width="7dp"
-                    android:layout_height="13dp"
-                    android:src="@drawable/ic_right_arrow" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="25dp"
-                android:layout_marginEnd="15dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
                     android:text="交货时间"
+
                     android:textColor="@color/fontColor"
                     android:textSize="15sp" />
 
@@ -162,6 +100,7 @@
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:text="税率"
+
                     android:textColor="@color/fontColor"
                     android:textSize="15sp" />
 
@@ -181,6 +120,20 @@
                     android:src="@drawable/ic_right_arrow" />
             </LinearLayout>
 
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:text="商品信息"
+                android:textColor="@color/white66"
+                android:textSize="13sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -192,12 +145,12 @@
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="配送方式"
+                    android:text="商品分类"
                     android:textColor="@color/fontColor"
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/tv_distribution"
+                    android:id="@+id/tv_goods_type"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -223,22 +176,24 @@
                 <TextView
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:text="备注"
+                    android:text="商品名称"
                     android:textColor="@color/fontColor"
                     android:textSize="15sp" />
 
-                <com.rainwood.tools.view.ClearEditText
-                    android:id="@+id/et_note"
-                    style="@style/EditTextStyle"
+                <TextView
+                    android:id="@+id/tv_goods_name"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:hint="@string/common_input"
-                    android:minLines="1"
+                    android:hint="@string/common_choose"
                     android:textColor="@color/textColor"
                     android:textColorHint="@color/gray_white"
                     android:textSize="15sp" />
 
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_right_arrow" />
             </LinearLayout>
 
             <View
@@ -246,29 +201,18 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginEnd="15dp"
-                android:text="商品信息"
-                android:textColor="@color/white66"
-                android:textSize="13sp" />
-
             <LinearLayout
                 android:id="@+id/ll_special_top"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="20dp"
                 android:layout_marginEnd="15dp"
                 android:background="@drawable/shape_pink_5"
                 android:orientation="horizontal"
                 android:paddingStart="15dp"
                 android:paddingTop="12dp"
                 android:paddingEnd="15dp"
-                android:paddingBottom="12dp"
-                android:visibility="gone">
+                android:paddingBottom="12dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -321,8 +265,7 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="15dp"
                 android:layout_marginBottom="15dp"
-                android:background="@drawable/shape_rectangle_stroke_red_3"
-                android:visibility="gone">
+                android:background="@drawable/shape_rectangle_stroke_red_3">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -351,68 +294,59 @@
 
             </RelativeLayout>
 
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp" />
+
             <LinearLayout
-                android:id="@+id/ll_bottom"
+                android:id="@+id/ll_discount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="35dp">
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp"
-                    android:gravity="center_vertical">
+                    android:layout_marginEnd="15dp">
 
                     <TextView
                         android:layout_width="80dp"
                         android:layout_height="wrap_content"
-                        android:text="运费"
-                        android:textColor="@color/fontColor"
+                        android:text="采购总数"
+                        android:textColor="@color/white66"
                         android:textSize="15sp" />
 
-                    <ImageView
-                        android:id="@+id/iv_package_email"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/radio_uncheck_shape"/>
-
                     <TextView
-                        android:id="@+id/tv_package_email"
+                        android:id="@+id/tv_total_num"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:textSize="15sp"
                         android:textColor="@color/textColor"
-                        android:text="包邮"/>
-                    <Space
-                        android:layout_width="30dp"
-                        android:layout_height="wrap_content"/>
+                        android:textSize="15sp" />
 
-                    <ImageView
-                        android:id="@+id/iv_not_package_email"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/radio_checked_shape"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="15dp">
 
                     <TextView
-                        android:id="@+id/tv_not_package_email"
+                        android:layout_width="80dp"
+                        android:layout_height="wrap_content"
+                        android:text="进价"
+                        android:textColor="@color/white66"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/tv_purchase_price"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:textSize="15sp"
                         android:textColor="@color/textColor"
-                        android:text="不包邮"/>
-
-                    <com.rainwood.tools.view.ClearEditText
-                        android:id="@+id/et_fee"
-                        style="@style/EditTextStyle"
-                        android:layout_width="0dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_weight="1"
-                        android:hint="请输入运费"
-                        android:layout_height="wrap_content"/>
+                        android:textSize="15sp" />
 
                 </LinearLayout>
 
@@ -426,38 +360,13 @@
                     android:divider="@color/transparent"
                     android:dividerHeight="20dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp">
-
-                    <TextView
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="VIP优惠"
-                        android:textColor="@color/fontColor"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/tv_vip_discount"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@color/textColor"
-                        android:textSize="15sp"/>
-
-                </LinearLayout>
-
                 <View
                     style="@style/HorizontalLineStyle"
                     android:layout_marginTop="20dp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical">
+                    android:layout_height="wrap_content">
 
                     <Space
                         android:layout_width="0dp"
@@ -483,10 +392,11 @@
                         android:textColor="@color/white"
                         android:textSize="14sp" />
                 </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
 </LinearLayout>

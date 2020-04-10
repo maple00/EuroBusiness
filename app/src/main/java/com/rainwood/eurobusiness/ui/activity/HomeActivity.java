@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.RadioGroup;
 
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
+import com.rainwood.eurobusiness.common.App;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.ui.fragment.HomeFragment;
 import com.rainwood.eurobusiness.ui.fragment.PersonalFragment;
@@ -131,5 +133,22 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
         Log.i("sxs","1-onDestroy");
+    }
+
+    private long mExitTime;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {         // 回到Home页
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {  // 间隔大于2s
+                toast("再按一次退出到桌面");
+                mExitTime = System.currentTimeMillis();
+                return false;
+            } else {
+                App.backHome(this);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

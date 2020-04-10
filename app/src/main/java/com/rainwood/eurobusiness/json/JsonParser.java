@@ -1,5 +1,7 @@
 package com.rainwood.eurobusiness.json;
 
+import android.text.TextUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -336,10 +338,18 @@ public class JsonParser {
                 list = (List<T>) field.getType().newInstance();
             }
             if (jsonStr != null && jsonStr.length() != 0 && !jsonStr.equals("[]") && !jsonStr.equals("null")) {
-                JSONArray jsonArray = parseJSONArrayString(jsonStr);
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                    T t = parseJSONObject(fieldParamsCls, jsonObject);
+                //正常的JSON Array
+                if (jsonStr.startsWith("[{")) {
+                    JSONArray jsonArray = parseJSONArrayString(jsonStr);
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                        T t = parseJSONObject(fieldParamsCls, jsonObject);
+                        list.add(t);
+                    }
+                }
+                //List字符串类型
+                if (jsonStr.startsWith("[") && !jsonStr.startsWith("[{")) {
+                    T t = (T) parseJSONList(jsonStr);
                     list.add(t);
                 }
             }
@@ -549,6 +559,28 @@ public class JsonParser {
         }
         sb.append("]");
         return sb.toString();
+    }
+
+    /**
+     * List类型JSON转化
+     *
+     * @param json List类型JSON字符串
+     * @return
+     */
+    public static List<String> parseJSONList(String json) {
+        if (json.startsWith("[") && !json.startsWith("[{")) {
+            List<String> list = new ArrayList<>();
+            String result = json.replace("[", "").replace("]", "");
+            String listStr[] = result.split(",");
+            for (int i = 0; i < listStr.length; i++) {
+                String item = listStr[i].replace("\"", "");
+                if (item != null && item.length() != 0) {
+                    list.add(item);
+                }
+            }
+            return list;
+        }
+        return new ArrayList<>();
     }
 
 }

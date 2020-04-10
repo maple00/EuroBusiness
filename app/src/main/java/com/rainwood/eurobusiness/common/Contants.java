@@ -70,4 +70,20 @@ public final class Contants {
      * 搜索条件
      */
     public static String SEARCH_CONDITIONS;
+
+    /**
+     * 初始化生成token
+     */
+    public static String token;
+
+    // 商品规格请求码
+    public static final int GOODS_REQUEST = 0x1002;
+    // 商品名称request
+    public static final int GOODS_NAME_REQUEST = 0x1111;
+    // 添加商品规格request
+    public static final int GOODS_SPECIAL_REQUEST = 0x1112;
+    // 收货地址选择请求码
+    public static final int ADDRESS_REQUEST_SIZE = 0x1113;
+    // 发票地址选择
+    public static final int INVOICE_ADDRESS_REQUEST = 0x1114;
 }

@@ -11,7 +11,6 @@
     <!-- 按钮按压时的颜色 -->
     <!-- 按钮禁用时的颜色 -->
     <color name="colorButtonDisable">#BBBBBB</color>
-    <color name="colorButtonPressed">#CC302C</color>
     <!-- 分割线的颜色 -->
     <color name="colorLine">#ECECEC</color>
 
@@ -29,16 +28,11 @@
     <!-- 浅白-->
     <color name="whiteF6">#F6F6F6</color>
     <color name="white66">#666666</color>
-    <color name="white20">#33FFFFFF</color>
-    <color name="white5">#0DFFFFFF</color>
     <!-- 黑色 -->
     <color name="black">#FF000000</color>
     <color name="black5">#0D000000</color>
     <color name="black00">#000000</color>
     <color name="black01">#332F40</color>
-    <color name="black45">#73000000</color>
-    <color name="black20">#33000000</color>
-    <color name="black25">#353235</color>
     <color name="black30">#00FFFFFF</color>
     <!-- 字体颜色-->
     <color name="fontColor">#999999</color>

@@ -7,11 +7,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
-import com.rainwood.eurobusiness.domain.PressBean;
+import com.rainwood.eurobusiness.domain.SkuBean;
 
 import java.util.List;
 
@@ -20,13 +19,12 @@ import java.util.List;
  * @Date: 2020/2/17
  * @Desc: 选择参数属性 ----- 颜色或者尺寸
  */
-public class SubChooseParamsAdapter extends BaseAdapter {
+public class SpecialChioceAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<PressBean> mList;
-    private int parentPos;
+    private List<SkuBean> mList;
 
-    public SubChooseParamsAdapter(Context mContext, List<PressBean> mList) {
+    public SpecialChioceAdapter(Context mContext, List<SkuBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
     }
@@ -37,7 +35,7 @@ public class SubChooseParamsAdapter extends BaseAdapter {
     }
 
     @Override
-    public PressBean getItem(int position) {
+    public SkuBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -59,8 +57,8 @@ public class SubChooseParamsAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.tv_text.setText(getItem(position).getTitle());
-        if (getItem(position).isChoose()) {
+        holder.tv_text.setText(getItem(position).getName());
+        if (getItem(position).isSelected()) {
             holder.fl_item.setBackgroundResource(R.drawable.shape_red65_4);
             holder.iv_checked.setImageResource(R.drawable.ic_icon_choice);
         } else {
@@ -70,20 +68,19 @@ public class SubChooseParamsAdapter extends BaseAdapter {
 
         // 点击事件
         holder.fl_item.setOnClickListener(v -> {
-            onClickItem.onClickItem(parentPos, position);
+            onClickItem.onClickItem(position);
             notifyDataSetChanged();
         });
         return convertView;
     }
 
     public interface OnClickItem {
-        void onClickItem(int parentPos, int position);
+        void onClickItem(int position);
     }
 
     private OnClickItem onClickItem;
 
-    public void setOnClickItem(int parentPos, OnClickItem onClickItem) {
-        this.parentPos = parentPos;
+    public void setOnClickItem(OnClickItem onClickItem) {
         this.onClickItem = onClickItem;
     }
 

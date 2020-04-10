@@ -52,6 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.rainwood.eurobusiness.common.Contants.GOODS_REQUEST;
 import static com.rainwood.eurobusiness.utils.CameraUtil.PHOTO_REQUEST_CAREMA;
 import static com.rainwood.eurobusiness.utils.CameraUtil.RESULT_CAMERA_IMAGE;
 import static com.rainwood.eurobusiness.utils.CameraUtil.uri_;
@@ -135,8 +136,7 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
     private List<String> goodsFications;
     private String[] selectors = {"相机", "相册"};
     private final int GOODS_IMAGE = 0x101;
-    // 商品规格请求码
-    public static final int GOODS_REQUEST = 0x1002;
+
     // 尺码选择请求码
     public static final int SIZE_REQUEST = 0x1003;
 

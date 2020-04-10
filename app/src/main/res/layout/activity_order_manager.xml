@@ -60,6 +60,14 @@
             android:layout_gravity="center_vertical"
             android:src="@drawable/ic_icon_new_found2" />
 
+        <ImageView
+            android:id="@+id/iv_screen"
+            android:layout_width="30dp"
+            android:padding="8dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_screening" />
+
     </LinearLayout>
 
     <LinearLayout
