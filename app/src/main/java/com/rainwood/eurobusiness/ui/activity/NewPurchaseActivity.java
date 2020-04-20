@@ -88,6 +88,8 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
     private MeasureListView discountMlv;
     @ViewById(R.id.tv_total_amount)     // 合计
     private TextView totalAmount;
+    @ViewById(R.id.tv_payType)
+    private TextView payType;
     @ViewById(R.id.ll_discount)
     private LinearLayout discountUi;
     @ViewById(R.id.tv_commit_order)
@@ -95,6 +97,7 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
     // list
     private List<String> mSupplyList;           // 供应商list
     private List<String> mTaxOptionList;        // 税率列表
+    private List<String> payTypeList;               // 付款方式
     // 选择商品
     private GoodsListBean mGoods;
     private List<SkuBean> mCopySpeciList = new ArrayList<>();
@@ -105,7 +108,7 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
     private String[] discountStr = {"优惠单价", "优惠总价", "折扣比例", "折扣总价"};
     private List<CommonUIBean> mDiscountList;
     private List<SupplierBean> mSupplierList;
-    private List<ISpecialBean> mISpecialList;
+    private static List<ISpecialBean> mISpecialList = new ArrayList<>();
 
     @Override
     protected int getLayoutId() {
@@ -151,6 +154,7 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
         addShop.setOnClickListener(this);
         tax.setOnClickListener(this);
         commitOrder.setOnClickListener(this);
+        payType.setOnClickListener(this);
     }
 
     @Override
@@ -188,6 +192,9 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
                 break;
             case R.id.tv_tax:               // 税率
                 setValue(mTaxOptionList, tax);
+                break;
+            case R.id.tv_payType:           // 付款方式
+                setValue(payTypeList, payType);
                 break;
             case R.id.tv_goods_type:        // 选择商品分类
                 Intent intent = new Intent(this, GoodsTypeActivity.class);
@@ -238,7 +245,8 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
                 // quest -- 提交订单
                 showLoading("");
                 RequestPost.purchaseOrderEdit(supplyId, mGoods.getGoodsId(), tax.getText().toString().trim(),
-                        time.getText().toString().trim(), "", "", "", "", "",
+                        time.getText().toString().trim(), payType.getText().toString().trim(),
+                        "", "", "", "",
                         mISpecialList, this);
                 break;
         }
@@ -301,7 +309,7 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
                 speciaList.get(i).setNum(num);
             }
             // 接口数据组合
-            mISpecialList = new ArrayList<>();
+            // mISpecialList = new ArrayList<>();
             for (int i = 0; i < ListUtils.getSize(speciaList); i++) {
                 ISpecialBean iSpecial = new ISpecialBean();
                 iSpecial.setSkuId(speciaList.get(i).getId());
@@ -309,7 +317,9 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
                 iSpecial.setNum(num);
                 mISpecialList.add(iSpecial);
             }
-            mCopySpeciList.addAll(speciaList);
+            if (speciaList != null) {
+                mCopySpeciList.addAll(speciaList);
+            }
             Message msg = new Message();
             msg.what = GOODS_SPECIAL_SIZE;
             mHandler.sendMessage(msg);
@@ -386,6 +396,18 @@ public final class NewPurchaseActivity extends BaseActivity implements View.OnCl
                         for (int i = 0; i < taxOption.length(); i++) {
                             try {
                                 mTaxOptionList.add(taxOption.getString(i));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    // 付款方式
+                    JSONArray payTypeArray = JsonParser.parseJSONArrayString(JsonParser.parseJSONObject(body.get("data")).get("payType"));
+                    if (payTypeArray != null) {
+                        payTypeList = new ArrayList<>();
+                        for (int i = 0; i < payTypeArray.length(); i++) {
+                            try {
+                                payTypeList.add(payTypeArray.getString(i));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

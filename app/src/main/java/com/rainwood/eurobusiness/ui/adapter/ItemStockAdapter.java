@@ -62,6 +62,7 @@ public class ItemStockAdapter extends BaseAdapter {
             holder.tv_stock_num = convertView.findViewById(R.id.tv_stock_num);
             holder.tv_status = convertView.findViewById(R.id.tv_status);
             holder.ll_item = convertView.findViewById(R.id.ll_item);
+            holder.tv_audit = convertView.findViewById(R.id.tv_audit);
             convertView.setTag(holder);
         }else {
             holder = (ViewHolder) convertView.getTag();
@@ -79,8 +80,19 @@ public class ItemStockAdapter extends BaseAdapter {
         holder.tv_stock_num.setText(Html.fromHtml("<font color=" + mContext.getResources().getColor(R.color.fontColor) + " size='12px'>盘点：</font>"
                 + "<font color=" + mContext.getResources().getColor(R.color.red100) + " size='12px'>" + getItem(position).getNum() + "</font>"));
         holder.tv_status.setText(getItem(position).getState());
-        // 点击事件
+        if ("已完成".equals(getItem(position).getState())){
+            holder.tv_audit.setVisibility(View.GONE);
+        }else {
+            if (getItem(position).getPermission() == 0){        // 批发商具有审核权限
+                holder.tv_audit.setVisibility(View.VISIBLE);
+            }else {
+                holder.tv_audit.setVisibility(View.GONE);
+            }
+        }
+
+        // 查看详情
         holder.ll_item.setOnClickListener(v -> onClickItem.onClickStockItem(position));
+
         return convertView;
     }
 
@@ -96,7 +108,7 @@ public class ItemStockAdapter extends BaseAdapter {
 
     private class ViewHolder{
         private ImageView iv_img;
-        private TextView tv_name, tv_model, tv_params, tv_ven_num, tv_stock_num, tv_status;
+        private TextView tv_name, tv_model, tv_params, tv_ven_num, tv_stock_num, tv_status, tv_audit;
         private LinearLayout ll_item;
     }
 }

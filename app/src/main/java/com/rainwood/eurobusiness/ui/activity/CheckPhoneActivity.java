@@ -1,6 +1,7 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -135,6 +136,7 @@ public class CheckPhoneActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, "===== result ========= " + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {

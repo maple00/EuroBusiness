@@ -51,13 +51,14 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
     private MeasureListView contentList;
     // handler
     private final int DEFAULT_SIZE = 0x1124;
+    private List<CustomTypeBean> mList;
+    private String[] menuLabels = {"编辑", "删除"};
 
     @Override
     protected void initView() {
         pageBack.setOnClickListener(this);
         newType.setOnClickListener(this);
         pageTitle.setText("客户分类");
-
     }
 
     @Override
@@ -72,15 +73,10 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
      * 点击编辑/删除
      */
     private void getMenuContent(int pos) {
-        // 底部选择框
         new MenuDialog.Builder(this)
-                // 设置null 表示不显示取消按钮
                 .setCancel(R.string.common_cancel)
-                // 设置点击按钮后不关闭弹窗
                 .setAutoDismiss(false)
-                // 设置不可点击
                 .setCanceledOnTouchOutside(false)
-                // 显示的数据
                 .setList(menuLabels)
                 .setListener(new MenuDialog.OnListener<String>() {
                     @Override
@@ -90,7 +86,7 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
                             case 0:
                                 //toast("编辑客户分类");  --- 分类实体
                                 Contants.CHOOSE_MODEL_SIZE = 17;
-                                Intent intent = new Intent(CustomTypeActivity.this, NewGoodsAddressActivity.class);
+                                Intent intent = new Intent(CustomTypeActivity.this, CustomCreateTypeActivity.class);
                                 intent.putExtra("typeId", mList.get(pos).getId());
                                 startActivity(intent);
                                 break;
@@ -118,8 +114,7 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.btn_new_type:
                 // toast("新增分类");
-                Contants.CHOOSE_MODEL_SIZE = 16;
-                openActivity(NewGoodsAddressActivity.class);
+                openActivity(CustomCreateTypeActivity.class);
                 break;
         }
     }
@@ -138,9 +133,6 @@ public class CustomTypeActivity extends BaseActivity implements View.OnClickList
             }
         }
     };
-
-    private List<CustomTypeBean> mList;
-    private String[] menuLabels = {"编辑", "删除"};
 
     @Override
     public void onHttpFailure(HttpResponse result) {

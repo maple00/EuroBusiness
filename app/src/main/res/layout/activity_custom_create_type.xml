@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_title" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="客户分类"
+                android:textColor="@color/white66"
+                android:textSize="14sp" />
+
+            <com.rainwood.tools.view.ClearEditText
+                android:id="@+id/cet_custom_type"
+                style="@style/EditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/common_input" />
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="折扣(%)"
+                android:textColor="@color/white66"
+                android:textSize="14sp" />
+
+            <com.rainwood.tools.view.ClearEditText
+                android:id="@+id/cet_discount"
+                style="@style/EditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/common_input" />
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="排序号"
+                android:textColor="@color/white66"
+                android:textSize="14sp" />
+
+            <com.rainwood.tools.view.ClearEditText
+                android:id="@+id/cet_order"
+                style="@style/EditTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/common_input" />
+
+            <View
+                style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp" />
+
+            <Button
+                android:id="@+id/btn_confirm"
+                style="@style/RedButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/common_confirm" />
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

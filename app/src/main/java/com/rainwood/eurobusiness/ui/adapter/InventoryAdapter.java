@@ -66,7 +66,10 @@ public class InventoryAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         // holder.iv_img.setImageResource(getItem(position).getImgPath());
-        Glide.with(convertView).load(getItem(position).getIco()).into(holder.iv_img);
+        Glide.with(convertView).load(getItem(position).getIco())
+                .error(R.drawable.icon_loadding_fail)
+                .placeholder(R.drawable.icon_loadding_fail)
+                .into(holder.iv_img);
         holder.tv_name.setText(getItem(position).getName());
         holder.tv_model.setText(getItem(position).getModel());
         holder.tv_inventory_num.setText("库存" + (getItem(position).getStock()==null ? 0 :getItem(position).getStock()) + "件");

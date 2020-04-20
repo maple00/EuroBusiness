@@ -10,14 +10,14 @@
         android:id="@+id/iv_img"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:layout_gravity="center_vertical"
-        android:scaleType="fitXY"/>
+        android:scaleType="fitXY"
+        android:src="@drawable/icon_loadding_fail" />
 
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginEnd="0dp"
         android:layout_weight="1">
 
         <TextView
@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="西装外套式系缀扣连衣裙"
             android:textColor="@color/textColor"
             android:textSize="16sp" />
 
@@ -40,6 +41,7 @@
                 android:id="@+id/tv_params"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="红色/XL"
                 android:textColor="@color/textColor"
                 android:textSize="13sp" />
 
@@ -48,6 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="18dp"
+                android:text="退货：100"
                 android:textSize="13sp" />
         </LinearLayout>
 
@@ -57,15 +60,55 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/ll_line"
             android:layout_marginTop="15dp"
+            android:text="退款：156.00€"
             android:textColor="@color/fontColor"
             android:textSize="13sp" />
-    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="top"
-        android:textSize="12sp" />
+        <TextView
+            android:id="@+id/tv_in_storage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/shape_radius_red_14"
+            android:paddingStart="18dp"
+            android:paddingTop="8dp"
+            android:layout_below="@+id/ll_line"
+            android:paddingEnd="18dp"
+            android:paddingBottom="8dp"
+            android:text="入库"
+            android:textColor="@color/red30"
+            android:textSize="12sp" />
+
+
+        <TextView
+            android:id="@+id/tv_scrap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/ll_line"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@+id/tv_in_storage"
+            android:background="@drawable/shape_radius_red_14"
+            android:paddingStart="18dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="18dp"
+            android:paddingBottom="8dp"
+            android:text="报废"
+            android:textColor="@color/red30"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/tv_name"
+            android:gravity="center|end"
+            android:text="@string/common_input"
+            android:textSize="12sp" />
+    </RelativeLayout>
 
 </LinearLayout>

@@ -1,8 +1,6 @@
 package com.rainwood.eurobusiness.ui.adapter;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +12,6 @@ import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.domain.ImageBean;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -30,7 +27,6 @@ public final class UploadImgAdapter extends BaseAdapter {
     public UploadImgAdapter(Context context, List<ImageBean> list) {
         this.mContext = context;
         this.mList = list;
-        Log.d("sxs", " -==== mList ==== " + mList.toString());
     }
 
     @Override
@@ -74,12 +70,13 @@ public final class UploadImgAdapter extends BaseAdapter {
             holder.fl_item.setFocusable(false);
             holder.fl_item.setFocusableInTouchMode(false);
 
-//            Glide.with(mContext).load(getItem(position).getPath())
-//                    .error(R.drawable.icon_loadding_fail)        //异常时候显示的图片
-//                    .placeholder(R.drawable.icon_loadding_fail) //加载成功前显示的图片
-//                    .fallback(R.drawable.icon_loadding_fail)  //url为空的时候,显示的图片
-//                    .into(holder.iv_image);
-            holder.iv_image.setImageURI(Uri.fromFile(new File(getItem(position).getPath())));
+            Glide.with(mContext)
+                    .load(getItem(position).getPath() == null ? getItem(position).getSrc() : getItem(position).getPath())
+                    .error(R.drawable.icon_loadding_fail)        //异常时候显示的图片
+                    .placeholder(R.drawable.icon_loadding_fail) //加载成功前显示的图片
+                    .fallback(R.drawable.icon_loadding_fail)  //url为空的时候,显示的图片
+                    .into(holder.iv_image);
+            // holder.iv_image.setImageURI(Uri.fromFile(new File(getItem(position).getPath())));
         }
         // 点击事件
         holder.iv_delete.setOnClickListener(v -> {

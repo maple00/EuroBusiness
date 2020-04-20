@@ -79,7 +79,7 @@ public class ItemOrderAddAdapter extends BaseAdapter {
                 SubChooseParamsAdapter paramsAdapter = new SubChooseParamsAdapter(mContext, getItem(position).getPressList());
                 holder.gv_press_list.setAdapter(paramsAdapter);
                 holder.gv_press_list.setNumColumns(4);
-                paramsAdapter.setOnClickItem(position, onClickItem);
+               // paramsAdapter.setOnClickItem(position, onClickItem);
                 break;
         }
         return convertView;

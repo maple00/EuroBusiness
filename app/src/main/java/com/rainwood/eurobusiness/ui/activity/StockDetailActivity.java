@@ -1,12 +1,20 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -24,6 +32,7 @@ import com.rainwood.eurobusiness.ui.adapter.StockDetailAdapter;
 import com.rainwood.eurobusiness.utils.ListUtils;
 import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.statusbar.StatusBarUtil;
+import com.rainwood.tools.view.ClearEditText;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
 
@@ -38,6 +47,8 @@ import java.util.Map;
  */
 public class StockDetailActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
+
+    private String mInventoryId;
 
     @Override
     protected int getLayoutId() {
@@ -57,7 +68,14 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
     // content
     @ViewById(R.id.lv_content_list)
     private MeasureListView contentList;
-
+    @ViewById(R.id.ll_audit)
+    private LinearLayout audit;
+    //
+    @ViewById(R.id.btn_rejected)
+    private Button rejected;
+    @ViewById(R.id.btn_through)
+    private Button through;
+    private PopupWindow mPopupWindow;
     private List<OrderBean> mList;
     private String[] titles = {"", ""};
     // 商品信息
@@ -70,12 +88,21 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
     @Override
     protected void initView() {
         initContext();
+        String permissionId = getIntent().getStringExtra("permissionId");
+        if ("0".equals(permissionId)){      //批发商端
+            audit.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         // request
         showLoading("loading");
-        String inventoryId = getIntent().getStringExtra("InventoryId");
-        if (inventoryId != null){
-            RequestPost.getInventoryInfo(inventoryId, this);
-        }else {
+        mInventoryId = getIntent().getStringExtra("InventoryId");
+        if (mInventoryId != null) {
+            RequestPost.getInventoryInfo(mInventoryId, this);
+        } else {
             toast("异常错误");
             dismissLoading();
         }
@@ -110,7 +137,47 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
             case R.id.iv_back:
                 finish();
                 break;
+            case R.id.btn_rejected:             // 驳回-- 驳回原因必填
+                View contentView = LayoutInflater.from(this).inflate(R.layout.dialog_refuse_inventory, null);
+                mPopupWindow = new PopupWindow(contentView,
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+                mPopupWindow.setContentView(contentView);
+                View rootView = LayoutInflater.from(this).inflate(R.layout.activity_return_goods_detail, null);
+                mPopupWindow.setAnimationStyle(R.style.IOSAnimStyle);
+                mPopupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+                backgroundAlpha(0.7f);
+                mPopupWindow.setOnDismissListener(() -> {
+                    mPopupWindow.dismiss();
+                    backgroundAlpha(1.0f);
+                });
+                ClearEditText refuseReason = contentView.findViewById(R.id.cet_refuse_reason);
+                Button cancel = contentView.findViewById(R.id.btn_cancel);
+                Button confirm = contentView.findViewById(R.id.btn_confirm);
+                cancel.setOnClickListener(v1 -> mPopupWindow.dismiss());
+                confirm.setOnClickListener(v12 -> {
+                    if (TextUtils.isEmpty(refuseReason.getText())) {
+                        toast("请输入驳回原因");
+                        return;
+                    }
+                    // TODO: 提交驳货
+                    showLoading("");
+                    RequestPost.auditInventory(mInventoryId, "refuse", refuseReason.getText().toString().trim(), this);
+                });
+
+                break;
+            case R.id.btn_through:              // 通过
+                // TODO:
+                showLoading("");
+                RequestPost.auditInventory(mInventoryId, "pass", "", this);
+                break;
         }
+    }
+
+    public void backgroundAlpha(float bgAlpha)  //阴影改变
+    {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = bgAlpha; //0.0-1.0
+        getWindow().setAttributes(lp);
     }
 
     /**
@@ -120,6 +187,8 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
         pageBack.setOnClickListener(this);
         pageBack.setImageResource(R.drawable.icon_white_page_back);
         pageTitle.setText("盘点详情");
+        rejected.setOnClickListener(this);
+        through.setOnClickListener(this);
         pageTitle.setTextColor(getResources().getColor(R.color.white));
         // 设置状态栏
         StatusBarUtil.setCommonUI(getActivity(), false);
@@ -135,10 +204,10 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
     }
 
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(){
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case INITIAL_SIZE:
                     StockDetailAdapter detailAdapter = new StockDetailAdapter(StockDetailActivity.this, mList);
                     contentList.setAdapter(detailAdapter);
@@ -161,8 +230,12 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
                 if (result.url().contains("wxapi/v1/stock.php?type=getInventoryInfo")) {
                     Map<String, String> inventoryInfo = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("inventoryInfo"));
                     status.setText(inventoryInfo.get("workFlow"));
+                    if (!"已完成".equals(inventoryInfo.get("workFlow"))) {
+                        rejected.setVisibility(View.VISIBLE);
+                        through.setVisibility(View.VISIBLE);
+                    }
                     for (int i = 0; i < ListUtils.getSize(mList); i++) {
-                        switch (i){
+                        switch (i) {
                             case 0:
                                 setValues(inventoryInfo, i, "goodsType", "goodsName", "model", "barCode", "goodsSkuName");
                                 break;
@@ -176,7 +249,15 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
                     msg.what = INITIAL_SIZE;
                     mHandler.sendMessage(msg);
                 }
-            }else {
+
+                // 审批盘点记录
+                if (result.url().contains("wxapi/v1/stock.php?type=auditInventory")) {
+                    toast(body.get("warn"));
+                    // 返回 finish
+                    finish();
+                    //  RequestPost.getInventoryInfo(mInventoryId, this);
+                }
+            } else {
                 toast(body.get("warn"));
             }
             dismissLoading();
@@ -185,6 +266,7 @@ public class StockDetailActivity extends BaseActivity implements View.OnClickLis
 
     /**
      * 赋值
+     *
      * @param inventoryInfo
      * @param i
      * @param stock

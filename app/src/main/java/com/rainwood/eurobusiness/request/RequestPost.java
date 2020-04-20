@@ -8,6 +8,7 @@ import com.rainwood.eurobusiness.okhttp.JsonParser;
 import com.rainwood.eurobusiness.okhttp.OkHttp;
 import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.okhttp.RequestParams;
+import com.rainwood.eurobusiness.utils.ListUtils;
 
 import java.io.File;
 import java.util.List;
@@ -36,11 +37,14 @@ public final class RequestPost {
      * @param refundNo 退货单号
      * @param listener listener
      */
-    public static void returnGoodsList(String classify, String workFlow, String refundNo, OnHttpListener listener) {
+    public static void returnGoodsList(String page, String classify, String workFlow, String refundNo, String starTime, String endTime, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("classify", classify);
+        params.add("page", page);
         params.add("workFlow", workFlow);
+        params.add("starTime", starTime);
+        params.add("endTime", endTime);
         params.add("refundNo", refundNo);
         Log.d("sxs", " - classify: " + classify + " - workFlow: " + workFlow + " - refundNo: " + refundNo);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getRefundOrder", params, listener);
@@ -118,9 +122,11 @@ public final class RequestPost {
      *
      * @param listener
      */
-    public static void getClientTypeList(OnHttpListener listener) {
+    public static void getClientTypeList(String name, String kehuTypeId, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
+        params.add("kehuTypeId", kehuTypeId);
+        params.add("name", name);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getKehuTypelist", params, listener);
     }
 
@@ -138,6 +144,17 @@ public final class RequestPost {
     }
 
     /**
+     * 新增客户页面
+     *
+     * @param listener
+     */
+    public static void newClientPage(OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=newClientPage", params, listener);
+    }
+
+    /**
      * 获取发票地址列表
      *
      * @param id       客户id
@@ -148,6 +165,17 @@ public final class RequestPost {
         params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getClientInvoicelist", params, listener);
+    }
+
+    /**
+     * 获取国家地区列表
+     *
+     * @param listener
+     */
+    public static void getRegion(OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getRegion", params, listener);
     }
 
     /**
@@ -202,6 +230,97 @@ public final class RequestPost {
         params.add("id", id);
         params.add("type", type);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=setDefaultAddress", params, listener);
+    }
+
+    /**
+     * 发票地址新增/编辑
+     *
+     * @param id           发票信息ID 更新时传
+     * @param khid         客户id
+     * @param name         公司名称
+     * @param paragraph    税号
+     * @param email        邮箱
+     * @param consignee    联系人
+     * @param consigneeTel 联系电话
+     * @param region       国家/地区
+     * @param addressMx    详细地址
+     * @param isDefault    是否默认 1：是 0：不是
+     * @param listener
+     */
+    public static void clientInvoiceEdit(String id, String khid, String name, String paragraph, String email,
+                                         String consignee, String consigneeTel, String region, String addressMx,
+                                         String isDefault, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        params.add("khid", khid);
+        params.add("name", name);
+        params.add("paragraph", paragraph);
+        params.add("email", email);
+        params.add("consignee", consignee);
+        params.add("consigneeTel", consigneeTel);
+        params.add("region", region);
+        params.add("addressMx", addressMx);
+        params.add("isDefault", isDefault);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=clientInvoiceEdit", params, listener);
+    }
+
+    /**
+     * 新增/编辑收货地址
+     *
+     * @param id          收货地址ID 更新时传
+     * @param khid        客户id
+     * @param companyName 公司名称
+     * @param contactName 联系人
+     * @param contactTel  联系人电话
+     * @param region      国家/地区
+     * @param addressMx   详细地址
+     * @param isDefault   是否默认 1：是 0：不是
+     * @param listener
+     */
+    public static void clientAddressEdit(String id, String khid, String companyName, String contactName, String contactTel,
+                                         String region, String addressMx, String isDefault, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        params.add("khid", khid);
+        params.add("companyName", companyName);
+        params.add("contactName", contactName);
+        params.add("contactTel", contactTel);
+        params.add("region", region);
+        params.add("addressMx", addressMx);
+        params.add("isDefault", isDefault);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=clientAddressEdit", params, listener);
+    }
+
+    /**
+     * 新增/编辑客户
+     *
+     * @param id          客户ID
+     * @param name        联系人
+     * @param tel         联系人电话
+     * @param payType     支付方式
+     * @param payTerm     支付期限
+     * @param companyName 公司名称
+     * @param kehuTypeId  客户分类id
+     * @param text        备注
+     * @param email       邮箱
+     * @param listener
+     */
+    public static void clientEdit(String id, String name, String tel, String payType, String payTerm, String companyName,
+                                  String kehuTypeId, String text, String email, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        params.add("name", name);
+        params.add("tel", tel);
+        params.add("payType", payType);
+        params.add("payTerm", payTerm);
+        params.add("companyName", companyName);
+        params.add("kehuTypeId", kehuTypeId);
+        params.add("text", text);
+        params.add("email", email);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=clientEdit", params, listener);
     }
 
     /**
@@ -263,10 +382,14 @@ public final class RequestPost {
      * @param storeId   门店ID
      * @param listener
      */
-    public static void getInventoryOut(String classify, String goodsName, String storeId, OnHttpListener listener) {
+    public static void getInventoryOut(String page, String classify, String goodsName, String storeId,
+                                       String starTime, String endTime, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("classify", classify);
+        params.add("page", page);
+        params.add("starTime", starTime);
+        params.add("endTime", endTime);
         params.add("goodsName", goodsName);
         params.add("storeId", storeId);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getInventoryOut", params, listener);
@@ -280,10 +403,14 @@ public final class RequestPost {
      * @param storeId   门店ID
      * @param listener
      */
-    public static void getInventoryIn(String classify, String goodsName, String storeId, OnHttpListener listener) {
+    public static void getInventoryIn(String page, String classify, String goodsName, String storeId,
+                                      String starTime, String endTime, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("classify", classify);
+        params.add("starTime", starTime);
+        params.add("endTime", endTime);
+        params.add("page", page);
         params.add("goodsName", goodsName);
         params.add("storeId", storeId);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getInventoryIn", params, listener);
@@ -311,10 +438,11 @@ public final class RequestPost {
      * @param goodsName 商品名称
      * @param listener
      */
-    public static void getStockChecklist(String workFlow, String goodsName, OnHttpListener listener) {
+    public static void getStockChecklist(String page, String workFlow, String goodsName, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("workFlow", workFlow);
+        params.add("page", page);
         params.add("goodsName", goodsName);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getStockChecklist", params, listener);
     }
@@ -333,16 +461,66 @@ public final class RequestPost {
     }
 
     /**
+     * 审批盘点库存
+     *
+     * @param id
+     * @param state
+     * @param text
+     * @param listener
+     */
+    public static void auditInventory(String id, String state, String text, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        params.add("state", state);
+        params.add("text", text);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=auditInventory", params, listener);
+    }
+
+    /**
+     * 获取盘点下的规格信息
+     *
+     * @param id       商品id
+     * @param listener
+     */
+    public static void getInventoryGoodsSku(String id, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("goodsId", id);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getInventoryGoodsSku", params, listener);
+    }
+
+    /**
+     * 新建盘存
+     *
+     * @param goodsSkuId 规格id
+     * @param goodsId    商品id
+     * @param num        盘存数量
+     * @param text       备注
+     * @param listener
+     */
+    public static void inventoryEdit(String goodsSkuId, String goodsId, String num, String text, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("goodsSkuId", goodsSkuId);
+        params.add("goodsId", goodsId);
+        params.add("num", num);
+        params.add("text", text);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=inventoryEdit", params, listener);
+    }
+
+    /**
      * 获取库存列表
      *
      * @param keyWord  搜索关键词
      * @param barCode  商品条码
      * @param listener
      */
-    public static void getAllStock(String keyWord, String barCode, OnHttpListener listener) {
+    public static void getAllStock(String page, String keyWord, String barCode, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("keyWord", keyWord);
+        params.add("page", page);
         params.add("barCode", barCode);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getAllStock", params, listener);
     }
@@ -375,10 +553,11 @@ public final class RequestPost {
      * @param endDate   结束日期
      * @param listener
      */
-    public static void getPurchaseOrderlist(String classify, String orderNo, String goodsName, String workFlow,
+    public static void getPurchaseOrderlist(String page, String classify, String orderNo, String goodsName, String workFlow,
                                             String startDate, String endDate, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
+        params.add("page", page);
         params.add("classify", classify);
         params.add("orderNo", orderNo);
         params.add("goodsName", goodsName);
@@ -386,6 +565,19 @@ public final class RequestPost {
         params.add("startDate", startDate);
         params.add("endDate", endDate);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getPurchaseOrderlist", params, listener);
+    }
+
+    /**
+     * 获取门店入库明细
+     *
+     * @param id
+     * @param listener
+     */
+    public static void getInStoreMx(String id, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("orderNo", id);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getInStoreMx", params, listener);
     }
 
     /**
@@ -423,6 +615,36 @@ public final class RequestPost {
         params.add("token", Contants.token);
         params.add("id", id);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getRefundPage", params, listener);
+    }
+
+    /**
+     * 删除退货订单
+     *
+     * @param id       退货订单id
+     * @param listener
+     */
+    public static void delRefundOrder(String id, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=delRefundOrder", params, listener);
+    }
+
+    /**
+     * 批发商端的商品退货驳回
+     *
+     * @param id
+     * @param state
+     * @param text
+     * @param listener
+     */
+    public static void auditingPurchaseOrder(String id, String state, String text, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        params.add("state", state);
+        params.add("text", text);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=auditingPurchaseOrder", params, listener);
     }
 
     /**
@@ -482,11 +704,12 @@ public final class RequestPost {
      * @param classifylist 分类筛选ID数组
      * @param listener
      */
-    public static void getGoodsList(String type, String state, String storelist, List<String> classifylist, OnHttpListener listener) {
+    public static void getGoodsList(String type, String state, String page, String storelist, List<String> classifylist, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("type", type);
         params.add("state", state);
+        params.add("page", page);
         params.add("storelist", storelist);
         for (int i = 0; i < classifylist.size(); i++) {
             params.add("classifylist[" + i + "]", classifylist.get(i));
@@ -686,7 +909,7 @@ public final class RequestPost {
         params.add("tel", tel);
         params.add("region", region);
         params.add("address", address);
-        params.add("companyTaxNum", companyTaxNum);
+        params.add("comapnyTaxNum", companyTaxNum);
         params.add("taxNum", taxNum);
         params.add("contactName", contactName);
         params.add("text", text);
@@ -694,7 +917,7 @@ public final class RequestPost {
     }
 
     /**
-     * 门店新建获取地区列表和权限
+     * 新建门店数据
      *
      * @param listener
      */
@@ -702,6 +925,7 @@ public final class RequestPost {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/store.php?type=newStorePage", params, listener);
+
     }
 
 
@@ -716,13 +940,17 @@ public final class RequestPost {
      * @param keyWord
      * @param listener
      */
-    public static void getOrderList(String type, String payType, String workFlow, String keyWord, OnHttpListener listener) {
+    public static void getOrderList(String page, String type, String payType, String workFlow,
+                                    String keyWord, String startTime, String endTime, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("type", type);
         params.add("payType", payType);
+        params.add("page", page);
         params.add("workFlow", workFlow);
         params.add("keyWord", keyWord);
+        params.add("startTime", startTime);
+        params.add("endTime", endTime);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getBuyCarlist", params, listener);
     }
 
@@ -869,10 +1097,11 @@ public final class RequestPost {
      * @param keyWord  搜索关键字
      * @param listener
      */
-    public static void warnStockList(String keyWord, OnHttpListener listener) {
+    public static void warnStockList(String page, String keyWord, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("keyWord", keyWord);
+        params.add("page", page);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/stock.php?type=getWarnStocklist", params, listener);
     }
 
@@ -998,10 +1227,11 @@ public final class RequestPost {
      * @param pwd      密码
      * @param listener
      */
-    public static void loginIn(String userName, String pwd, OnHttpListener listener) {
+    public static void loginIn(String userName, String pwd, String type, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("token", Contants.token);
         params.add("userName", userName);
+        params.add("type", type);
         params.add("pwd", pwd);
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/login.php?type=loginIn", params, listener);
     }
@@ -1104,9 +1334,9 @@ public final class RequestPost {
         params.add("endDate", endDate);
         params.add("promotionPrice", promotionPrice);
         params.add("discount", discount);
-        /*for (int i = 0; i < ListUtils.getSize(goodsWinAll); i++) {
-            params.add("goodsWinAll["+ i +"]", goodsWinAll.get(i));
-        }*/
+        for (int i = 0; i < ListUtils.getSize(goodsWinAll); i++) {
+            params.add("goodsWinAll[" + i + "]", goodsWinAll.get(i));
+        }
         // params.add("goodsWinAll", goodsWinAll.get(0));
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/goods.php?type=goodsInfoEdit", params, listener);
     }
@@ -1213,6 +1443,7 @@ public final class RequestPost {
         params.add("text", text);
         params.add("discount", discount);
         params.add("newPrice", newPrice);
+        params.add("discountMoney", discountMoney);
         params.add("payType", payType);
         params.add("skuAll", JsonParser.parseObject(skuAll));
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=purchaseOrderEdit", params, listener);
@@ -1255,4 +1486,158 @@ public final class RequestPost {
         //params.addStringBody(JsonParser.parseObject(skuAll));
         OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=buyCarEdit", params, listener);
     }
+
+    /**
+     * 退出登录
+     *
+     * @param listener
+     */
+    public static void loginOut(OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/login.php?type=loginOut", params, listener);
+    }
+
+    /**
+     * 修改个人中心头像
+     *
+     * @param img
+     * @param listener
+     */
+    public static void changeTouxiang(File img, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("img", img);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=changeTouxiang", params, listener);
+    }
+
+    /**
+     * 修改昵称
+     *
+     * @param listener
+     */
+    public static void changeNickName(String nickName, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("nickName", nickName);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=changeNickName", params, listener);
+    }
+
+    /**
+     * 消息列表
+     *
+     * @param page     页码 从0开始
+     * @param listener
+     */
+    public static void getMessageList(String page, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("page", page);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/index.php?type=getMessagelist", params, listener);
+    }
+
+    /**
+     * 新增客户页面
+     *
+     * @param id
+     * @param name
+     * @param discount
+     * @param list
+     * @param listener
+     */
+    public static void customTypeEdit(String id, String name, String discount, String list, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        params.add("name", name);
+        params.add("discount", discount);
+        params.add("list", list);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=kehuTypeEdit", params, listener);
+    }
+
+    /**
+     * 获取客户分类详情
+     *
+     * @param id
+     * @param listener
+     */
+    public static void getCustomTypeDetail(String id, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/client.php?type=getKehuTypeInfo", params, listener);
+    }
+
+    /**
+     * 确认收款
+     *
+     * @param id
+     * @param listener
+     */
+    public static void changePurchaseOrderState(String id, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=changePurchaseOrderState", params, listener);
+    }
+
+    /**
+     * 订单入库或者报废
+     *
+     * @param id
+     * @param state
+     * @param num
+     * @param text
+     * @param listener
+     */
+    public static void refundOrderInStock(String id, String state, String num, String text, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("id", id);
+        params.add("state", state);
+        params.add("num", num);
+        params.add("text", text);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=refundOrderInStock", params, listener);
+    }
+
+    /**
+     * 补货同意之后的采购单页面
+     * @param orderNo
+     * @param listener
+     */
+    public static void getChargeNewOrder(String orderNo, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("orderNo", orderNo);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=getChargeNewOrder", params, listener);
+    }
+
+    /**
+     * 审批补货订单
+     * @param supplierId
+     * @param orderNo
+     * @param taxRate
+     * @param payType
+     * @param deliveryDate
+     * @param text
+     * @param discount
+     * @param discountMoney
+     * @param listener
+     */
+    public static void auditChargeOrder(String supplierId, String orderNo, String taxRate, String payType,
+                                        String deliveryDate, String text, String discount, String discountMoney, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("token", Contants.token);
+        params.add("supplierId", supplierId);
+        params.add("orderNo", orderNo);
+        params.add("classify", "pass");
+        params.add("taxRate", taxRate);
+        params.add("payType", payType);
+        params.add("deliveryDate", deliveryDate);
+        params.add("text", text);
+        params.add("discount", discount);
+        params.add("discountMoney", discountMoney);
+        OkHttp.post(Contants.ROOT_URI + "wxapi/v1/order.php?type=auditChargeOrder", params, listener);
+    }
+
 }

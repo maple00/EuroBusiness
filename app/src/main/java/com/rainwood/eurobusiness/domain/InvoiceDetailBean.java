@@ -13,6 +13,7 @@ public final class InvoiceDetailBean implements Serializable {
     private String name;                // 公司名称
     private String paragraph;           // 税号
     private String email;               // 邮箱
+    private String consignee;           // 联系人
     private String consigneeTel;        // 手机号
     private String region;              // 所在地区
     private String addressMx;           // 详细地址
@@ -28,6 +29,14 @@ public final class InvoiceDetailBean implements Serializable {
                 ", region='" + region + '\'' +
                 ", addressMx='" + addressMx + '\'' +
                 '}';
+    }
+
+    public String getConsignee() {
+        return consignee;
+    }
+
+    public void setConsignee(String consignee) {
+        this.consignee = consignee;
     }
 
     public String getId() {

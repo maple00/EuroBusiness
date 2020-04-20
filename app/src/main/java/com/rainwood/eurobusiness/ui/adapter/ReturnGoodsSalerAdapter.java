@@ -27,10 +27,12 @@ public class ReturnGoodsSalerAdapter extends BaseAdapter {
 
     private Context mContext;
     private List<RefundGoodsBean> mList;
+    private int topTypePos;
 
-    public ReturnGoodsSalerAdapter(Context mContext, List<RefundGoodsBean> mList) {
+    public ReturnGoodsSalerAdapter(int topTypePos, Context mContext, List<RefundGoodsBean> mList) {
         this.mContext = mContext;
         this.mList = mList;
+        this.topTypePos = topTypePos;
     }
 
     @Override
@@ -61,8 +63,6 @@ public class ReturnGoodsSalerAdapter extends BaseAdapter {
             holder.tv_return_money = convertView.findViewById(R.id.tv_return_money);
             holder.tv_status = convertView.findViewById(R.id.tv_status);
             holder.ll_item = convertView.findViewById(R.id.ll_item);
-            holder.tv_in_storage = convertView.findViewById(R.id.tv_in_storage);
-            holder.tv_scrap = convertView.findViewById(R.id.tv_scrap);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -84,35 +84,15 @@ public class ReturnGoodsSalerAdapter extends BaseAdapter {
             holder.tv_status.setTextColor(mContext.getResources().getColor(R.color.blue5));
         }
         holder.tv_status.setText(getItem(position).getWorkFlow());
-        if (getItem(position).getWorkFlow().equals("已完成")) {
-            holder.tv_in_storage.setVisibility(View.VISIBLE);
-            holder.tv_scrap.setVisibility(View.VISIBLE);
-        } else {
-            holder.tv_in_storage.setVisibility(View.GONE);
-            holder.tv_scrap.setVisibility(View.GONE);
-        }
         // 点击事件
         holder.ll_item.setOnClickListener(v -> onClickItem.onClickItem(position));
-        // 报废
-        holder.tv_scrap.setOnClickListener(v -> {
-            onClickItem.onClickScrap(position);
-            notifyDataSetChanged();
-        });
-        // 入库
-        holder.tv_in_storage.setOnClickListener(v -> {
-            onClickItem.onClickStorage(position);
-            notifyDataSetChanged();
-        });
         return convertView;
     }
 
     public interface OnClickItem {
         // 查看详情
         void onClickItem(int position);
-        // 报废
-        void onClickScrap(int position);
-        // 入库
-        void onClickStorage(int position);
+
     }
 
     private OnClickItem onClickItem;
@@ -123,7 +103,7 @@ public class ReturnGoodsSalerAdapter extends BaseAdapter {
 
     private class ViewHolder {
         private ImageView iv_img;
-        private TextView tv_name, tv_params, tv_return_num, tv_return_money, tv_status, tv_in_storage, tv_scrap;
+        private TextView tv_name, tv_params, tv_return_num, tv_return_money, tv_status;
         private LinearLayout ll_item;
     }
 }

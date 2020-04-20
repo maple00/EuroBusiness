@@ -13,8 +13,8 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="15dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <com.rainwood.tools.widget.MeasureGridView
             android:id="@+id/gv_top_type"
@@ -28,7 +28,7 @@
             android:layout_width="17dp"
             android:layout_height="17dp"
             android:padding="3dp"
-            android:src="@drawable/ic_screening"/>
+            android:src="@drawable/ic_screening" />
 
     </LinearLayout>
 
@@ -44,26 +44,34 @@
         android:layout_marginRight="15dp"
         android:numColumns="4" />
 
-    <androidx.core.widget.NestedScrollView
+    <com.rainwood.tools.refresh.DaisyRefreshLayout
+        android:id="@+id/drl_refresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="15dp">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:scrollbarSize="2dp"
+            android:scrollbars="vertical">
 
-            <com.rainwood.tools.widget.MeasureListView
-                android:id="@+id/lv_goods_list"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="@color/transparent"
-                android:dividerHeight="30dp" />
+                android:layout_height="wrap_content">
 
-        </LinearLayout>
+                <com.rainwood.tools.widget.MeasureListView
+                    android:id="@+id/lv_goods_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="30dp" />
 
-    </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
 
+        </androidx.core.widget.NestedScrollView>
+
+    </com.rainwood.tools.refresh.DaisyRefreshLayout>
 </LinearLayout>

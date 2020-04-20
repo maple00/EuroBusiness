@@ -86,7 +86,7 @@ public class ModifyPwdActivity extends BaseActivity implements View.OnClickListe
                 showLoading("loading");
                 RequestPost.getVerifyCode(editPhone.getText().toString().trim(), type,this);
                 break;
-            case R.id.btn_confirm:
+            case R.id.btn_confirm:          // 确认修改
                 if (TextUtils.isEmpty(editVerify.getText())){
                     toast("请输入验证码");
                     return;
@@ -124,9 +124,11 @@ public class ModifyPwdActivity extends BaseActivity implements View.OnClickListe
                     toast(body.get("warn"));
                 }
                 // 修改密码
-                if (result.url().contains("wxapi/v1/index.php?type=getStoreInfo")){
+                if (result.url().contains("wxapi/v1/index.php?type=changePwd")){
                     toast(body.get("warn"));
+                    postDelayed(this::finish, 1000);
                 }
+
             }else {
                 toast(body.get("warn"));
             }

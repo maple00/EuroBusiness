@@ -2,6 +2,7 @@ package com.rainwood.eurobusiness.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -20,8 +21,10 @@ import com.rainwood.eurobusiness.json.JsonParser;
 import com.rainwood.eurobusiness.okhttp.HttpResponse;
 import com.rainwood.eurobusiness.okhttp.OnHttpListener;
 import com.rainwood.eurobusiness.request.RequestPost;
+import com.rainwood.eurobusiness.ui.activity.GoodsDetailActivity;
 import com.rainwood.eurobusiness.ui.activity.HomeActivity;
 import com.rainwood.eurobusiness.ui.activity.NewShopActivity;
+import com.rainwood.eurobusiness.ui.activity.ShopManagementActivity;
 import com.rainwood.eurobusiness.ui.adapter.SaleGoodsAdapter;
 import com.rainwood.eurobusiness.ui.adapter.TopTypeAdapter;
 import com.rainwood.eurobusiness.utils.ListUtils;
@@ -38,6 +41,8 @@ import java.util.Map;
  * @Desc: 批发商端创建的商品
  */
 public class SaleCreateFragment extends BaseFragment implements View.OnClickListener, OnHttpListener {
+
+    private List<GoodsBean> mGoodsList;
 
     @Override
     protected int initLayout() {
@@ -72,7 +77,7 @@ public class SaleCreateFragment extends BaseFragment implements View.OnClickList
         mHandler.sendMessage(msg);
         // request
         showLoading("");
-        RequestPost.getGoodsList("mine", "", "", new ArrayList<>(), this);
+        RequestPost.getGoodsList("mine", "", "0","", new ArrayList<>(), this);
     }
 
     @Override
@@ -135,13 +140,22 @@ public class SaleCreateFragment extends BaseFragment implements View.OnClickList
                         }
                         // request
                         showLoading("");
-                        RequestPost.getGoodsList("mine", state, "", new ArrayList<>(), SaleCreateFragment.this);
+                        RequestPost.getGoodsList("mine", state, "0","", new ArrayList<>(), SaleCreateFragment.this);
                     });
                     break;
                 case INITIAL_SIZE:
                     // content
                     SaleGoodsAdapter goodsAdapter = new SaleGoodsAdapter(getContext(), mList);
                     contentList.setAdapter(goodsAdapter);
+                    goodsAdapter.setOnClickItemListener(new SaleGoodsAdapter.OnClickItemListener() {
+                        @Override
+                        public void onClickItem(int position) {
+                            String goodsId = mList.get(position).getGoodsId();
+                            Intent intent = new Intent(getmContext(), GoodsDetailActivity.class);
+                            intent.putExtra("goodsId", mGoodsList.get(position).getGoodsId());
+                            startActivity(intent);
+                        }
+                    });
                     break;
             }
         }
@@ -159,31 +173,31 @@ public class SaleCreateFragment extends BaseFragment implements View.OnClickList
             if ("1".equals(body.get("code"))) {
                 // 获取批发商创建的商品列表
                 if (result.url().contains("wxapi/v1/goods.php?type=getGoodsList")) {
-                    List<GoodsBean> goodsList = JsonParser.parseJSONArray(GoodsBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodslist"));
+                    mGoodsList = JsonParser.parseJSONArray(GoodsBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodslist"));
                     mList = new ArrayList<>();
-                    for (int i = 0; i < ListUtils.getSize(goodsList); i++) {
+                    for (int i = 0; i < ListUtils.getSize(mGoodsList); i++) {
                         SaleGoodsBean saleGoods = new SaleGoodsBean();
                         saleGoods.setType(0);
-                        saleGoods.setImgPath(goodsList.get(i).getIco());
-                        saleGoods.setStatus(goodsList.get(i).getState());
-                        saleGoods.setName(goodsList.get(i).getName());
+                        saleGoods.setImgPath(mGoodsList.get(i).getIco());
+                        saleGoods.setStatus(mGoodsList.get(i).getState());
+                        saleGoods.setName(mGoodsList.get(i).getName());
                         List<CommonUIBean> priceList = new ArrayList<>();
                         for (int j = 0; j < priceTitles.length; j++) {
                             CommonUIBean commonUI = new CommonUIBean();
                             commonUI.setTitle(priceTitles[j]);
                             if (j == 0) {        // 进价
-                                commonUI.setShowText(goodsList.get(i).getPrice());
+                                commonUI.setShowText(mGoodsList.get(i).getPrice());
                             }
                             if (j == 1) {
-                                commonUI.setShowText(goodsList.get(i).getTradePrice());
+                                commonUI.setShowText(mGoodsList.get(i).getTradePrice());
                             }
                             if (j == 2) {
-                                commonUI.setShowText(goodsList.get(i).getRetailPrice());
+                                commonUI.setShowText(mGoodsList.get(i).getRetailPrice());
                             }
                             priceList.add(commonUI);
                         }
                         saleGoods.setPriceList(priceList);
-                        saleGoods.setStoreName(goodsList.get(i).getStore());
+                        saleGoods.setStoreName(mGoodsList.get(i).getStore());
                         mList.add(saleGoods);
                     }
                     Message msg = new Message();

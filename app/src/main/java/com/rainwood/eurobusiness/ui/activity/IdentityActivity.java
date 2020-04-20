@@ -31,6 +31,11 @@ public class IdentityActivity extends BaseActivity {
     @ViewById(R.id.btn_next_step)
     private Button nextStep;
 
+
+    private List<PressBean> mList;
+
+    private String[] titleNames = {"供应商", "门店"};
+
     @Override
     protected void initView() {
         // 初始化
@@ -78,7 +83,4 @@ public class IdentityActivity extends BaseActivity {
         }
     }
 
-    private List<PressBean> mList;
-
-    private String[] titleNames = {"供应商", "门店"};
 }

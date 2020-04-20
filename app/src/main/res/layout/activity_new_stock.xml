@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -18,18 +19,163 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.rainwood.tools.widget.MeasureListView
-                android:id="@+id/lv_content_list"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="商品信息"
+                android:textColor="@color/white66"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="商品分类"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_goods_type"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/common_choose" />
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_right_arrow" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="商品名称"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_goods_name"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/common_choose" />
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_right_arrow" />
+            </LinearLayout>
+
+            <com.rainwood.tools.widget.MeasureGridView
+                android:id="@+id/mgv_content_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="@color/transparent"
-                android:dividerHeight="20dp" />
+                android:dividerHeight="20dp"
+                android:layout_marginTop="20dp"/>
+
+            <View style="@style/HorizontalLineStyle"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="库存信息"
+                android:textColor="@color/white66"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="库存数量"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_inventory_num"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="请选择规格" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="盘存数量"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_num"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:inputType="number"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/common_input" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="备注"
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <com.rainwood.tools.view.ClearEditText
+                    android:id="@+id/cet_note"
+                    style="@style/EditTextStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="@string/common_input" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btn_confirm"
                 style="@style/RedButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
                 android:text="@string/common_confirm" />
 
         </LinearLayout>

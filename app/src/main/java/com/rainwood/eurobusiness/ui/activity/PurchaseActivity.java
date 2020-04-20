@@ -2,7 +2,6 @@ package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
@@ -35,12 +34,12 @@ import com.rainwood.eurobusiness.ui.adapter.PurchaseGoodsAdapter;
 import com.rainwood.eurobusiness.ui.adapter.ReplePurchaseAdapter;
 import com.rainwood.eurobusiness.ui.adapter.TopTypeAdapter;
 import com.rainwood.eurobusiness.ui.dialog.DateDialog;
+import com.rainwood.tools.refresh.DaisyRefreshLayout;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureGridView;
 import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +50,8 @@ import java.util.Map;
  */
 public class PurchaseActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
+
+    private String mTopType;
 
     @Override
     protected int getLayoutId() {
@@ -76,10 +77,14 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
     @ViewById(R.id.iv_top_screening)
     private ImageView topScreening;
+    @ViewById(R.id.drl_refresh)
+    private DaisyRefreshLayout mRefreshLayout;
 
     // handler 码
     private final int STATUS_SIZE = 0x1124;
     private final int INITIAL_SIZE = 0x1123;
+    private final int REFRESH_SIZE = 0x102;
+    private static int pageCount = 0;
     // 头部选中位置标记
     private static int posFalg;
     private List<PressBean> mTopList;
@@ -91,8 +96,8 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
     private List<PressBean> repStatusList;
     private String[] repStatus = {"全部", "待入库", "已完成", "待审核"};
     // 商品列表
-    private List<PurchasesBean> goodsList;          // 采购单
-    private List<ReplePurchaseBean> mReplePurchaseList;     // 补货单
+    private List<PurchasesBean> mCopyGoodsList = new ArrayList<>();     // 采购单
+    private List<ReplePurchaseBean> mReplePurchaseList = new ArrayList<>();     // 补货单
 
     @Override
     protected void initView() {
@@ -102,26 +107,27 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
 
         if (Contants.CHOOSE_MODEL_SIZE == 109) {
             topScreening.setOnClickListener(this);
-            topScreening.setVisibility(View.VISIBLE);
+            topScreening.setVisibility(View.GONE);
+            newFound.setVisibility(View.VISIBLE);
+            screening.setVisibility(View.GONE);
         }
         if (Contants.CHOOSE_MODEL_SIZE == 2) {
-            topScreening.setVisibility(View.GONE);
+            topScreening.setVisibility(View.VISIBLE);
+            newFound.setVisibility(View.GONE);
+            screening.setVisibility(View.VISIBLE            );
         }
 
-        // default query new -- 默认查询供应商采购订单的全部
-        showLoading("loading");
-        RequestPost.getPurchaseOrderlist("new", "", "", "", "",
-                "", this);
+        Message msg = new Message();
+        msg.what = REFRESH_SIZE;
+        mHandler.sendMessage(msg);
     }
 
     @Override
-    protected void initData() {
+    protected void initData()  {
         super.initData();
         // 头部
         mTopList = new ArrayList<>();
         for (int i = 0; i < topTitles.length && Contants.CHOOSE_MODEL_SIZE == 2; i++) {
-            search1.setVisibility(View.GONE);
-            newFound.setVisibility(View.GONE);
             PressBean press = new PressBean();
             press.setTitle(topTitles[i]);
             press.setChoose(false);
@@ -131,8 +137,6 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
             mTopList.add(press);
         }
         for (int i = 0; i < salerStatus.length && Contants.CHOOSE_MODEL_SIZE == 109; i++) {
-            search.setVisibility(View.GONE);
-            screening.setVisibility(View.GONE);
             PressBean press = new PressBean();
             press.setTitle(salerStatus[i]);
             press.setChoose(false);
@@ -224,19 +228,19 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 return;
             }
             // 通过时间查询订单列表 -- 默认查询当前选中的类型的全部状态
-            String type = "";
             switch (posFalg) {
                 case 0:             // 采购订单
-                    type = "new";
+                    mTopType = "new";
                     break;
                 case 1:             // 补货订单
-                    type = "charge";
+                    mTopType = "charge";
                     break;
             }
             // request
             showLoading("loading");
             dialog.dismiss();
-            RequestPost.getPurchaseOrderlist(type, "", "", "", startTime.getText().toString().trim(),
+            pageCount = 0;
+            RequestPost.getPurchaseOrderlist(String.valueOf(pageCount), mTopType, "", "", "", startTime.getText().toString().trim(),
                     endTime.getText().toString().trim(), this);
             //toast("您选择了：" + startTime.getText().toString() + "至" + endTime.getText().toString());
         });
@@ -252,20 +256,8 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
     private void getDateDialog(TextView time) {
         new DateDialog.Builder(this)
                 .setTitle(getString(R.string.date_title))
-                // 确定文本
                 .setConfirm(getString(R.string.common_confirm))
-                // 设置为null 时表示不显示取消按钮
-                // .setCancel(getString(R.string.common_clear_screening))
                 .setCancel(null)
-                // 设置日期(可支持2019-12-03， 20191203， 时间戳)
-                // .setDate(20191203)
-                // 设置年份
-                //.setYear(2019)
-                // 设置月份
-                //.setMonth(12)
-                // 设置天数
-                //.setDay(3)
-                // 不选择天数
                 //.setIgnoreDay()
                 .setListener(new DateDialog.OnListener() {
                     @SuppressLint("SetTextI18n")
@@ -273,14 +265,6 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                     public void onSelected(BaseDialog dialog, int year, int month, int day) {
                         // toast(year + "-" + "-" + month + "-" + day);
                         time.setText(year + "-" + (month < 10 ? ("0" + month) : month) + "-" + (day < 10 ? ("0" + day) : day));
-                        // 如果不指定时分秒则默认为现在的时间
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(Calendar.YEAR, year);
-                        // 月份从零开始，所以需要减 1
-                        calendar.set(Calendar.MONTH, month - 1);
-                        calendar.set(Calendar.DAY_OF_MONTH, day);
-                        // toast("时间戳：" + calendar.getTimeInMillis());
-                        //toast(new SimpleDateFormat("yyyy年MM月dd日 kk:mm:ss").format(calendar.getTime()));
                     }
 
                     @Override
@@ -295,6 +279,8 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
+            mRefreshLayout.setLoadMore(false);
+            mRefreshLayout.setRefreshing(false);
             switch (msg.what) {
                 case INITIAL_SIZE:
                     // 门店端
@@ -321,21 +307,20 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                                 pressBean.setChoose(false);
                             }
                             statuList.get(position).setChoose(true);
-                        }else {                     // 补货单状态
+                        } else {                     // 补货单状态
                             for (PressBean pressBean : repStatusList) {
                                 pressBean.setChoose(false);
                             }
                             repStatusList.get(position).setChoose(true);
                         }
                         // query 不同的类型的不同状态
-                        String topType = "";
                         String status;
                         switch (posFalg) {
                             case 0:             // 采购单
-                                topType = "new";
+                                mTopType = "new";
                                 break;
                             case 1:             // 补货单
-                                topType = "charge";
+                                mTopType = "charge";
                                 break;
                         }
                         switch (position) {
@@ -354,10 +339,35 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                         }
                         // request
                         showLoading("loading");
-                        RequestPost.getPurchaseOrderlist(topType, "", "", status, "",
+                        pageCount = 0;
+                        mCopyGoodsList = new ArrayList<>();
+                        RequestPost.getPurchaseOrderlist(String.valueOf(pageCount), mTopType, "", "", status, "",
                                 "", PurchaseActivity.this);
 
                     });
+                    break;
+                case REFRESH_SIZE:
+                    //上拉加载
+                    mRefreshLayout.setOnLoadMoreListener(() -> {
+                        pageCount++;
+                        RequestPost.getPurchaseOrderlist(String.valueOf(pageCount), mTopType, "", "", "", "",
+                                "", PurchaseActivity.this);
+                    });
+                    // 下拉刷新
+                    mRefreshLayout.setOnRefreshListener(() -> {
+                        pageCount = 0;
+                        mCopyGoodsList = new ArrayList<>();
+                        RequestPost.getPurchaseOrderlist(String.valueOf(pageCount), mTopType, "", "", "", "",
+                                "", PurchaseActivity.this);
+                    });
+                    // 第一次进来的时候刷新
+                    mRefreshLayout.setOnAutoLoadListener(() -> {
+                        // default query new -- 默认查询供应商采购订单的全部
+                        // showLoading("loading");
+                        RequestPost.getPurchaseOrderlist(String.valueOf(pageCount), mTopType, "", "", "", "",
+                                "", PurchaseActivity.this);
+                    });
+                    mRefreshLayout.autoRefresh();
                     break;
             }
         }
@@ -379,16 +389,17 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 pressBean.setChoose(false);
             }
             statuList.get(0).setChoose(true);
-            String topType;
             if (position == 1) {            // 补货单
-                topType = "charge";
+                mTopType = "charge";
             } else {                        // 采购订单
-                topType = "new";
+                mTopType = "new";
             }
             posFalg = position;
             // request -- default query all
             showLoading("loading");
-            RequestPost.getPurchaseOrderlist(topType, "", "", "", "",
+            pageCount = 0;
+            mCopyGoodsList = new ArrayList<>();
+            RequestPost.getPurchaseOrderlist(String.valueOf(pageCount), mTopType, "", "", "", "",
                     "", PurchaseActivity.this);
         });
         // 商品状态
@@ -396,29 +407,40 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
         statusMsg.what = STATUS_SIZE;
         mHandler.sendMessage(statusMsg);
         // content --- 展示采购订单列表或者补货订单列表
-        if (posFalg == 0){          // 采购单
-            PurchaseGoodsAdapter goodsAdapter = new PurchaseGoodsAdapter(PurchaseActivity.this, goodsList);
+        if (posFalg == 0) {          // 采购单
+            PurchaseGoodsAdapter goodsAdapter = new PurchaseGoodsAdapter(PurchaseActivity.this, mCopyGoodsList);
             goodsLists.setAdapter(goodsAdapter);
             goodsAdapter.setOnClickItem(position -> {
-                // detail --- 采购单详情
-                String id = goodsList.get(position).getOrderNo();
-                Intent intent = new Intent(PurchaseActivity.this, PurchaseDetailActivity.class);
-                intent.putExtra("orderId", id);
-                startActivity(intent);
+                // detail --- 采购单详情 -- 门店端
+                if (Contants.userType == 1){
+                    String id = mCopyGoodsList.get(position).getOrderNo();
+                    Intent intent = new Intent(PurchaseActivity.this, PurchaseDetailActivity.class);
+                    intent.putExtra("orderId", id);
+                    startActivity(intent);
+                }
+                // 采购单详情 -- 批发商端 -- 采购单详情
+                if (Contants.userType == 0){
+                    // toast("批发商端采购单");
+                    Intent intent = new Intent(PurchaseActivity.this, WPurchaseDetailActivity.class);
+                    intent.putExtra("goodsId", mCopyGoodsList.get(position).getOrderNo());
+                    startActivity(intent);
+                }
             });
         }
 
-        if (posFalg == 1){              // 补货单
+        if (posFalg == 1) {              // 补货单
             ReplePurchaseAdapter goodsAdapter = new ReplePurchaseAdapter(PurchaseActivity.this, mReplePurchaseList);
             goodsLists.setAdapter(goodsAdapter);
             goodsAdapter.setOnClickItem(position -> {
                 // detail -- 补货单查看详情只有两种情况：1、通过补货申请；2、查看补货的审核情况
                 // 0: 供应商具有通过补货申请的权限
-                if (Contants.userType == 0){
-                    toast("通过补货申请");
+                if (Contants.userType == 0) {
+                    Intent intent = new Intent(PurchaseActivity.this, PurchaseRepleActivity.class);
+                    intent.putExtra("orderId", mReplePurchaseList.get(position).getOrderNo());
+                    startActivity(intent);
                 }
                 // 1: 门店端只能查看补货的进度
-                if (Contants.userType == 1){
+                if (Contants.userType == 1) {
                     // toast("查看补货情况");
                     openActivity(ReplePurchaseActivity.class);
                 }
@@ -440,7 +462,10 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 // 获取采购记录列表
                 if (result.url().contains("wxapi/v1/order.php?type=getPurchaseOrderlist")) {
                     // 采购单
-                    goodsList = JsonParser.parseJSONArray(PurchasesBean.class, JsonParser.parseJSONObject(body.get("data")).get("datalist"));
+                    List<PurchasesBean> goodsList = JsonParser.parseJSONArray(PurchasesBean.class, JsonParser.parseJSONObject(body.get("data")).get("datalist"));
+                    if (goodsList != null) {
+                        mCopyGoodsList.addAll(goodsList);
+                    }
                     // 补货单
                     mReplePurchaseList = JsonParser.parseJSONArray(ReplePurchaseBean.class, JsonParser.parseJSONObject(body.get("data")).get("datalist"));
 
@@ -452,6 +477,7 @@ public class PurchaseActivity extends BaseActivity implements View.OnClickListen
                 toast(body.get("data"));
             }
         }
-        dismissLoading();
+        if (getDialog() != null)
+            dismissLoading();
     }
 }

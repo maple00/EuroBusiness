@@ -24,7 +24,6 @@ public class SubChooseParamsAdapter extends BaseAdapter {
 
     private Context mContext;
     private List<PressBean> mList;
-    private int parentPos;
 
     public SubChooseParamsAdapter(Context mContext, List<PressBean> mList) {
         this.mContext = mContext;
@@ -70,20 +69,19 @@ public class SubChooseParamsAdapter extends BaseAdapter {
 
         // 点击事件
         holder.fl_item.setOnClickListener(v -> {
-            onClickItem.onClickItem(parentPos, position);
+            onClickItem.onClickItem(position);
             notifyDataSetChanged();
         });
         return convertView;
     }
 
     public interface OnClickItem {
-        void onClickItem(int parentPos, int position);
+        void onClickItem(int position);
     }
 
     private OnClickItem onClickItem;
 
-    public void setOnClickItem(int parentPos, OnClickItem onClickItem) {
-        this.parentPos = parentPos;
+    public void setOnClickItem(OnClickItem onClickItem) {
         this.onClickItem = onClickItem;
     }
 

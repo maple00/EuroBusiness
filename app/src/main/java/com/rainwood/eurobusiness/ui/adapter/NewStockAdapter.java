@@ -97,9 +97,7 @@ public class NewStockAdapter extends BaseAdapter {
                 }*/
                 SubChooseParamsAdapter paramsAdapter = new SubChooseParamsAdapter(mContext, getItem(position).getPressList());
                 holder.gv_press_list.setAdapter(paramsAdapter);
-                holder.gv_press_list.setNumColumns(4);
-                paramsAdapter.setOnClickItem(position, onClickItem);
-
+                holder.gv_press_list.setNumColumns(3);
                 break;
             case 1:                         // 库存信息
                 CommUIAdapter stockAdapter = new CommUIAdapter(mContext, getItem(position).getCommonList());

@@ -120,6 +120,38 @@
                     android:src="@drawable/ic_right_arrow" />
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="25dp"
+                android:layout_marginEnd="15dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:text="付款方式"
+
+                    android:textColor="@color/fontColor"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_payType"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:hint="@string/common_choose"
+                    android:textColor="@color/textColor"
+                    android:textColorHint="@color/gray_white"
+                    android:textSize="15sp" />
+
+                <ImageView
+                    android:layout_width="7dp"
+                    android:layout_height="13dp"
+                    android:src="@drawable/ic_right_arrow" />
+            </LinearLayout>
+
             <View
                 style="@style/HorizontalLineStyle"
                 android:layout_marginTop="20dp"
@@ -282,7 +314,6 @@
                         android:src="@drawable/ic_icon_plus_red" />
 
                     <TextView
-                        android:id="@+id/tv_add_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"

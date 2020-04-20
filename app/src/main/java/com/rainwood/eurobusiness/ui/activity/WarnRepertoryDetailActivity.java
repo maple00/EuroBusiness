@@ -1,6 +1,7 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -38,6 +39,8 @@ import java.util.Map;
  * @Desc:
  */
 public class WarnRepertoryDetailActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
+
+    private String mWarnId;
 
     @Override
     protected int getLayoutId() {
@@ -78,8 +81,8 @@ public class WarnRepertoryDetailActivity extends BaseActivity implements View.On
 
         // request
         showLoading("loading");
-        String warnId = getIntent().getStringExtra("warnId");
-        RequestPost.warnStockDetail(warnId, this);
+        mWarnId = getIntent().getStringExtra("warnId");
+        RequestPost.warnStockDetail(mWarnId, this);
     }
 
     @Override
@@ -118,7 +121,9 @@ public class WarnRepertoryDetailActivity extends BaseActivity implements View.On
                 break;
             case R.id.btn_replenish:
                 // toast("补货");
-                openActivity(WarnReplishenActivity.class);
+                Intent intent = new Intent(this, WarnReplishenActivity.class);
+                intent.putExtra("warnId", mWarnId);
+                startActivity(intent);
                 break;
         }
     }

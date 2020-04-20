@@ -659,6 +659,7 @@ drawable btn_radio_off_mtrl
 drawable btn_radio_off_to_on_mtrl_animation
 drawable btn_radio_on_mtrl
 drawable btn_radio_on_to_off_mtrl_animation
+drawable down_arrow
 drawable ic_input_delete
 drawable ic_input_hide
 drawable ic_input_show
@@ -674,6 +675,7 @@ drawable notification_template_icon_bg
 drawable notification_template_icon_low_bg
 drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
+drawable rotate_daisy
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
 id accessibility_action_clickable_span
@@ -749,12 +751,17 @@ id edit_query
 id english
 id expand_activities_button
 id expanded_menu
+id footer_image_view
+id footer_pb_view
+id footer_text_view
 id forever
 id group_divider
 id home
 id icon
 id icon_group
 id image
+id image_view
+id img_daisy
 id info
 id italic
 id item_touch_helper_previous_elevation
@@ -777,6 +784,7 @@ id notification_main_column_container
 id off
 id on
 id parentPanel
+id pb_view
 id progress_circular
 id progress_horizontal
 id radio
@@ -818,11 +826,13 @@ id text
 id text2
 id textSpacerNoButtons
 id textSpacerNoTitle
+id text_view
 id time
 id title
 id titleDividerNoCustom
 id title_template
 id topPanel
+id txt_loading
 id unchecked
 id uniform
 id up
@@ -868,6 +878,9 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout custom_dialog
+layout layout_daisy
+layout layout_footer
+layout layout_head
 layout notification_action
 layout notification_action_tombstone
 layout notification_template_custom_big

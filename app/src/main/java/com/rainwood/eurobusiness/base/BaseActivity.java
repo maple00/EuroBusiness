@@ -150,6 +150,14 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     private DialogUtils mDialog;
 
+    public DialogUtils getDialog() {
+        return mDialog;
+    }
+
+    public void setDialog(DialogUtils dialog) {
+        mDialog = dialog;
+    }
+
     public void showLoading(String tips){
         mDialog = new DialogUtils(this, tips);
         mDialog.showDialog();

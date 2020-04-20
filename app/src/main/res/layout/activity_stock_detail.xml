@@ -10,8 +10,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="12dp"
-        android:background="@drawable/shape_white_top_8"
-        android:layout_marginTop="-50dp"/>
+        android:layout_marginTop="-50dp"
+        android:background="@drawable/shape_white_top_8" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -19,7 +19,8 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <com.rainwood.tools.widget.MeasureListView
                 android:id="@+id/lv_content_list"
@@ -27,6 +28,40 @@
                 android:layout_height="wrap_content"
                 android:divider="@color/transparent"
                 android:dividerHeight="20dp" />
+
+            <LinearLayout
+                android:id="@+id/ll_audit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="15dp"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btn_rejected"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:background="@drawable/shape_radius_red_empty_4"
+                    android:text="驳回"
+                    android:textColor="@color/red30"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <Space
+                    android:layout_width="10dp"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    android:id="@+id/btn_through"
+                    style="@style/RedButtonStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:text="通过"
+                    android:visibility="gone" />
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -69,9 +69,6 @@ public class NewGoodsAddressActivity extends BaseActivity implements View.OnClic
     // 开票地址
     private String[] taxTitles = {"公司名称", "公司税号（P.IVA）", "PEC邮箱/SDI", "手机号", "所在地区", "详细地址"};
     private String[] taxLabels = {"请输入", "请输入", "请输入", "请输入", "请选择", "请输入"};
-    // 客户分类
-    private String[] typeTitles = {"客户分类", "折扣(%)", "排序号"};
-    private String[] typeLabel = {"请输入", "请输入", "请输入"};
 
     @Override
     protected void initView() {
@@ -96,24 +93,6 @@ public class NewGoodsAddressActivity extends BaseActivity implements View.OnClic
             Message msg = new Message();
             msg.what = INITIAL_SIZE;
             mHandler.sendMessage(msg);
-        }
-        if (Contants.CHOOSE_MODEL_SIZE == 16) {
-            pageTitle.setText("新增分类");
-            defaultAddress.setVisibility(View.GONE);
-            save.setText(R.string.common_confirm);
-
-            Message msg = new Message();
-            msg.what = INITIAL_SIZE;
-            mHandler.sendMessage(msg);
-        }
-        if (Contants.CHOOSE_MODEL_SIZE == 17) {
-            pageTitle.setText("编辑分类");
-            defaultAddress.setVisibility(View.GONE);
-            save.setText(R.string.common_confirm);
-            // request
-            showLoading("loading");
-            String typeId = getIntent().getStringExtra("typeId");
-            RequestPost.getClientTypeDetail(typeId, this);
         }
         if (Contants.CHOOSE_MODEL_SIZE == 18) {
             pageTitle.setText("修改开票地址");
@@ -189,19 +168,6 @@ public class NewGoodsAddressActivity extends BaseActivity implements View.OnClic
                 mList.add(commonUI);
             }
         }
-        if (Contants.CHOOSE_MODEL_SIZE == 16 || Contants.CHOOSE_MODEL_SIZE == 17) {
-            for (int i = 0; i < typeTitles.length; i++) {
-                CommonUIBean commonUI = new CommonUIBean();
-                commonUI.setTitle(typeTitles[i]);
-                commonUI.setLabel(typeLabel[i]);
-                if (typeLabel[i].equals("请选择")) {
-                    commonUI.setArrowType(1);
-                } else {
-                    commonUI.setArrowType(0);
-                }
-                mList.add(commonUI);
-            }
-        }
     }
 
     @Override
@@ -213,7 +179,6 @@ public class NewGoodsAddressActivity extends BaseActivity implements View.OnClic
             case R.id.btn_save:
                 // 客户分类编辑
                 if (Contants.CHOOSE_MODEL_SIZE == 17){
-
                     // request
                     //RequestPost.clientTypeEdit();
                 }

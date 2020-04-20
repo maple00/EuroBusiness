@@ -37,6 +37,8 @@ import com.rainwood.eurobusiness.ui.adapter.ShopMangerRecyclerAdapter;
 import com.rainwood.eurobusiness.ui.adapter.StoresManagerAdapter;
 import com.rainwood.eurobusiness.ui.dialog.MessageDialog;
 import com.rainwood.eurobusiness.ui.widget.ScreeningPopWindow;
+import com.rainwood.eurobusiness.utils.ListUtils;
+import com.rainwood.tools.refresh.DaisyRefreshLayout;
 import com.rainwood.tools.view.ClearEditText;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
@@ -51,8 +53,6 @@ import java.util.Map;
  * @Desc: 商品管理
  */
 public class ShopManagementActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
-
-    private String mTopType;
 
     @Override
     protected int getLayoutId() {
@@ -73,6 +73,8 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
     private TextView mLine;
     @ViewById(R.id.et_search)
     private ClearEditText etSearch;
+    @ViewById(R.id.drl_refresh)
+    private DaisyRefreshLayout mRefreshLayout;
     //content
     @ViewById(R.id.sl_content)
     private NestedScrollView contentScroll;
@@ -99,6 +101,10 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
     private List<StoresBean> storesList;
 
     private final int INITIAL_SIZE = 0x101;
+    private final int REFRESH_SIZE = 0x102;
+    private static int pageCount = 0;
+
+    private String mTopType = "";
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -108,6 +114,9 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
         searchView.setOnClickListener(this);
         mScreening.setOnClickListener(this);
 
+        Message msg = new Message();
+        msg.what = REFRESH_SIZE;
+        mHandler.sendMessage(msg);
     }
 
     @Override
@@ -133,20 +142,17 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
         // 商品管理
         if (Contants.CHOOSE_MODEL_SIZE == 1) {
             // request -- default query all
-            showLoading("loading");
-            RequestPost.getGoodsList("", "", "", new ArrayList<>(), this);
+            RequestPost.getGoodsList("", mTopType, String.valueOf(pageCount), "", new ArrayList<>(), ShopManagementActivity.this);
         }
         // 供应商管理
         if (Contants.CHOOSE_MODEL_SIZE == 102) {
             // request
-            showLoading("");
-            RequestPost.getSupplierlist("", this);
+            RequestPost.getSupplierlist("", ShopManagementActivity.this);
         }
         // 门店管理
         if (Contants.CHOOSE_MODEL_SIZE == 103) {
             // request
-            showLoading("loading");
-            RequestPost.getStorelist(this);
+            RequestPost.getStorelist(ShopManagementActivity.this);
         }
     }
 
@@ -161,19 +167,18 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                     openActivity(NewShopActivity.class);
                 }
                 if (Contants.CHOOSE_MODEL_SIZE == 102 || Contants.CHOOSE_MODEL_SIZE == 0x1002) {         // 新建供应商
-                    openActivity(NewSupplierActivity.class);
+                    openActivity(SupplierCreateActivity.class);
                 }
-
                 // 新建门店
                 if (Contants.CHOOSE_MODEL_SIZE == 0x1003) {
                     Contants.CHOOSE_MODEL_SIZE = 103;
                 }
+
                 if (Contants.CHOOSE_MODEL_SIZE == 103) {
-                    openActivity(NewSupplierActivity.class);
+                    openActivity(StoreCreateEditActivity.class);
                 }
                 break;
             case R.id.ll_search:            // 搜索框
-
                 break;
             case R.id.iv_screen:            // 筛选
                 if (Contants.CHOOSE_MODEL_SIZE == 1) {                       // 门店端的筛选
@@ -183,6 +188,7 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                     RequestPost.getGoodsType(this);
                 }
                 break;
+
         }
     }
 
@@ -192,6 +198,8 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
         public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case INITIAL_SIZE:
+                    mRefreshLayout.setLoadMore(false);
+                    mRefreshLayout.setRefreshing(false);
                     /**
                      *  门店端 - 商品管理
                      */
@@ -222,7 +230,7 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                             }
                             // request
                             showLoading("loading");
-                            RequestPost.getGoodsList("", mTopType, "", new ArrayList<>(), ShopManagementActivity.this);
+                            RequestPost.getGoodsList("", mTopType, String.valueOf(pageCount), "", new ArrayList<>(), ShopManagementActivity.this);
                         });
                         // content -- 默认显示查看全部商品
                         ShopListContentListAdapter contentAdapter = new ShopListContentListAdapter(ShopManagementActivity.this, mContentList);
@@ -260,7 +268,10 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
 
                             @Override
                             public void onEdit(int position) {
-                                toast("编辑");
+                                // toast("编辑");
+                                Intent intent = new Intent(ShopManagementActivity.this, NewShopActivity.class);
+                                intent.putExtra("goodsId", mContentList.get(position).getGoodsId());
+                                startActivity(intent);
                             }
 
                             @Override
@@ -277,21 +288,6 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                             }
                         });
 
-                        // 滑动监听
-                        contentScroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                            if (contentScroll.getScrollY() == 0) {
-                                //顶部 // toast("到了顶部");
-                            }
-
-                            View contentView = contentScroll.getChildAt(0);
-                            if (contentView != null && contentView.getMeasuredHeight() == (contentScroll.getScrollY() + contentScroll.getHeight())) {
-                                //底部
-                                toast("您已经到底了");
-                                bottomText.setVisibility(View.VISIBLE);
-                            } else {
-                                bottomText.setVisibility(View.GONE);
-                            }
-                        });
                     }
 
                     /**
@@ -306,7 +302,7 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                         contentList.setAdapter(supplierAdapter);
                         supplierAdapter.setOnClickItem(position -> {
                             Contants.CHOOSE_MODEL_SIZE = 0x1001;
-                            Intent intent = new Intent(ShopManagementActivity.this, NewSupplierActivity.class);
+                            Intent intent = new Intent(ShopManagementActivity.this, SupplierCreateActivity.class);
                             intent.putExtra("supplyId", suppierList.get(position).getId());
                             startActivity(intent);
                         });
@@ -325,22 +321,83 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                         storesAdapter.setOnClickPoint(new StoresManagerAdapter.OnClickPoint() {
                             @Override
                             public void onClickPoint(int position) {
-                                if (storesList.get(position).isDelete()) {
-                                    storesList.get(position).setDelete(false);
-                                } else {
-                                    storesList.get(position).setDelete(true);
-                                }
+                                new MessageDialog.Builder(getActivity())
+                                        .setMessage("确认删除？")
+                                        .setConfirm(getString(R.string.common_confirm))
+                                        .setCancel(getString(R.string.common_cancel))
+                                        .setAutoDismiss(false)
+                                        .setCanceledOnTouchOutside(false)
+                                        .setListener(new MessageDialog.OnListener() {
+                                            @Override
+                                            public void onConfirm(BaseDialog dialog) {
+                                                dialog.dismiss();
+                                                if (storesList.get(position).isDelete()) {
+                                                    storesList.get(position).setDelete(false);
+                                                } else {
+                                                    storesList.get(position).setDelete(true);
+                                                }
+                                                // request
+                                                showLoading("");
+                                                RequestPost.delStore(storesList.get(position).getStoreId(), ShopManagementActivity.this);
+                                            }
+
+                                            @Override
+                                            public void onCancel(BaseDialog dialog) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+
                             }
 
                             @Override
                             public void onCliCkDetail(int position) {
                                 Contants.CHOOSE_MODEL_SIZE = 0x1003;
-                                Intent intent = new Intent(ShopManagementActivity.this, NewSupplierActivity.class);
+                                Intent intent = new Intent(ShopManagementActivity.this, StoreCreateEditActivity.class);
                                 intent.putExtra("storeId", storesList.get(position).getStoreId());
                                 startActivity(intent);
                             }
                         });
                     }
+                    break;
+
+                case REFRESH_SIZE:
+                    //上拉加载
+                    mRefreshLayout.setOnLoadMoreListener(() -> {
+                        pageCount++;
+                        // 商品管理
+                        if (Contants.CHOOSE_MODEL_SIZE == 1) {
+                            // request -- default query all
+                            RequestPost.getGoodsList("", mTopType, String.valueOf(pageCount), "", new ArrayList<>(), ShopManagementActivity.this);
+                        }
+                    });
+                    // 下拉刷新
+                    mRefreshLayout.setOnRefreshListener(() -> {
+                        pageCount = 0;
+                        // 商品管理
+                        if (Contants.CHOOSE_MODEL_SIZE == 1) {
+                            // request -- default query all
+                            RequestPost.getGoodsList("", mTopType, String.valueOf(pageCount), "", new ArrayList<>(), ShopManagementActivity.this);
+                        }
+                    });
+                    // 第一次进来的时候刷新
+                    mRefreshLayout.setOnAutoLoadListener(() -> {
+                        // 商品管理
+                        if (Contants.CHOOSE_MODEL_SIZE == 1) {
+                            // request -- default query all
+                            RequestPost.getGoodsList("", mTopType, String.valueOf(pageCount), "", new ArrayList<>(), ShopManagementActivity.this);
+                        }
+                        // 供应商管理
+                        if (Contants.CHOOSE_MODEL_SIZE == 102) {
+                            // request
+                            RequestPost.getSupplierlist("", ShopManagementActivity.this);
+                        }
+                        // 门店管理
+                        if (Contants.CHOOSE_MODEL_SIZE == 103) {
+                            // request
+                            RequestPost.getStorelist(ShopManagementActivity.this);
+                        }
+                    });
+                    mRefreshLayout.autoRefresh();
                     break;
             }
         }
@@ -368,8 +425,7 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                 // 更改商品上下架状态
                 if (result.url().contains("wxapi/v1/goods.php?type=onSaleGoods")) {
                     // request
-                    //showLoading("loading");
-                    RequestPost.getGoodsList("", mTopType, "", new ArrayList<>(), this);
+                    RequestPost.getGoodsList("", mTopType, String.valueOf(pageCount), "", new ArrayList<>(), this);
                 }
                 // 获取门店列表
                 if (result.url().contains("wxapi/v1/goods.php?type=getStorelist")) {
@@ -385,7 +441,8 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                                 JsonParser.parseJSONObject(body.get("data")).get("goodsTypeOne"));
                         List<PressTypeRightBean> rightTypeList = JsonParser.parseJSONArray(PressTypeRightBean.class,
                                 JsonParser.parseJSONObject(body.get("data")).get("goodsTypeTwo"));
-
+                        if (topTypeList != null && ListUtils.getSize(topTypeList) != 0)
+                            topTypeList.get(0).setChoose(true);
                         ScreeningPopWindow screeningPop = new ScreeningPopWindow(topTypeList, rightTypeList, this);
                         PopupWindowCompat.showAsDropDown(screeningPop, mLine, 0, 0, Gravity.START);
                         screeningPop.setAnimationStyle(R.style.IOSAnimStyle);
@@ -412,12 +469,12 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                                 screeningPop.dismiss();
                                 // request
                                 showLoading("loading");
-                                RequestPost.getGoodsList("", "", "", rightList, ShopManagementActivity.this);
+                                RequestPost.getGoodsList("", "", String.valueOf(pageCount), "", rightList, ShopManagementActivity.this);
                             }
                         });
                     }
                 }
-                // 获取右边的分类类型
+                // 获取左边的分类类型
                 if (result.url().contains("wxapi/v1/goods.php?type=getNewGoodsTypeTwo")) {
                     List<PressTypeRightBean> rightList = JsonParser.parseJSONArray(PressTypeRightBean.class,
                             JsonParser.parseJSONObject(body.get("data")).get("goodsTypeTwo"));
@@ -437,10 +494,16 @@ public class ShopManagementActivity extends BaseActivity implements View.OnClick
                     msg.what = INITIAL_SIZE;
                     mHandler.sendMessage(msg);
                 }
+                // 删除门店
+                if (result.url().contains("wxapi/v1/store.php?type=delStore")){
+                    toast(body.get("warn"));
+                    RequestPost.getStorelist(ShopManagementActivity.this);
+                }
             } else {
                 toast(body.get("warn"));
             }
-            dismissLoading();
+            if (getDialog() != null)
+                dismissLoading();
         }
     }
 }

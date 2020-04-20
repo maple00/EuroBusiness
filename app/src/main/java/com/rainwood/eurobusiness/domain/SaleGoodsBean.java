@@ -11,6 +11,7 @@ import java.util.List;
 public class SaleGoodsBean implements Serializable {
 
     private int type;                   // 加载的类型            --- 0：批发商；1：门店端
+    private String goodsId;             // 商品id
     private String imgPath;             //图片路径
     private String status;              // 商品状态
     private String name;                // 商品名称
@@ -30,6 +31,14 @@ public class SaleGoodsBean implements Serializable {
                 ", storeName='" + storeName + '\'' +
                 ", priceList=" + priceList +
                 '}';
+    }
+
+    public String getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(String goodsId) {
+        this.goodsId = goodsId;
     }
 
     public int getType() {

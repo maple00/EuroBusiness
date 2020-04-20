@@ -4,14 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -24,6 +27,7 @@ import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseFragment;
 import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.PersonalListBean;
+import com.rainwood.eurobusiness.io.IOUtils;
 import com.rainwood.eurobusiness.json.JsonParser;
 import com.rainwood.eurobusiness.okhttp.HttpResponse;
 import com.rainwood.eurobusiness.okhttp.OnHttpListener;
@@ -31,8 +35,9 @@ import com.rainwood.eurobusiness.other.BaseDialog;
 import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.activity.FeedBackActivity;
 import com.rainwood.eurobusiness.ui.activity.HelperActivity;
+import com.rainwood.eurobusiness.ui.activity.IdentityActivity;
 import com.rainwood.eurobusiness.ui.activity.InvoiceActivity;
-import com.rainwood.eurobusiness.ui.activity.LoginActivity;
+import com.rainwood.eurobusiness.ui.activity.MessageActivity;
 import com.rainwood.eurobusiness.ui.activity.ModifyPwdActivity;
 import com.rainwood.eurobusiness.ui.activity.StoresActivity;
 import com.rainwood.eurobusiness.ui.adapter.PersonaListAdapter;
@@ -42,6 +47,7 @@ import com.rainwood.eurobusiness.ui.dialog.MessageDialog;
 import com.rainwood.eurobusiness.ui.dialog.UpdateDialog;
 import com.rainwood.eurobusiness.utils.CacheManagerUtils;
 import com.rainwood.eurobusiness.utils.CameraAlbumUtils;
+import com.rainwood.eurobusiness.utils.CameraUtil;
 import com.rainwood.tools.permission.OnPermission;
 import com.rainwood.tools.permission.Permission;
 import com.rainwood.tools.permission.XXPermissions;
@@ -55,6 +61,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
+import static com.rainwood.eurobusiness.utils.CameraUtil.PHOTO_REQUEST_CAREMA;
+import static com.rainwood.eurobusiness.utils.CameraUtil.RESULT_CAMERA_IMAGE;
+import static com.rainwood.eurobusiness.utils.CameraUtil.uri_;
 
 /**
  * @Author: a797s
@@ -63,23 +72,38 @@ import static android.app.Activity.RESULT_OK;
  */
 public class PersonalFragment extends BaseFragment implements View.OnClickListener, OnHttpListener {
 
+    private Map<String, String> mCustomInfo;
+    private TextView mMsgDesc;
+
     @Override
     protected int initLayout() {
         return R.layout.fragment_personal;
     }
 
     private MeasureListView personalList;
-    private ImageView msg, edit, headPhoto;
+    private ImageView edit, headPhoto;
     private TextView userName, location;
     private Button logout;
+
+    private List<PersonalListBean> mList;
+
+    private String[] moduleName = {"门店信息", "开票信息", "账号设置", "帮助中心", "意见反馈",
+            "清理缓存", "版本更新"};
+    private int[] moduleIcon = {R.drawable.ic_icon_me_store, R.drawable.ic_icon_me_invoice,
+            R.drawable.ic_icon_me_set_up, R.drawable.ic_icon_me_help,
+            R.drawable.ic_icon_me_feedback, R.drawable.ic_icon_me_clear,
+            R.drawable.ic_icon_me_version_update};
+    private String[] addPictures = {"相机", "相册"};
 
     private final int INITIAL_SIZE = 0x101;
 
     @Override
     protected void initView(View view) {
         // 消息
-        msg = view.findViewById(R.id.iv_msg);
+        FrameLayout msg = view.findViewById(R.id.fl_message);
         msg.setOnClickListener(this);
+        mMsgDesc = view.findViewById(R.id.tv_desc);
+        mMsgDesc.setVisibility(View.GONE);
         // 个人信息
         headPhoto = view.findViewById(R.id.iv_head_photo);
         headPhoto.setOnClickListener(this);
@@ -127,8 +151,8 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
         logout = view.findViewById(R.id.btn_logout);
         logout.setOnClickListener(this);
         // 赋值
-        userName.setText("Herry");
-        location.setText("来福士门店");
+        userName.setText("");
+        location.setText("");
         // 圆形头像
         Glide.with(view)
                 .load(R.drawable.icon_logo_2x)
@@ -259,11 +283,13 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                             @Override
                             public void onConfirm(BaseDialog dialog, String content) {
                                 if (content.length() < 2 || content.length() > 8) {      // 输入限制
-                                    toast("昵称不规范");
+                                    toast("请输入2-8位昵称");
                                 } else {
                                     postDelayed(() -> {
                                         dialog.dismiss();
                                         userName.setText(content);
+                                        // TODO:
+                                        RequestPost.changeNickName(content, PersonalFragment.this);
                                     }, 500);
                                 }
                             }
@@ -274,8 +300,9 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                             }
                         }).show();
                 break;
-            case R.id.iv_msg:               // 消息
-                toast("消息列表");
+            case R.id.fl_message:               // 消息
+                // toast("消息列表");
+                startActivity(MessageActivity.class);
                 break;
             case R.id.btn_logout:           // 退出登陆
                 new MessageDialog.Builder(getActivity())
@@ -287,10 +314,9 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                         .setListener(new MessageDialog.OnListener() {
                             @Override
                             public void onConfirm(BaseDialog dialog) {
-                                postDelayed(() -> {
-                                    dialog.dismiss();
-                                    startActivity(LoginActivity.class);
-                                }, 500);
+                                // TODO
+                                showLoading("");
+                                RequestPost.loginOut(PersonalFragment.this);
                             }
 
                             @Override
@@ -321,10 +347,10 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                     @Override
                     public void onSelected(BaseDialog dialog, int position, String text) {
                         if (position == 0) {     // 相机
-                            CameraAlbumUtils.openCamera(PersonalFragment.this, getContext(), picSavePath);
+                            CameraUtil.openCamera(PersonalFragment.this);
                         }
                         if (position == 1) {     // 相册
-                            CameraAlbumUtils.openAlbum(PersonalFragment.this);
+                            gallery();
                         }
                         dialog.dismiss();
                     }
@@ -334,6 +360,17 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                         dialog.dismiss();
                     }
                 }).show();
+    }
+
+    /**
+     * 从相册获取
+     */
+    public void gallery() {
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
+        startActivityForResult(intent, RESULT_CAMERA_IMAGE);
     }
 
     /**
@@ -350,7 +387,7 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
         String photoPath;
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case CameraAlbumUtils.OPEN_CAMERA_SIZE:
+                case PHOTO_REQUEST_CAREMA:
                     if (data != null) {      //可能尚未指定intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
                         if (data.hasExtra("data")) {                                    //返回有缩略图
                             Bitmap bitmap = data.getParcelableExtra("data");
@@ -369,13 +406,23 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
                                     .load(photoPath)
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
                                     .into(headPhoto);
+                            File file = IOUtils.decodeUri(getActivity(), uri_);
+                            RequestPost.changeTouxiang(file, this);
                         }
                     }
                     break;
-                case CameraAlbumUtils.OPEN_ALBUM_SIZE:
-                    Log.d("sxs", " --- : " + data.getData());
+                case RESULT_CAMERA_IMAGE:
+                    if (data != null) {
+                        // 得到图片的全路径
+                        Uri uri = data.getData();
+                        // String path = CameraUtil.getPath(getContext(), uri);
+                        // uploadImg(path);
+                        File file = IOUtils.decodeUri(getActivity(), uri);
+                        RequestPost.changeTouxiang(file, this);
+//                        File file1 = CameraUtil.getFileFromUri(uri, getContext());
+//                        RequestPost.UploadFile(file1, this);
+                    }
                     photoPath = CameraAlbumUtils.getRealPathFromUri(getContext(), data.getData());
-                    Log.d("sxs", " --- :" + photoPath);
                     Glide.with(PersonalFragment.this)
                             .load(photoPath)
                             .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
@@ -385,16 +432,6 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    private List<PersonalListBean> mList;
-
-    private String[] moduleName = {"门店信息", "开票信息", "账号设置", "帮助中心", "意见反馈",
-            "清理缓存", "版本更新"};
-    private int[] moduleIcon = {R.drawable.ic_icon_me_store, R.drawable.ic_icon_me_invoice,
-            R.drawable.ic_icon_me_set_up, R.drawable.ic_icon_me_help,
-            R.drawable.ic_icon_me_feedback, R.drawable.ic_icon_me_clear,
-            R.drawable.ic_icon_me_version_update};
-    private String[] addPictures = {"相机", "相册"};
-
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
@@ -402,8 +439,17 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
             super.handleMessage(msg);
             switch (msg.what) {
                 case INITIAL_SIZE:
-
+                    Glide.with(Objects.requireNonNull(getActivity()))
+                            .load(mCustomInfo.get("ico"))
+                            .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+                            .error(R.drawable.icon_logo_2x)        //异常时候显示的图片
+                            .placeholder(R.drawable.icon_logo_2x) //加载成功前显示的图片
+                            .fallback(R.drawable.icon_logo_2x)  //url为空的时候,显示的图片
+                            .into(headPhoto);
+                    location.setText(mCustomInfo.get("storeName"));
+                    userName.setText(mCustomInfo.get("name"));
                     break;
+
             }
         }
     };
@@ -420,23 +466,39 @@ public class PersonalFragment extends BaseFragment implements View.OnClickListen
         if (body != null) {
             if ("1".equals(body.get("code"))) {
                 if (result.url().contains("wxapi/v1/index.php?type=getPerson")) {           // 个人中心
-                    Map<String, String> data = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("info"));
-                    Log.d(TAG, "data --- " + data);
-                    Glide.with(Objects.requireNonNull(getActivity()))
-                            .load(data.get("ico"))
-                            .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
-                            .error(R.drawable.icon_loadding_fail)        //异常时候显示的图片
-                            .placeholder(R.drawable.icon_loadding_fail) //加载成功前显示的图片
-                            .fallback(R.drawable.icon_loadding_fail)  //url为空的时候,显示的图片
-                            .into(headPhoto);
-                    location.setText(data.get("storeName"));
-                    userName.setText(data.get("name"));
+                    mCustomInfo = JsonParser.parseJSONObject(JsonParser.parseJSONObject(body.get("data")).get("info"));
+                    if (mCustomInfo != null) {
+                        if (!TextUtils.isEmpty(mCustomInfo.get("messageNum"))){
+                            mMsgDesc.setVisibility(View.VISIBLE);
+                            mMsgDesc.setText(mCustomInfo.get("messageNum"));
+                        }
+                    }
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
                 }
 
                 // 一键报警
                 if (result.url().contains("wxapi/v1/index.php?type=callPlat")) {
                     toast(body.get("warn"));
                 }
+
+                // 退出登录
+                if (result.url().contains("wxapi/v1/login.php?type=loginOut")) {
+                    toast(body.get("warn"));
+                    postDelayed(() -> startActivity(IdentityActivity.class), 500);
+                }
+
+                // 修改头像
+                if (result.url().contains("wxapi/v1/index.php?type=changeTouxiang")) {
+                    toast(body.get("warn"));
+                }
+
+                // 修改昵称
+                if (result.url().contains("wxapi/v1/index.php?type=changeNickName")) {
+                    toast(body.get("warn"));
+                }
+
             } else {
                 toast(body.get("warn"));
             }

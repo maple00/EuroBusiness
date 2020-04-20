@@ -1,10 +1,16 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,11 +26,14 @@ import com.rainwood.eurobusiness.domain.RefundGoodsBean;
 import com.rainwood.eurobusiness.json.JsonParser;
 import com.rainwood.eurobusiness.okhttp.HttpResponse;
 import com.rainwood.eurobusiness.okhttp.OnHttpListener;
+import com.rainwood.eurobusiness.other.BaseDialog;
 import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.GoodsStatusAdapter;
 import com.rainwood.eurobusiness.ui.adapter.ReturnGoodsAdapter;
 import com.rainwood.eurobusiness.ui.adapter.ReturnGoodsSalerAdapter;
 import com.rainwood.eurobusiness.ui.adapter.TopTypeAdapter;
+import com.rainwood.eurobusiness.ui.dialog.DateDialog;
+import com.rainwood.tools.refresh.DaisyRefreshLayout;
 import com.rainwood.tools.view.ClearEditText;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
@@ -66,25 +75,34 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
     private LinearLayout search;
     @ViewById(R.id.iv_new_found)
     private ImageView newFound;
+    @ViewById(R.id.drl_refresh)
+    private DaisyRefreshLayout mRefreshLayout;
+
     // mHandler
     private final int DEFAULT_SIZE = 0x1124;
     private final int SALER_SIZE = 0x0929;
+    private final int REFRESH_SIZE = 0x102;
+    private static int pageCount = 0;
 
     private List<PressBean> topTypeList;
     private String[] topTypes = {"采购订单退货", "销售订单退货"};
-    private List<PressBean> orderTypeList;
+    // 门店端的采购单状态
     private String[] orderTypes = {"全部", "已完成", "审核中", "草稿"};
     private List<PressBean> saleTypeList;
-    private String[] saleType = {"全部", "已完成", "确认中"};
+    // 门店端销售单状态
+    private String[] saleType = {"全部", "已完成", "待入库", "待审核"};
     private List<RefundGoodsBean> mList;
     // 批发商
-    private String[] orderType = {"全部", "已完成", "待审核"};
-    private String[] saleTypes = {"全部", "已完成", "确认中", "待审核"};
+    private List<PressBean> orderTypeList;
+    // 批发商端的采购单状态
+    private String[] orderType = {"全部", "已完成", "待审核", "退货中"};
+    // 销售单状态
+    private String[] saleTypes = {"全部", "已完成", "待审核", "待入库"};
 
     private static String mClassify;
     private static String mStatus;
 
-    private List<RefundGoodsBean> goodsList;
+    private List<RefundGoodsBean> mCopyGoodsList = new ArrayList<>();
 
     @Override
     protected void initView() {
@@ -95,14 +113,24 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
         if (Contants.CHOOSE_MODEL_SIZE == 9) {
             searchTips.setText("退货单号");
             searchHint.setHint("请输入退货单号");
-            search1.setVisibility(View.GONE);
-            newFound.setVisibility(View.GONE);
         }
         // 批发商端
         if (Contants.CHOOSE_MODEL_SIZE == 108) {
             search.setVisibility(View.GONE);
             newFound.setVisibility(View.GONE);
         }
+
+        Message msg = new Message();
+        msg.what = REFRESH_SIZE;
+        mHandler.sendMessage(msg);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        pageCount = 0;
+        mCopyGoodsList = new ArrayList<>();
+        requestPost("", "");
     }
 
     @Override
@@ -118,6 +146,7 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
             topTypeList.add(press);
         }
         // 门店端
+        // 采购单类型
         orderTypeList = new ArrayList<>();
         for (int i = 0; i < orderTypes.length && Contants.CHOOSE_MODEL_SIZE == 9; i++) {
             PressBean press = new PressBean();
@@ -127,6 +156,7 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
             }
             orderTypeList.add(press);
         }
+        // 销售单类型
         saleTypeList = new ArrayList<>();
         for (int i = 0; i < saleType.length && Contants.CHOOSE_MODEL_SIZE == 9; i++) {
             PressBean press = new PressBean();
@@ -138,6 +168,7 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
         }
 
         // 批发商
+        // 采购单类型
         for (int i = 0; i < orderType.length && Contants.CHOOSE_MODEL_SIZE == 108; i++) {
             PressBean press = new PressBean();
             press.setTitle(orderType[i]);
@@ -146,8 +177,15 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
             }
             orderTypeList.add(press);
         }
-        // request
-        requestPost();
+        // 销售单类型
+        for (int i = 0; i < saleTypes.length && Contants.CHOOSE_MODEL_SIZE == 108; i++) {
+            PressBean press = new PressBean();
+            press.setTitle(saleTypes[i]);
+            if (i == 0) {
+                press.setChoose(true);
+            }
+            saleTypeList.add(press);
+        }
     }
 
     @Override
@@ -157,15 +195,90 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
                 finish();
                 break;
             case R.id.iv_screening:
-                toast("筛选");
+                // toast("筛选");
+                getCusTomDialog();
                 break;
         }
     }
 
     /**
+     * 选择时间段 Dialog
+     */
+    private void getCusTomDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_period);
+        Window dialogWindow = dialog.getWindow();
+        dialogWindow.setGravity(Gravity.CENTER);
+        dialogWindow.getDecorView().setPadding(0, 30, 0, 30);
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialogWindow.setAttributes(lp);
+        dialog.show();
+
+        TextView startTime = dialog.findViewById(R.id.tv_start_time);
+        startTime.setFocusable(true);
+        startTime.setOnClickListener(v -> {
+            // 日期选择对话框
+            getDateDialog(startTime);
+        });
+        TextView endTime = dialog.findViewById(R.id.tv_end_time);
+        endTime.setOnClickListener(v -> getDateDialog(endTime));
+        // 监听
+        TextView clear = dialog.findViewById(R.id.tv_clear_screening);
+        clear.setOnClickListener(v -> {
+            startTime.setText("");
+            endTime.setText("");
+            postAtTime(() -> toast("清除完成!"), 500);
+        });
+        TextView confirm = dialog.findViewById(R.id.tv_confirm);
+        confirm.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(startTime.getText()) || TextUtils.isEmpty(endTime.getText())) {
+                toast("选择时间范围不完整!");
+                return;
+            }
+
+            // request
+            dialog.dismiss();
+            pageCount = 0;
+            mCopyGoodsList = new ArrayList<>();
+            requestPost(startTime.getText().toString().trim(), endTime.getText().toString().trim());
+        });
+        // dialog  dismiss 监听
+        dialog.setOnDismissListener(DialogInterface::dismiss);
+    }
+
+    /**
+     * 选择时间范围
+     *
+     * @param time TextView
+     */
+    private void getDateDialog(TextView time) {
+        new DateDialog.Builder(this)
+                .setTitle(getString(R.string.date_title))
+                .setConfirm(getString(R.string.common_confirm))
+                .setCancel(null)
+                //.setIgnoreDay()
+                .setListener(new DateDialog.OnListener() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onSelected(BaseDialog dialog, int year, int month, int day) {
+                        // toast(year + "-" + "-" + month + "-" + day);
+                        time.setText(year + "-" + (month < 10 ? ("0" + month) : month) + "-" + (day < 10 ? ("0" + day) : day));
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    /**
      * request Data
      */
-    private void requestPost() {
+    private void requestPost(String startTime, String endTime) {
         // 采购订单、销售订单
         if ("销售订单退货".equals(mClassify)) {
             mClassify = "sale";
@@ -181,10 +294,10 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
         } else if ("草稿".equals(mStatus)) {
             mStatus = "draft";
         } else {
-            mStatus = "others";
+            mStatus = "";
         }
-        showLoading("加载中");
-        RequestPost.returnGoodsList(mClassify, mStatus, Contants.SEARCH_CONDITIONS, this);
+        // showLoading("");
+        RequestPost.returnGoodsList(String.valueOf(pageCount), mClassify, mStatus, Contants.SEARCH_CONDITIONS, startTime, endTime, this);
     }
 
     // type position record
@@ -196,8 +309,7 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case DEFAULT_SIZE:
-                    // count
+                case DEFAULT_SIZE:          // 门店端
                     // 退货订单类型
                     TopTypeAdapter typeAdapter = new TopTypeAdapter(ReturnGoodsActivity.this, topTypeList);
                     topType.setAdapter(typeAdapter);
@@ -209,7 +321,9 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
                         topTypeList.get(position).setChoose(true);
                         mClassify = topTypeList.get(position).getTitle();
                         // request
-                        requestPost();
+                        mCopyGoodsList = new ArrayList<>();
+                        requestPost("", "");
+                        showLoading("");
                         posCount = position;
                     });
                     // 加载不同的状态
@@ -243,20 +357,42 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
                             mStatus = saleTypeList.get(position1).getTitle();
                         }
                         // request
-                        requestPost();
+                        showLoading("");
+                        mCopyGoodsList = new ArrayList<>();
+                        requestPost("", "");
                     });
 
                     // content
-                    ReturnGoodsAdapter goodsAdapter = new ReturnGoodsAdapter(ReturnGoodsActivity.this, goodsList);
+                    ReturnGoodsAdapter goodsAdapter = new ReturnGoodsAdapter(posCount, ReturnGoodsActivity.this, mCopyGoodsList);
                     contentList.setAdapter(goodsAdapter);
-                    goodsAdapter.setOnClickItem(position -> {
-                        // toast("点击详情");
-                        Intent intent = new Intent(ReturnGoodsActivity.this, ReGoodsDetailActivity.class);
-                        intent.putExtra("goodsId", goodsList.get(position).getId());
-                        startActivity(intent);
+                    goodsAdapter.setOnClickItem(new ReturnGoodsAdapter.OnClickItem() {
+                        @Override
+                        public void onClickItem(int position) {
+                            Intent intent = new Intent(ReturnGoodsActivity.this, ReGoodsDetailActivity.class);
+                            intent.putExtra("goodsId", mCopyGoodsList.get(position).getId());
+                            intent.putExtra("flag", "store");
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onClickScrap(int position) {
+                            // toast("报废");
+                            Intent intent = new Intent(ReturnGoodsActivity.this, ScrapInActivity.class);
+                            intent.putExtra("goodsId", mCopyGoodsList.get(position).getId());
+                            intent.putExtra("flag", "scrap");
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onClickStorage(int position) {
+                            Intent intent = new Intent(ReturnGoodsActivity.this, ScrapInActivity.class);
+                            intent.putExtra("goodsId", mCopyGoodsList.get(position).getId());
+                            intent.putExtra("flag", "inStorage");
+                            startActivity(intent);
+                        }
                     });
                     break;
-                case SALER_SIZE:
+                case SALER_SIZE:            // 批发商端
                     // 退货订单类型
                     TopTypeAdapter typesAdapter = new TopTypeAdapter(ReturnGoodsActivity.this, topTypeList);
                     topType.setAdapter(typesAdapter);
@@ -268,8 +404,10 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
                         topTypeList.get(position).setChoose(true);
                         mClassify = topTypeList.get(position).getTitle();
                         // request
-                        requestPost();
+                        mCopyGoodsList = new ArrayList<>();
                         posCount = position;
+                        showLoading("");
+                        requestPost("", "");
                     });
                     // 加载不同的状态
                     GoodsStatusAdapter topStateAdapter;
@@ -283,33 +421,60 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
                     typeList.setAdapter(topStateAdapter);
                     typeList.setNumColumns(5);
                     topStateAdapter.setOnClickItem(position -> {
-                        for (PressBean pressBean : orderTypeList) {
-                            pressBean.setChoose(false);
+                        for (PressBean pressBean : topTypeList) {
+                            if (pressBean.isChoose()) {
+                                mClassify = topTypeList.get(posCount).getTitle();
+                                break;
+                            }
                         }
-                        orderTypeList.get(position).setChoose(true);
-
+                        if (posCount == 0) {
+                            for (PressBean pressBean : orderTypeList) {
+                                pressBean.setChoose(false);
+                            }
+                            orderTypeList.get(position).setChoose(true);
+                            mStatus = orderTypeList.get(position).getTitle();
+                        } else {
+                            for (PressBean bean : saleTypeList) {
+                                bean.setChoose(false);
+                            }
+                            saleTypeList.get(position).setChoose(true);
+                            mStatus = orderTypeList.get(position).getTitle();
+                        }
                         // request
-                        requestPost();
+                        showLoading("");
+                        mList = new ArrayList<>();
+                        requestPost("", "");
                     });
-                    // content
-                    ReturnGoodsSalerAdapter salerAdapter = new ReturnGoodsSalerAdapter(ReturnGoodsActivity.this, mList);
+                    // content -- 采购单可以审批，销售单只能查看详情
+                    ReturnGoodsSalerAdapter salerAdapter = new ReturnGoodsSalerAdapter(posCount, ReturnGoodsActivity.this, mList);
                     contentList.setAdapter(salerAdapter);
-                    salerAdapter.setOnClickItem(new ReturnGoodsSalerAdapter.OnClickItem() {
-                        @Override
-                        public void onClickItem(int position) {
-                            toast("查看详情");
-                        }
-
-                        @Override
-                        public void onClickScrap(int position) {
-                            toast("报废");
-                        }
-
-                        @Override
-                        public void onClickStorage(int position) {
-                            toast("入库");
-                        }
+                    salerAdapter.setOnClickItem(position -> {
+                        Intent intent = new Intent(ReturnGoodsActivity.this, ReGoodsDetailActivity.class);
+                        intent.putExtra("goodsId", mList.get(position).getId());
+                        intent.putExtra("flag", "seller");
+                        startActivity(intent);
                     });
+                    break;
+                case REFRESH_SIZE:
+                    //上拉加载
+                    mRefreshLayout.setOnLoadMoreListener(() -> {
+                        pageCount++;
+                        requestPost("", "");
+                    });
+                    // 下拉刷新
+                    mRefreshLayout.setOnRefreshListener(() -> {
+                        pageCount = 0;
+                        mCopyGoodsList = new ArrayList<>();
+                        requestPost("", "");
+                    });
+                    // 第一次进来的时候刷新
+                    mRefreshLayout.setOnAutoLoadListener(() -> {
+                        // request
+                        pageCount = 0;
+                        mCopyGoodsList = new ArrayList<>();
+                        requestPost("", "");
+                    });
+                    mRefreshLayout.autoRefresh();
                     break;
             }
         }
@@ -322,18 +487,23 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
+        mRefreshLayout.setLoadMore(false);
+        mRefreshLayout.setRefreshing(false);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
                 if (result.url().contains("wxapi/v1/order.php?type=getRefundOrder")) {            // 查询退货列表
-                    if (Contants.CHOOSE_MODEL_SIZE == 9) {
-                        goodsList = JsonParser.parseJSONArray(RefundGoodsBean.class,
+                    if (Contants.CHOOSE_MODEL_SIZE == 9) {                          // 门店端
+                        List<RefundGoodsBean> goodsList = JsonParser.parseJSONArray(RefundGoodsBean.class,
                                 JsonParser.parseJSONObject(body.get("data")).get("refundlist"));
-                        Message msg = new Message();
-                        msg.what = DEFAULT_SIZE;
-                        mHandler.sendMessage(msg);
+                        if (goodsList != null) {
+                            mCopyGoodsList.addAll(goodsList);
+                            Message msg = new Message();
+                            msg.what = DEFAULT_SIZE;
+                            mHandler.sendMessage(msg);
+                        }
                     }
-                    if (Contants.CHOOSE_MODEL_SIZE == 108) {
+                    if (Contants.CHOOSE_MODEL_SIZE == 108) {                        // 批发商端
                         mList = JsonParser.parseJSONArray(RefundGoodsBean.class,
                                 JsonParser.parseJSONObject(body.get("data")).get("refundlist"));
                         Message msg = new Message();
@@ -344,7 +514,8 @@ public class ReturnGoodsActivity extends BaseActivity implements View.OnClickLis
             } else {
                 toast(body.get("warn"));
             }
-            dismissLoading();
+            if (getDialog() != null)
+                dismissLoading();
         }
     }
 }

@@ -15,7 +15,6 @@ import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.domain.CommonUIBean;
 import com.rainwood.eurobusiness.domain.GoodsDetailBean;
-import com.rainwood.eurobusiness.domain.ImageBean;
 import com.rainwood.eurobusiness.domain.ImagesBean;
 import com.rainwood.eurobusiness.domain.SpecialBean;
 import com.rainwood.eurobusiness.json.JsonParser;
@@ -80,14 +79,23 @@ public class InventoryGoodsActivity extends BaseActivity implements View.OnClick
         pageBack.setOnClickListener(this);
         inventory.setOnClickListener(this);
         goods.setOnClickListener(this);
-
         // request
         String stockId = getIntent().getStringExtra("stockId");
         if (stockId != null) {
             showLoading("loading");
             RequestPost.getStockDetail(stockId, "", this);
+        } else {
+            mList = (List<GoodsDetailBean>) getIntent().getSerializableExtra("goodsDetail");
+            mSpeciaList = (List<SpecialBean>) getIntent().getSerializableExtra("specialData");
+            if (ListUtils.getSize(mList) != 0) {
+                Message msg = new Message();
+                msg.what = INVENTORY_SIZE;
+                mHandler.sendMessage(msg);
+            } else {
+                toast("该商品数据错误");
+                finish();
+            }
         }
-
     }
 
     @Override

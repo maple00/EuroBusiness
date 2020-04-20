@@ -1,11 +1,17 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,9 +34,11 @@ import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.GoodsStatusAdapter;
 import com.rainwood.eurobusiness.ui.adapter.LevelTypeAdapter;
 import com.rainwood.eurobusiness.ui.adapter.OrderContentAdapter;
+import com.rainwood.eurobusiness.ui.dialog.DateDialog;
 import com.rainwood.eurobusiness.ui.dialog.MenuDialog;
 import com.rainwood.eurobusiness.ui.widget.CustomDialog;
 import com.rainwood.tools.common.FontDisplayUtil;
+import com.rainwood.tools.refresh.DaisyRefreshLayout;
 import com.rainwood.tools.view.ClearEditText;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureGridView;
@@ -77,11 +85,16 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
     private MeasureListView contentList;        // 订单列表
     @ViewById(R.id.tv_order_tips)
     private TextView orderTips;                 // 提示没有更多订单了
+    @ViewById(R.id.drl_refresh)
+    private DaisyRefreshLayout mRefreshLayout;
     // mHandler
     private final int PRINT_SIZE = 0x1124;
     private final int INITIAL_SIZE = 0x101;
+    private final int REFRESH_SIZE = 0x102;
+    private static int pageCount = 0;
+    private static int posFalg;
 
-    private List<OrderListBean> mOrderList;
+    private List<OrderListBean> mCopyOrderList = new ArrayList<>();
     //
     private List<ItemGridBean> orderPayList;
     private String[] orderPays = {"订单状态", "支付方式"};
@@ -113,9 +126,9 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
-        // request
-        showLoading("loading");
-        RequestPost.getOrderList("", "", "", "", this);
+        Message msg = new Message();
+        msg.what = REFRESH_SIZE;
+        mHandler.sendMessage(msg);
     }
 
     @Override
@@ -158,10 +171,93 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                 mHandler.sendMessage(msg);
                 break;
             case R.id.iv_screening:
-                toast("筛选");
+                // toast("筛选");
+                getCusTomDialog();
                 break;
         }
     }
+
+    /**
+     * 选择时间段 Dialog
+     */
+    private void getCusTomDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_period);
+        Window dialogWindow = dialog.getWindow();
+        dialogWindow.setGravity(Gravity.CENTER);
+        dialogWindow.getDecorView().setPadding(0, 30, 0, 30);
+        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialogWindow.setAttributes(lp);
+        dialog.show();
+
+        TextView startTime = dialog.findViewById(R.id.tv_start_time);
+        startTime.setFocusable(true);
+        startTime.setOnClickListener(v -> {
+            // 日期选择对话框
+            getDateDialog(startTime);
+        });
+        TextView endTime = dialog.findViewById(R.id.tv_end_time);
+        endTime.setOnClickListener(v -> getDateDialog(endTime));
+        // 监听
+        TextView clear = dialog.findViewById(R.id.tv_clear_screening);
+        clear.setOnClickListener(v -> {
+            startTime.setText("");
+            endTime.setText("");
+            postAtTime(() -> toast("清除完成!"), 500);
+        });
+        TextView confirm = dialog.findViewById(R.id.tv_confirm);
+        confirm.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(startTime.getText()) || TextUtils.isEmpty(endTime.getText())) {
+                toast("选择时间范围不完整!");
+                return;
+            }
+            // 通过时间查询订单列表 -- 默认查询当前选中的类型的全部状态
+            // request
+            showLoading("loading");
+            dialog.dismiss();
+            pageCount = 0;
+            mCopyOrderList = new ArrayList<>();
+            RequestPost.getOrderList(String.valueOf(pageCount), mType, mPayType, mGoodsStatus, "", startTime.getText().toString().trim(),
+                    endTime.getText().toString().trim(), OrderManagerActivity.this);
+            //toast("您选择了：" + startTime.getText().toString() + "至" + endTime.getText().toString());
+        });
+        // dialog  dismiss 监听
+        dialog.setOnDismissListener(DialogInterface::dismiss);
+    }
+
+    /**
+     * 选择时间范围
+     *
+     * @param time TextView
+     */
+    private void getDateDialog(TextView time) {
+        new DateDialog.Builder(this)
+                .setTitle(getString(R.string.date_title))
+                .setConfirm(getString(R.string.common_confirm))
+                .setCancel(null)
+                //.setIgnoreDay()
+                .setListener(new DateDialog.OnListener() {
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onSelected(BaseDialog dialog, int year, int month, int day) {
+                        // toast(year + "-" + "-" + month + "-" + day);
+                        time.setText(year + "-" + (month < 10 ? ("0" + month) : month) + "-" + (day < 10 ? ("0" + day) : day));
+                    }
+
+                    @Override
+                    public void onCancel(BaseDialog dialog) {
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+
+    private String mPayType;
+    private String mType;
+    private String mGoodsStatus;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -221,22 +317,26 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                                         .setCanceledOnTouchOutside(false)
                                         .setListener(new MenuDialog.OnListener<String>() {
                                             @Override
-                                            public void onSelected(BaseDialog dialog, int position, String text) {
+                                            public void onSelected(BaseDialog dialog, int position, String goodsStatus) {
                                                 dialog.dismiss();
-                                                switch (text) {
+                                                switch (goodsStatus) {
                                                     case "待发货":
-                                                        text = "waitSend";
+                                                        goodsStatus = "waitSend";
                                                         break;
                                                     case "待付款":
-                                                        text = "waitRec";
+                                                        goodsStatus = "waitRec";
                                                         break;
                                                     case "已完成":
-                                                        text = "complete";
+                                                        goodsStatus = "complete";
                                                         break;
                                                 }
                                                 // request
                                                 showLoading("loading");
-                                                RequestPost.getOrderList("", "", text, "", OrderManagerActivity.this);
+                                                mGoodsStatus = goodsStatus;
+                                                pageCount = 0;
+                                                mCopyOrderList = new ArrayList<>();
+                                                RequestPost.getOrderList(String.valueOf(pageCount), mType, mPayType, mGoodsStatus,
+                                                        "", "", "", OrderManagerActivity.this);
                                             }
 
                                             @Override
@@ -253,11 +353,15 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                                         .setCanceledOnTouchOutside(false)
                                         .setListener(new MenuDialog.OnListener<String>() {
                                             @Override
-                                            public void onSelected(BaseDialog dialog, int position, String text) {
+                                            public void onSelected(BaseDialog dialog, int position, String payType) {
                                                 dialog.dismiss();
                                                 // request
                                                 showLoading("loading");
-                                                RequestPost.getOrderList("", text, "", "", OrderManagerActivity.this);
+                                                mPayType = payType;
+                                                pageCount = 0;
+                                                mCopyOrderList = new ArrayList<>();
+                                                RequestPost.getOrderList(String.valueOf(pageCount), mType, mPayType, mGoodsStatus, "",
+                                                        "", "", OrderManagerActivity.this);
                                             }
 
                                             @Override
@@ -277,31 +381,58 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                             pressBean.setChoose(false);
                         }
                         statuList.get(position).setChoose(true);
-                        String type;
                         switch (position) {
                             case 1:
-                                type = "online";
+                                mType = "online";
                                 break;
                             case 2:
-                                type = "offline";
+                                mType = "offline";
                                 break;
                             default:
-                                type = "";
+                                mType = "";
                                 break;
                         }
                         // request
                         showLoading("loading");
-                        RequestPost.getOrderList(type, "", "", "", OrderManagerActivity.this);
+                        pageCount = 0;
+                        mCopyOrderList = new ArrayList<>();
+                        RequestPost.getOrderList(String.valueOf(pageCount), mType, mPayType, mGoodsStatus,
+                                "", "", "", OrderManagerActivity.this);
                     });
                     // 订单内容
-                    OrderContentAdapter contentAdapter = new OrderContentAdapter(OrderManagerActivity.this, mOrderList);
+                    mRefreshLayout.setLoadMore(false);
+                    mRefreshLayout.setRefreshing(false);
+                    OrderContentAdapter contentAdapter = new OrderContentAdapter(OrderManagerActivity.this, mCopyOrderList);
                     contentList.setAdapter(contentAdapter);
                     contentAdapter.setOnClickItem(position -> {
                         // toast("订单详情：" + position);
                         Intent intent = new Intent(OrderManagerActivity.this, OrderDetailActivity.class);
-                        intent.putExtra("orderId", mOrderList.get(position).getId());
+                        intent.putExtra("orderId", mCopyOrderList.get(position).getId());
                         startActivity(intent);
                     });
+                    break;
+                case REFRESH_SIZE:
+                    //上拉加载
+                    mRefreshLayout.setOnLoadMoreListener(() -> {
+                        pageCount++;
+                        RequestPost.getOrderList(String.valueOf(pageCount), mType, mPayType, mGoodsStatus,
+                                "", "", "", OrderManagerActivity.this);
+                    });
+                    // 下拉刷新
+                    mRefreshLayout.setOnRefreshListener(() -> {
+                        pageCount = 0;
+                        mCopyOrderList = new ArrayList<>();
+                        RequestPost.getOrderList(String.valueOf(pageCount), mType, mPayType, mGoodsStatus,
+                                "", "", "", OrderManagerActivity.this);
+                    });
+                    // 第一次进来的时候刷新
+                    mRefreshLayout.setOnAutoLoadListener(() -> {
+                        // default query new --
+                        // request
+                        RequestPost.getOrderList(String.valueOf(pageCount), mType, mPayType, mGoodsStatus,
+                                "", "", "", OrderManagerActivity.this);
+                    });
+                    mRefreshLayout.autoRefresh();
                     break;
             }
         }
@@ -319,7 +450,10 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
             if ("1".equals(body.get("code"))) {
                 // 订单列表
                 if (result.url().contains("wxapi/v1/order.php?type=getBuyCarlist")) {
-                    mOrderList = JsonParser.parseJSONArray(OrderListBean.class, JsonParser.parseJSONObject(body.get("data")).get("list"));
+                    List<OrderListBean> orderList = JsonParser.parseJSONArray(OrderListBean.class, JsonParser.parseJSONObject(body.get("data")).get("list"));
+                    if (orderList != null) {
+                        mCopyOrderList.addAll(orderList);
+                    }
                     Message msg = new Message();
                     msg.what = INITIAL_SIZE;
                     mHandler.sendMessage(msg);
@@ -343,12 +477,12 @@ public class OrderManagerActivity extends BaseActivity implements View.OnClickLi
                             e.printStackTrace();
                         }
                     }
-                    //Log.d(TAG, "=========== " + JsonParser.parseJSONObject(body.get("data")).get("orderStatelist"));
                 }
             } else {
                 toast(body.get("warn"));
             }
-            dismissLoading();
+            if (getDialog() != null)
+                dismissLoading();
         }
     }
 }

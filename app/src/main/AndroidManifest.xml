@@ -19,6 +19,9 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <!-- 读取短信-->
     <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".base.BaseApplication"
@@ -32,9 +35,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
 
-        <!-- App 首页-->
+        <!-- 启动页 SplashActivity-->
         <activity
-            android:name=".ui.activity.IdentityActivity"
+            android:name=".ui.activity.SplashActivity"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="behind">
@@ -58,6 +61,10 @@
         </provider>
 
         <!-- 启动页身份选择界面 IdentityActivity-->
+        <activity
+            android:name=".ui.activity.IdentityActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.activity.HomeActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -368,7 +375,7 @@
             android:name=".ui.activity.NewSupplierActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
 
         <!-- 批发商（商品管理）SaleGoodsManagerActivity-->
         <activity
@@ -380,8 +387,8 @@
         <activity
             android:name=".ui.activity.NewPurchaseActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:windowSoftInputMode="stateVisible|adjustResize"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
 
         <!-- 商品列表  -->
         <activity
@@ -392,6 +399,84 @@
         <!-- 添加商品 AddNewGoodsActivity-->
         <activity
             android:name=".ui.activity.AddNewGoodsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 消息列表 MessageActivity-->
+        <activity
+            android:name=".ui.activity.MessageActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 消息详情 MessageDetailActivity-->
+        <activity
+            android:name=".ui.activity.MessageDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 客户管理 新增分类 CustomCreateTypeActivity-->
+        <activity
+            android:name=".ui.activity.CustomCreateTypeActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 客户编辑及新增 CustomEditActivity-->
+        <activity
+            android:name=".ui.activity.CustomEditActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 采购单补货申请 PurchaseRepleActivity-->
+        <activity
+            android:name=".ui.activity.PurchaseRepleActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 新建供应商 SupplierCreateActivity-->
+        <activity
+            android:name=".ui.activity.SupplierCreateActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 新建门店 StoreCreateEditActivity-->
+        <activity
+            android:name=".ui.activity.StoreCreateEditActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 新增/编辑发票地址 InvoinceCreateActivity-->
+        <activity
+            android:name=".ui.activity.InvoinceCreateActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 新增/编辑收货地址 ShipAddressActivity-->
+        <activity
+            android:name=".ui.activity.ShipAddressActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 批发商采购单详情 WPurchaseDetailActivity-->
+        <activity
+            android:name=".ui.activity.WPurchaseDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 入库报废  ScrapInActivity-->
+        <activity
+            android:name=".ui.activity.ScrapInActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 门店入库明细 StoreInventoryActivity-->
+        <activity
+            android:name=".ui.activity.StoreInventoryActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+
+        <!-- 批发商补货订单审核 AuditOrderActivity-->
+        <activity
+            android:name=".ui.activity.AuditOrderActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait" />
 

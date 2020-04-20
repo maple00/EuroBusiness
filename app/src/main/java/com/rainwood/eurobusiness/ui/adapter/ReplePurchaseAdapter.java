@@ -76,7 +76,7 @@ public final class ReplePurchaseAdapter extends BaseAdapter {
                 + "<font color=" + mContext.getResources().getColor(R.color.textColor) + " size='12px'>"
                 + getItem(position).getBuyTotal() + "</font>"));
         holder.tv_storage_num.setText(Html.fromHtml("<font color="
-                + mContext.getResources().getColor(R.color.fontColor) + " size='12px'>采购：</font>"
+                + mContext.getResources().getColor(R.color.fontColor) + " size='12px'>入库：</font>"
                 + "<font color=" + mContext.getResources().getColor(R.color.red30) + " size='12px'>"
                 + getItem(position).getInTotal() + "</font>"));
         holder.tv_status.setText(getItem(position).getWorkFlow());

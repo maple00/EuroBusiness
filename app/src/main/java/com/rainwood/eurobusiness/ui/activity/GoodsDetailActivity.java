@@ -59,7 +59,6 @@ public class GoodsDetailActivity extends BaseActivity implements View.OnClickLis
         pageBack.setOnClickListener(this);
         pageTitle.setText("商品详情");
 
-
         // request
         String goodsId = getIntent().getStringExtra("goodsId");
         showLoading("loading");

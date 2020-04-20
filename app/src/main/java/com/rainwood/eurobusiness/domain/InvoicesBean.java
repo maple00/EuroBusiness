@@ -13,12 +13,21 @@ public final class InvoicesBean implements Serializable {
     private String khId;        // 客户id
     private String name;        // 名称
     private String paragraph;       // 税号
+    private String companyName;     // 公司名称
     private String email;       // 邮箱
     private String consignee;       // 联系人
     private String consigneeTel;        // 联系电话
     private String region;      // 国家地区
     private String addressMx;       // 详细地址
     private String isDefault;       // 是否是默认地址
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
 
     public String getId() {
         return id;

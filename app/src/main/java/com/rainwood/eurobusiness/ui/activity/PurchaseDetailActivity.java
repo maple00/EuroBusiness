@@ -44,6 +44,7 @@ import java.util.Map;
 public class PurchaseDetailActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
     private PurchaseInfos mPurchaseInfos;
+    private static String mOrderId;
 
     @Override
     protected int getLayoutId() {
@@ -104,10 +105,10 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
     protected void onResume() {
         super.onResume();
         // request
-        String orderId = getIntent().getStringExtra("orderId");
-        if (orderId != null) {
+        mOrderId = getIntent().getStringExtra("orderId");
+        if (mOrderId != null) {
             showLoading("loading");
-            RequestPost.getPurchaseOrderDetail(orderId, this);
+            RequestPost.getPurchaseOrderDetail(mOrderId, this);
         }
     }
 
@@ -162,8 +163,9 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
                     bulkStorage.setVisibility(View.GONE);
                     setSelector(true);
                 }else {                                                             // 待收款
-                    // request
-                    toast("确认收款");
+                    // TODO
+                   // showLoading("");
+                    RequestPost.changePurchaseOrderState(mOrderId, this);
                 }
                 break;
             case R.id.btn_cancel:
@@ -270,8 +272,10 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
                         status.setText("待入库");
                     }else if ("waitPay".equals(mPurchaseInfos.getWorkFlow())){
                         status.setText("待付款");
-                    }else {
+                    }else if ("complete".equals(mPurchaseInfos.getWorkFlow())){
                         status.setText("已完成");
+                    }else {
+                        status.setText(mPurchaseInfos.getWorkFlow()                                                                                                                         );
                     }
 
                     goodsName.setText(mPurchaseInfos.getGoodsName());
@@ -299,6 +303,11 @@ public class PurchaseDetailActivity extends BaseActivity implements View.OnClick
                     Message msg = new Message();
                     msg.what = CHECKED_SIZE;
                     mHandler.sendMessage(msg);
+                }
+                // 确认收款
+                if (result.url().contains("wxapi/v1/order.php?type=changePurchaseOrderState")){
+                    toast(body.get("warn"));
+                    RequestPost.getPurchaseOrderDetail(mOrderId, this);
                 }
             } else {
                 toast(body.get("warn"));

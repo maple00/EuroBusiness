@@ -7,12 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.rainwood.eurobusiness.R;
-import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.domain.SpecialBean;
 
 import java.util.List;
@@ -94,35 +92,28 @@ public class SizeAdapter extends BaseAdapter {
             holder.tv_repertory.setText(getItem(position).getStock());
         }
         // 如果内容为空，则表示可以退货 -- 只有门店端管理的订单完成才显示退货
-        if ("已完成".equals(status) && Contants.CHOOSE_MODEL_SIZE == 4){
-            holder.tv_refunds.setVisibility(View.VISIBLE);
-            if (TextUtils.isEmpty(getItem(position).getRefundText())) {
-                holder.tv_refunds.setFocusable(true);
-                holder.tv_refunds.setFocusableInTouchMode(true);
-                holder.tv_refunds.setBackgroundResource(R.drawable.shape_radius_gray_16);
-                holder.tv_refunds.setOnClickListener(v -> {
-                    mOnClickRefunds.onClickrefunds(position);
-                    notifyDataSetChanged();
-                });
-            }else {
-                if ("complete".equals(getItem(position).getRefundState())){
-                    holder.tv_refunds.setTextColor(mContext.getResources().getColor(R.color.blue5));
-                }else {
-                    holder.tv_refunds.setTextColor(mContext.getResources().getColor(R.color.yellow05));
-                }
-                holder.tv_refunds.setFocusable(false);
-                holder.tv_refunds.setFocusableInTouchMode(false);
-                holder.tv_refunds.setText(getItem(position).getRefundText());
-                holder.tv_refunds.setBackgroundResource(R.drawable.selector_transparent);
+        if ("".equals(getItem(position).getRefundState())) {         // 如果状态为空，则表示可以退货
+            holder.tv_refunds.setFocusable(true);
+            holder.tv_refunds.setText(getItem(position).getRefundText());
+            holder.tv_refunds.setTextColor(mContext.getResources().getColor(R.color.textColor));
+            holder.tv_refunds.setBackgroundResource(R.drawable.shape_radius_gray_16);
+            holder.tv_refunds.setOnClickListener(v -> {
+                mOnClickRefunds.onClickrefunds(position);
+            });
+        } else {                 // 显示退货进度
+            if ("complete".equals(getItem(position).getRefundState())) {
+                holder.tv_refunds.setTextColor(mContext.getResources().getColor(R.color.blue5));
+            } else {
+                holder.tv_refunds.setTextColor(mContext.getResources().getColor(R.color.yellow05));
             }
-        }else {
-            holder.tv_refunds.setVisibility(View.GONE);
+            holder.tv_refunds.setFocusable(false);
+            holder.tv_refunds.setText(getItem(position).getRefundText());
+            holder.tv_refunds.setBackgroundResource(R.drawable.selector_transparent);
         }
-
         return convertView;
     }
 
-    public interface OnClickRefunds{
+    public interface OnClickRefunds {
         // 退货
         void onClickrefunds(int position);
     }

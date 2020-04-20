@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion "29.0.3"
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.rainwood.eurobusiness"
         minSdkVersion 19
@@ -10,12 +10,23 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // 开启 Dex 分包
+        multiDexEnabled true
     }
 
     // 配置jdk1.8
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
+    }
+
+    // 生成指定的apk文件名，默认为app-release.spk
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                // 此处指定生成的apk文件名
+                outputFileName = "欧商科技.apk"
+            }
     }
 
     buildTypes {

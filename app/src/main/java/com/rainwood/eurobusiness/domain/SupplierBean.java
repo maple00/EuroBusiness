@@ -10,7 +10,7 @@ import java.io.Serializable;
 public final class SupplierBean implements Serializable {
 
     private String id;              // id
-    private String name;            // 供应商
+    private String name;            // 供应商/门店/客户
 
     public String getId() {
         return id;

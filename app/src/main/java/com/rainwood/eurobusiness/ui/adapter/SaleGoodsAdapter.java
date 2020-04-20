@@ -60,6 +60,7 @@ public class SaleGoodsAdapter extends BaseAdapter {
             holder.gv_price = convertView.findViewById(R.id.gv_price);
             holder.tv_name = convertView.findViewById(R.id.tv_name);
             holder.ll_store_name = convertView.findViewById(R.id.ll_store_name);
+            holder.ll_item = convertView.findViewById(R.id.ll_item);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -74,6 +75,11 @@ public class SaleGoodsAdapter extends BaseAdapter {
             Glide.with(convertView).load(R.drawable.icon_loadding_fail).into(holder.iv_shop_img);
         } else {
             Glide.with(convertView).load(getItem(position).getImgPath()).into(holder.iv_shop_img);
+        }
+        if (TextUtils.isEmpty(getItem(position).getStoreName())){
+            holder.ll_store_name.setVisibility(View.INVISIBLE);
+        }else {
+            holder.ll_store_name.setVisibility(View.VISIBLE);
         }
         if (TextUtils.isEmpty(getItem(position).getStatus())) {
             holder.tv_status.setVisibility(View.GONE);
@@ -90,14 +96,25 @@ public class SaleGoodsAdapter extends BaseAdapter {
         SubSaleGoodsAdapter saleGoodsAdapter = new SubSaleGoodsAdapter(mContext, getItem(position).getPriceList());
         holder.gv_price.setAdapter(saleGoodsAdapter);
         holder.gv_price.setNumColumns(3);
+        // 查看详情点击事件
+        holder.ll_item.setOnClickListener(v -> mOnClickItemListener.onClickItem(position));
         return convertView;
     }
 
+    public interface OnClickItemListener{
+        void onClickItem(int position);
+    }
+
+    private OnClickItemListener mOnClickItemListener;
+
+    public void setOnClickItemListener(OnClickItemListener onClickItemListener) {
+        mOnClickItemListener = onClickItemListener;
+    }
 
     private class ViewHolder {
         private ImageView iv_shop_img;
         private TextView tv_status, tv_name, tv_store_name;
         private MeasureGridView gv_price;
-        private LinearLayout ll_store_name;
+        private LinearLayout ll_store_name, ll_item;
     }
 }

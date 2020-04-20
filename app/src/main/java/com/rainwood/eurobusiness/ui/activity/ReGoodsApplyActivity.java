@@ -51,7 +51,6 @@ public class ReGoodsApplyActivity extends BaseActivity implements View.OnClickLi
         return R.layout.activity_return_goods_apply;
     }
 
-
     @ViewById(R.id.iv_back)
     private ImageView pageBack;
     @ViewById(R.id.tv_title)
@@ -109,7 +108,6 @@ public class ReGoodsApplyActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void initView() {
         initContent();
-
         // request
         // 采购订单退货
         showLoading("loading");
@@ -133,6 +131,14 @@ public class ReGoodsApplyActivity extends BaseActivity implements View.OnClickLi
             } else {
                 finish();
             }
+        }
+
+        // 被驳回的商品重新申请 goodsId
+        String goodsId = getIntent().getStringExtra("goodsId");
+        if (goodsId != null) {
+            RequestPost.getRefundOrder(goodsId, this);
+        } else {
+            finish();
         }
     }
 
@@ -188,7 +194,6 @@ public class ReGoodsApplyActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.btn_confirm:
                 if (Contants.CHOOSE_MODEL_SIZE == 2 || Contants.CHOOSE_MODEL_SIZE == 109) {
-
                     if (TextUtils.isEmpty(clearEditText.getText())) {
                         toast("请输入退货数量");
                         return;
@@ -213,11 +218,11 @@ public class ReGoodsApplyActivity extends BaseActivity implements View.OnClickLi
                 }
                 // 订单退货
                 if (Contants.CHOOSE_MODEL_SIZE == 4 || Contants.CHOOSE_MODEL_SIZE == 106) {
-                    clearEditText.setText("4");
-                    if (TextUtils.isEmpty(clearEditText.getText())) {
-                        toast("请输入退货数量");
-                        return;
-                    }
+                    //clearEditText.setText("4");
+//                    if (TextUtils.isEmpty(clearEditText.getText())) {
+//                        toast("请输入退货数量");
+//                        return;
+//                    }
                     if (TextUtils.isEmpty(clearReason.getText())) {
                         toast("请输入退货原因");
                         return;
@@ -228,7 +233,8 @@ public class ReGoodsApplyActivity extends BaseActivity implements View.OnClickLi
                     }
                     // request
                     showLoading("");
-                    RequestPost.commitBuyCarRefundOrder(mRefundsOrder.getBuyCarMxId(), clearEditText.getText().toString().trim(),
+                    RequestPost.commitBuyCarRefundOrder(mRefundsOrder.getBuyCarMxId(),
+                            TextUtils.isEmpty(clearEditText.getText()) ? "" : clearEditText.getText().toString().trim(),
                             clearReason.getText().toString().trim(), returnFee.getText().toString().trim(), this);
                 }
                 break;
@@ -341,6 +347,7 @@ public class ReGoodsApplyActivity extends BaseActivity implements View.OnClickLi
                 }
             } else {
                 toast(body.get("warn"));
+                finish();
             }
             dismissLoading();
         }

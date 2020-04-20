@@ -15,26 +15,52 @@
 
     <View style="@style/HorizontalLineStyle" />
 
-    <androidx.core.widget.NestedScrollView
+    <com.rainwood.tools.refresh.DaisyRefreshLayout
+        android:id="@+id/drl_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:scrollbarSize="2dp"
+            android:scrollbars="vertical">
 
-            <com.rainwood.tools.widget.MeasureListView
-                android:id="@+id/lv_content_list"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="15dp"
-                android:divider="@color/transparent"
-                android:dividerHeight="30dp" />
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-        </LinearLayout>
+                <com.rainwood.tools.widget.MeasureListView
+                    android:id="@+id/lv_content_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginRight="15dp"
+                    android:divider="@color/transparent"
+                    android:dividerHeight="30dp" />
 
-    </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
+
+
+        </androidx.core.widget.NestedScrollView>
+
+    </com.rainwood.tools.refresh.DaisyRefreshLayout>
+
+ <!--   <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <Button
+        style="@style/RedButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="10dp"
+        android:text="新建盘存" />-->
+
 </LinearLayout>

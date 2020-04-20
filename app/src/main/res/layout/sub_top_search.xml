@@ -22,6 +22,7 @@
         android:layout_height="match_parent"
         android:layout_marginStart="15dp"
         android:layout_weight="1"
+        android:visibility="gone"
         android:background="@drawable/bg_search_bar">
 
         <LinearLayout
@@ -92,7 +93,8 @@
         android:layout_width="35dp"
         android:layout_height="wrap_content"
         android:padding="2dp"
-        android:src="@drawable/ic_icon_new_found2" />
+        android:src="@drawable/ic_icon_new_found2"
+        android:visibility="gone"/>
 
     <ImageView
         android:id="@+id/iv_screening"

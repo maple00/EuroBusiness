@@ -1,14 +1,19 @@
 package com.rainwood.eurobusiness.ui.activity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,7 +24,6 @@ import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.domain.CommonUIBean;
 import com.rainwood.eurobusiness.domain.RefundDetailBean;
-import com.rainwood.eurobusiness.domain.ReturnGoodsBean;
 import com.rainwood.eurobusiness.json.JsonParser;
 import com.rainwood.eurobusiness.okhttp.HttpResponse;
 import com.rainwood.eurobusiness.okhttp.OnHttpListener;
@@ -27,6 +31,7 @@ import com.rainwood.eurobusiness.request.RequestPost;
 import com.rainwood.eurobusiness.ui.adapter.StoresListAdapter;
 import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.statusbar.StatusBarUtil;
+import com.rainwood.tools.view.ClearEditText;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
 
@@ -43,6 +48,8 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
 
     private RefundDetailBean mDetail;
     private List<CommonUIBean> mUIList;
+    private String mFlag;
+    private PopupWindow mPopupWindow;
 
     @Override
     protected int getLayoutId() {
@@ -76,7 +83,7 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
     @ViewById(R.id.lv_content_list)
     private MeasureListView contentList;
 
-    // 状态删除
+    // 状态删除/驳回
     @ViewById(R.id.tv_reason)
     private TextView reason;
     @ViewById(R.id.ll_status_hint)
@@ -93,16 +100,24 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
     protected void initView() {
         // initView
         initContext();
-
+        String goodsId = getIntent().getStringExtra("goodsId");
+        // TODO:商品详情
+        if (goodsId != null) {
+            RequestPost.returnGoodsDetail(goodsId, this);
+        } else {
+            toast("数据异常");
+            finish();
+        }
+        mFlag = getIntent().getStringExtra("flag");
+        if (mFlag == null) {
+            toast("数据异常");
+            finish();
+        }
     }
 
     @Override
     protected void initData() {
         super.initData();
-        String goodsId = getIntent().getStringExtra("goodsId");
-        // request data detail
-        RequestPost.returnGoodsDetail(goodsId, this);
-
         mUIList = new ArrayList<>();
         for (int i = 0; i < titles.length; i++) {
             CommonUIBean commonUI = new CommonUIBean();
@@ -140,42 +155,94 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
             case R.id.iv_back:
                 finish();
                 break;
-            case R.id.btn_delete:
-                toast("删除");
+            case R.id.btn_delete:           // 删除退货订单
+                // toast("删除");
+                if ("seller".equals(mFlag)) {          // 批发商端-- 驳回
+                    View contentView = LayoutInflater.from(this).inflate(R.layout.dialog_refuse_inventory, null);
+                    mPopupWindow = new PopupWindow(contentView,
+                            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+                    mPopupWindow.setContentView(contentView);
+                    View rootView = LayoutInflater.from(this).inflate(R.layout.activity_return_goods_detail, null);
+                    mPopupWindow.setAnimationStyle(R.style.IOSAnimStyle);
+                    mPopupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+                    backgroundAlpha(0.7f);
+                    mPopupWindow.setOnDismissListener(() -> {
+                        mPopupWindow.dismiss();
+                        backgroundAlpha(1.0f);
+                    });
+                    ClearEditText refuseReason = contentView.findViewById(R.id.cet_refuse_reason);
+                    Button cancel = contentView.findViewById(R.id.btn_cancel);
+                    Button confirm = contentView.findViewById(R.id.btn_confirm);
+                    cancel.setOnClickListener(v1 -> mPopupWindow.dismiss());
+                    confirm.setOnClickListener(v12 -> {
+                        if (TextUtils.isEmpty(refuseReason.getText())) {
+                            toast("请输入驳回原因");
+                            return;
+                        }
+                        showLoading("");
+                        RequestPost.auditingPurchaseOrder(mDetail.getId(), "refuse",
+                                refuseReason.getText().toString().trim(), ReGoodsDetailActivity.this);
+                    });
+                } else {
+                    showLoading("");
+                    RequestPost.delRefundOrder(mDetail.getId(), this);
+                }
                 break;
-            case R.id.btn_edit:         // 跳转到退货申请
-                // toast("编辑");
-                openActivity(ReGoodsApplyActivity.class);
+            case R.id.btn_edit:
+                if ("seller".equals(mFlag)) {            // 批发商端 --- 通过审核
+                    showLoading("");
+                    RequestPost.auditingPurchaseOrder(mDetail.getId(), "pass","", ReGoodsDetailActivity.this);
+                } else {                // 跳转到退货申请
+                    Intent intent = new Intent(this, ReGoodsApplyActivity.class);
+                    intent.putExtra("goodsId", mDetail.getBuyCarMxId());
+                    startActivity(intent);
+                }
                 break;
         }
     }
 
+    public void backgroundAlpha(float bgAlpha)  //阴影改变
+    {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        lp.alpha = bgAlpha; //0.0-1.0
+        getWindow().setAttributes(lp);
+    }
+
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler(){
+    private Handler mHandler = new Handler() {
         @SuppressLint("SetTextI18n")
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            switch (msg.what){
+            switch (msg.what) {
                 case INITIAL_SIZE:
                     Glide.with(ReGoodsDetailActivity.this).load(mDetail.getIco()).into(image);
                     status.setText(mDetail.getWorkFlow());
-                    if (mDetail.getWorkFlow().equals("已驳回")) {               // 驳回状态与其他状态不同
-                        topText.setText("审核记录");
-                        topText.setTextColor(getResources().getColor(R.color.white));
-                        reason.setVisibility(View.VISIBLE);
-                        reason.setText("驳回原因："+ mDetail.getAuditText());
-                        statusHint.setVisibility(View.VISIBLE);
+                    if ("seller".equals(mFlag)) {     // 批发商端
+                        if ("待审核".equals(mDetail.getWorkFlow())) {          // 待审核时需通过审核
+                            statusHint.setVisibility(View.VISIBLE);
+                            delete.setText("驳回");
+                            edit.setText("通过");
+                        }
                     } else {
-                        topText.setText("");
-                        statusHint.setVisibility(View.GONE);
-                        reason.setVisibility(View.GONE);
+                        if (!"".equals(mDetail.getAuditText())) {               // 驳回状态(状态)
+                            topText.setText("审核记录");
+                            status.setText("已驳回");
+                            topText.setTextColor(getResources().getColor(R.color.white));
+                            reason.setVisibility(View.VISIBLE);
+                            reason.setText("驳回原因：" + mDetail.getAuditText());
+                            statusHint.setVisibility(View.VISIBLE);
+                        } else {
+                            topText.setText("");
+                            statusHint.setVisibility(View.GONE);
+                            reason.setVisibility(View.GONE);
+                        }
                     }
                     name.setText(mDetail.getGoodsName());
                     model.setText(mDetail.getModel());
-                    discount.setText(mDetail.getDiscount());
-                    rate.setText(mDetail.getTaxRate());
-                    params.setText(mDetail.getModel());
+                    discount.setText(mDetail.getDiscount() + "%");
+                    rate.setText(mDetail.getTaxRate() + "%");
+                    params.setText(mDetail.getSkuName());
 
                     StoresListAdapter listAdapter = new StoresListAdapter(ReGoodsDetailActivity.this, mUIList);
                     contentList.setAdapter(listAdapter);
@@ -193,7 +260,6 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        Log.d(TAG, "======= result ======= " + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
@@ -202,7 +268,7 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
                             JsonParser.parseJSONObject(body.get("data")).get("info"));
                     // 赋值
                     for (int i = 0; i < mUIList.size(); i++) {
-                        switch (i){
+                        switch (i) {
                             case 0:         // 退货数量
                                 mUIList.get(i).setShowText(mDetail.getRefundNum());
                                 break;
@@ -213,7 +279,7 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
                                 mUIList.get(i).setShowText(mDetail.getText());
                                 break;
                             case 3:         // 运费
-                                mUIList.get(i).setShowText(mDetail.getRefundMoney());
+                                mUIList.get(i).setShowText(mDetail.getFreightMoney());
                                 break;
                             case 4:         // 订单类型
                                 mUIList.get(i).setShowText(mDetail.getClassify());
@@ -230,10 +296,23 @@ public class ReGoodsDetailActivity extends BaseActivity implements View.OnClickL
                     msg.what = INITIAL_SIZE;
                     mHandler.sendMessage(msg);
                 }
-            }else {
+
+                // 删除退货订单
+                if (result.url().contains("wxapi/v1/order.php?type=delRefundOrder")) {
+                    toast(body.get("warn"));
+                    postDelayed(this::finish, 500);
+                }
+
+                // 批发商采购单退货审批
+                if (result.url().contains("wxapi/v1/order.php?type=auditingPurchaseOrder")) {
+                    toast(body.get("warn"));
+                    postDelayed(this::finish, 500);
+                }
+            } else {
                 toast(body.get("warn"));
             }
-
+            if (getDialog() != null)
+                dismissLoading();
         }
     }
 }

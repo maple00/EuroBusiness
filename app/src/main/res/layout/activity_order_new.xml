@@ -339,7 +339,6 @@
                         android:src="@drawable/ic_icon_plus_red" />
 
                     <TextView
-                        android:id="@+id/tv_add_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"

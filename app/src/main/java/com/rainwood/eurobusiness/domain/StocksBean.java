@@ -17,6 +17,15 @@ public class StocksBean implements Serializable {
     private String stock;               // 库存数量
     private String num;                 // 盘点数量
     private String state;               // 状态
+    private int permission = 0;             // 权限页面、默认为批发商端
+
+    public int getPermission() {
+        return permission;
+    }
+
+    public void setPermission(int permission) {
+        this.permission = permission;
+    }
 
     public String getId() {
         return id;

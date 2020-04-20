@@ -74,20 +74,26 @@ public class GoodsAddressActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void initView() {
         pageBack.setOnClickListener(this);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         mCustomId = getIntent().getStringExtra("customId");
-
-        if (Contants.CHOOSE_MODEL_SIZE == 13 && mCustomId != null) {          // 收货地址
-            setDefaultUI("收货地址", "新增收货地址");
-            // request
-            showLoading("loading");
-            RequestPost.getClientAddresslist(mCustomId, this);
-        }else if (Contants.CHOOSE_MODEL_SIZE == 14 && mCustomId != null) {              // 开票地址
-            setDefaultUI("开票地址", "新增开票地址");
-            // request
-            showLoading("loading");
-            RequestPost.getClientInvoicelist(mCustomId, this);
-        }else {
+        mList = new ArrayList<>();
+        if (mCustomId != null) {
+            if (Contants.CHOOSE_MODEL_SIZE == 13 || Contants.CHOOSE_MODEL_SIZE == 19) {          // 收货地址
+                setDefaultUI("收货地址", "新增收货地址");
+                // request
+                showLoading("loading");
+                RequestPost.getClientAddresslist(mCustomId, this);
+            } else {              // 开票地址
+                setDefaultUI("开票地址", "新增开票地址");
+                // request
+                showLoading("loading");
+                RequestPost.getClientInvoicelist(mCustomId, this);
+            }
+        } else {
             toast("数据异常");
             finish();
         }
@@ -102,7 +108,7 @@ public class GoodsAddressActivity extends BaseActivity implements View.OnClickLi
     @Override
     protected void initData() {
         super.initData();
-        mList = new ArrayList<>();
+
     }
 
     @Override
@@ -113,10 +119,14 @@ public class GoodsAddressActivity extends BaseActivity implements View.OnClickLi
                 break;
             case R.id.btn_new_address:
                 if (Contants.CHOOSE_MODEL_SIZE == 13) {              // 新增收货地址
-                    openActivity(NewGoodsAddressActivity.class);
+                    Intent intent = new Intent(this, ShipAddressActivity.class);
+                    intent.putExtra("customId", mCustomId);
+                    startActivity(intent);
                 }
                 if (Contants.CHOOSE_MODEL_SIZE == 14) {              // 新增开票地址
-                    openActivity(NewGoodsAddressActivity.class);
+                    Intent intent = new Intent(this, InvoinceCreateActivity.class);
+                    intent.putExtra("customId", mCustomId);
+                    startActivity(intent);
                 }
                 break;
         }
@@ -159,16 +169,18 @@ public class GoodsAddressActivity extends BaseActivity implements View.OnClickLi
                         public void onClickEdit(int position) {
                             // 开票地址
                             if (Contants.CHOOSE_MODEL_SIZE == 14 || Contants.CHOOSE_MODEL_SIZE == 18) {
-                                Contants.CHOOSE_MODEL_SIZE = 18;
-                                Intent intent = new Intent(GoodsAddressActivity.this, NewGoodsAddressActivity.class);
+                               // Contants.CHOOSE_MODEL_SIZE = 18;
+                                Intent intent = new Intent(GoodsAddressActivity.this, InvoinceCreateActivity.class);
                                 intent.putExtra("invoice", mInvoiceList.get(position));
+                                intent.putExtra("customId", mCustomId);
                                 startActivity(intent);
                             }
                             // 收货地址
                             if (Contants.CHOOSE_MODEL_SIZE == 13 || Contants.CHOOSE_MODEL_SIZE == 19) {
-                                Contants.CHOOSE_MODEL_SIZE = 19;
-                                Intent intent = new Intent(GoodsAddressActivity.this, NewGoodsAddressActivity.class);
+                               // Contants.CHOOSE_MODEL_SIZE = 19;
+                                Intent intent = new Intent(GoodsAddressActivity.this, ShipAddressActivity.class);
                                 intent.putExtra("invoice", mClientAddressList.get(position));
+                                intent.putExtra("customId", mCustomId);
                                 startActivity(intent);
                             }
                         }
@@ -191,10 +203,10 @@ public class GoodsAddressActivity extends BaseActivity implements View.OnClickLi
                         public void onClickItem(int position) {
                             Intent intent = new Intent();
                             intent.putExtra("address", mList.get(position));
-                            if (Contants.CHOOSE_MODEL_SIZE == 13){
+                            if (Contants.CHOOSE_MODEL_SIZE == 13) {
                                 setResult(ADDRESS_REQUEST_SIZE, intent);
                             }
-                            if (Contants.CHOOSE_MODEL_SIZE == 14){
+                            if (Contants.CHOOSE_MODEL_SIZE == 14) {
                                 setResult(INVOICE_ADDRESS_REQUEST, intent);
                             }
                             finish();

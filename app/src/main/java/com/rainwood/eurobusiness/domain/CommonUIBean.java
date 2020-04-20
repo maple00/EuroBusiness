@@ -1,11 +1,13 @@
 package com.rainwood.eurobusiness.domain;
 
+import java.io.Serializable;
+
 /**
  * @Author: a797s
  * @Date: 2020/2/7
  * @Desc: title + label 形式的界面
  */
-public class CommonUIBean {
+public class CommonUIBean implements Serializable {
 
     /**
      * 类型

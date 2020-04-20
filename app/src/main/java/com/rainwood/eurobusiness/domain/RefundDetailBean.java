@@ -10,12 +10,14 @@ import java.io.Serializable;
 public final class RefundDetailBean implements Serializable {
 
     private String id;              // 退货订单号
+    private String buyCarMxId;      // 商品id
     private String ico;             // 图片
     private String goodsName;       // 商品名称
     private String  skuName;        // 规格名称
     private String refundMoney;     // 退货金额
     private String refundNum;       // 退货数量
     private String model;           // 型号
+    private String freightMoney;    // 运费
     private String time;            // 申请时间
     private String workFlow;        // 订单状态
     private String discount;        // 折扣
@@ -23,6 +25,22 @@ public final class RefundDetailBean implements Serializable {
     private String classify;        // 订单类型
     private String text;            // 退货原因
     private String auditText;       // 审批原因
+
+    public String getFreightMoney() {
+        return freightMoney;
+    }
+
+    public void setFreightMoney(String freightMoney) {
+        this.freightMoney = freightMoney;
+    }
+
+    public String getBuyCarMxId() {
+        return buyCarMxId;
+    }
+
+    public void setBuyCarMxId(String buyCarMxId) {
+        this.buyCarMxId = buyCarMxId;
+    }
 
     public String getId() {
         return id;

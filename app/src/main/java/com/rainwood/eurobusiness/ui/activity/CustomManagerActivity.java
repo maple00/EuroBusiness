@@ -65,12 +65,23 @@ public class CustomManagerActivity extends BaseActivity implements View.OnClickL
     // 订单总额
     private String totalCost;
 
+    private List<ItemGridBean> customTypeList;
+    private String[] types = {"客户分类"};
+    private List<ClientManagerBean> mList;
+    private List<ClientTypeBean> mClientTypeList;
+    // 批发商
+    private String[] topTypes = {"客户分类", "门店"};
+
     @Override
     protected void initView() {
         pageBack.setOnClickListener(this);
         managerType.setOnClickListener(this);
         newCustom.setOnClickListener(this);
-
+        if (Contants.CHOOSE_MODEL_SIZE == 107){
+            newCustom.setVisibility(View.GONE);
+        }else {
+            newCustom.setVisibility(View.VISIBLE);
+        }
         // request
         showLoading("loading");
         RequestPost.getClientList("", "", this);
@@ -105,7 +116,7 @@ public class CustomManagerActivity extends BaseActivity implements View.OnClickL
                 openActivity(CustomTypeActivity.class);
                 break;
             case R.id.btn_new_custom:               // 新增客户
-                openActivity(CustomNewActivity.class);
+                openActivity(CustomEditActivity.class);
                 break;
         }
     }
@@ -128,7 +139,7 @@ public class CustomManagerActivity extends BaseActivity implements View.OnClickL
                         typeAdapter.setOnClickItem(position -> {
                             // request 客户分类列表
                             showLoading("loading");
-                            RequestPost.getClientTypeList(CustomManagerActivity.this);
+                            RequestPost.getClientTypeList("", "", CustomManagerActivity.this);
                         });
                         // content
                         CustomAdapter customAdapter = new CustomAdapter(CustomManagerActivity.this, mList);
@@ -147,21 +158,14 @@ public class CustomManagerActivity extends BaseActivity implements View.OnClickL
                         LevelTypeAdapter typeAdapter = new LevelTypeAdapter(CustomManagerActivity.this, customTypeList);
                         customSpinner.setAdapter(typeAdapter);
                         customSpinner.setNumColumns(GridView.AUTO_FIT);
-                        typeAdapter.setOnClickItem(new LevelTypeAdapter.OnClickItem() {
-                            @Override
-                            public void onClickItem(int position) {
-                                toast(customTypeList.get(position).getItemName());
-                            }
+                        typeAdapter.setOnClickItem(position -> {
+                            showLoading("loading");
+                            RequestPost.getClientTypeList("", "", CustomManagerActivity.this);
                         });
                         // content
                         CustomAdapter customAdapter = new CustomAdapter(CustomManagerActivity.this, mList);
                         contentList.setAdapter(customAdapter);
-                        customAdapter.setOnClickContent(new CustomAdapter.OnClickContent() {
-                            @Override
-                            public void onClickContent(int position) {
-                                openActivity(CustomDetailActivity.class);
-                            }
-                        });
+                        customAdapter.setOnClickContent(position -> openActivity(CustomDetailActivity.class));
                     }
                     break;
                 case CLIENT_TYPE_SIZE:
@@ -193,13 +197,6 @@ public class CustomManagerActivity extends BaseActivity implements View.OnClickL
             }
         }
     };
-
-    private List<ItemGridBean> customTypeList;
-    private String[] types = {"客户分类"};
-    private List<ClientManagerBean> mList;
-    private List<ClientTypeBean> mClientTypeList;
-    // 批发商
-    private String[] topTypes = {"客户分类", "门店"};
 
     @Override
     public void onHttpFailure(HttpResponse result) {

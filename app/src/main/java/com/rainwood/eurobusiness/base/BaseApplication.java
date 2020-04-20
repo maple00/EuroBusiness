@@ -10,6 +10,7 @@ import com.rainwood.eurobusiness.common.Contants;
 import com.rainwood.eurobusiness.helper.ActivityStackManager;
 import com.rainwood.eurobusiness.ui.activity.CrashActivity;
 import com.rainwood.eurobusiness.ui.activity.HomeActivity;
+import com.rainwood.eurobusiness.ui.activity.SplashActivity;
 import com.rainwood.eurobusiness.utils.DeviceIdUtils;
 import com.rainwood.tools.toast.ToastInterceptor;
 import com.rainwood.tools.toast.ToastUtils;
@@ -77,7 +78,7 @@ public class BaseApplication extends Application {
                 .trackActivities(true)
                 .minTimeBetweenCrashesMs(2000)
                 // 重启的 Activity
-                .restartActivity(HomeActivity.class)
+                .restartActivity(SplashActivity.class)
                 // 错误的 Activity
                 .errorActivity(CrashActivity.class)
                 // 设置监听器

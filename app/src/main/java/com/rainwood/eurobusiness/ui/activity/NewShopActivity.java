@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -17,11 +18,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.bumptech.glide.Glide;
 import com.rainwood.eurobusiness.R;
 import com.rainwood.eurobusiness.base.BaseActivity;
 import com.rainwood.eurobusiness.common.Contants;
+import com.rainwood.eurobusiness.domain.EditSpecialBean;
+import com.rainwood.eurobusiness.domain.GoodsDetailsBean;
 import com.rainwood.eurobusiness.domain.ImageBean;
+import com.rainwood.eurobusiness.domain.PromotionBean;
 import com.rainwood.eurobusiness.io.IOUtils;
 import com.rainwood.eurobusiness.json.JsonParser;
 import com.rainwood.eurobusiness.okhttp.HttpResponse;
@@ -65,6 +68,9 @@ import static com.rainwood.eurobusiness.utils.CameraUtil.uri_;
 public class NewShopActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
     private String mGoodsId;
+    private GoodsDetailsBean mGoodsDetails;
+    private List<EditSpecialBean> mEditSpecialList;
+    private PromotionBean mPromotion;
 
     @Override
     protected int getLayoutId() {
@@ -136,6 +142,7 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
     private List<String> goodsFications;
     private String[] selectors = {"相机", "相册"};
     private final int GOODS_IMAGE = 0x101;
+    private final int GOODS_EDIT_SIZE = 0x102;  // 商品编辑
 
     // 尺码选择请求码
     public static final int SIZE_REQUEST = 0x1003;
@@ -150,12 +157,18 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
     @Override
 
     protected void initView() {
-        pageTitle.setText("新建商品");
         initEvents();
-
-        // request
+        mGoodsId = getIntent().getStringExtra("goodsId");
         showLoading("");
-        RequestPost.getNewGoodsPage(this);
+        if (mGoodsId == null) {           // 新建商品
+            pageTitle.setText("新建商品");
+            // TODO:
+            RequestPost.getNewGoodsPage(this);
+        } else {                     // 编辑商品
+            pageTitle.setText("编辑商品");
+            // TODO: 获取详情页数据
+            RequestPost.getGoodsDetail(mGoodsId, this);
+        }
     }
 
     private void initEvents() {
@@ -208,7 +221,7 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
                 startActivityForResult(intent, GOODS_REQUEST);
                 break;
             case R.id.iv_scan:
-                toast("扫一扫");
+                // toast("扫一扫");
                 openScan();
                 break;
             case R.id.iv_tax_checked:
@@ -250,11 +263,11 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
                 setSpecification();
                 break;
             case R.id.cet_start_time:
-                toast("开始时间");
+                // toast("开始时间");
                 setDateAndTime(0);
                 break;
             case R.id.cet_end_time:
-                toast("结束时间");
+                // toast("结束时间");
                 setDateAndTime(1);
                 break;
             case R.id.btn_commit:
@@ -321,10 +334,6 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
                     toast("请填写商品名称");
                     return;
                 }
-                /*List<File> subFile = new ArrayList<>();
-                if (ListUtils.getSize(goodsImageList) != 0) {
-                    subFile = new ArrayList<>(goodsImageList.subList(1, goodsImageList.size()));
-                }*/
                 // request
                 showLoading("");
                 RequestPost.goodsInfoEdit(mGoodsId, "save", goodsName.getText().toString().trim(), subTypeId, goodsModel.getText().toString().trim(),
@@ -338,6 +347,7 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
+        @SuppressLint("SetTextI18n")
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -357,6 +367,54 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
                         //toast("添加图片");
                         imageSelector();
                     });
+                    break;
+                case GOODS_EDIT_SIZE:
+                    Log.d(TAG, "" + mGoodsDetails);
+                    // setValue
+                    goodsName.setText(mGoodsDetails.getName());
+                    goodsModel.setText(mGoodsDetails.getModel());
+                    goodsModel.setText(mGoodsDetails.getGoodsTypeOne() + "-" + mGoodsDetails.getGoodsTypeTwo());
+                    goodsCodeBar.setText(mGoodsDetails.getBarCode());
+                    salePrice.setText(mGoodsDetails.getTradePrice());
+                    retailPrice.setText(mGoodsDetails.getRetailPrice());
+                    goodsSpecial.setText(mGoodsDetails.getGoodsUnit());
+                    taxRate.setText(mGoodsDetails.getTaxRate());
+                    minBook.setText(mGoodsDetails.getStartNum());
+                    // 是否含税
+                    if ("1".equals(mGoodsDetails.getIsTax())){      // 含有增值税
+                        ivTaxChecked.setImageResource(R.drawable.radio_checked_shape);
+                        ivTaxUnchecked.setImageResource(R.drawable.radio_uncheck_shape);
+                    }else {
+                        ivTaxChecked.setImageResource(R.drawable.radio_uncheck_shape);
+                        ivTaxUnchecked.setImageResource(R.drawable.radio_checked_shape);
+                    }
+                    // 商品尺码
+                    if (ListUtils.getSize(mEditSpecialList) == 0){      // 没有尺码
+                        hasSize = !hasSize;
+                        llAddSize.setVisibility(View.GONE);
+                        iv_not_size.setImageResource(R.drawable.radio_checked_shape);
+                        iv_has_size.setImageResource(R.drawable.radio_uncheck_shape);
+                    }else {                                             // 有尺码
+                        hasSize = !hasSize;
+                        llAddSize.setVisibility(View.VISIBLE);
+                        iv_not_size.setImageResource(R.drawable.radio_uncheck_shape);
+                        iv_has_size.setImageResource(R.drawable.radio_checked_shape);
+                        cetAddSize.setText("共添加了" + ListUtils.getSize(mEditSpecialList) + "种规格");
+                    }
+                    // 图片列表
+                    Message imgMsg = new Message();
+                    imgMsg.what = GOODS_IMAGE;
+                    mHandler.sendMessage(imgMsg);
+                    // 促销信息
+                    if ("是".equals(mPromotion.getState())) {
+                        sb_switch.setChecked(true);
+                    }else {
+                        sb_switch.setChecked(false);
+                    }
+                    startTime.setText(mPromotion.getStartTime());
+                    endTime.setText(mPromotion.getEndTime());
+                    promotionPrice.setText(mPromotion.getPrice());
+                    discount.setText(mPromotion.getDiscount());
                     break;
             }
         }
@@ -428,7 +486,8 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
                     @Override
                     public void onSelected(BaseDialog dialog, int hour, int minute, int second) {
                         // toast(year + "年" + month + "月"+ day + "日\u3000" + hour + ":" + minute);
-                        String dateTime = year + "年" + month + "月" + day + "日\u3000" + hour + ":" + minute;
+                        String dateTime = year + "-" + (month < 10 ? "0" + month : month) + "-"
+                                + (day < 10 ? "0" + day : day) + " " + hour + ":" + minute;
                         // toast(dateTime);
                         if (flag == 0) {     // 开始时间
                             startTime.setText(dateTime);
@@ -549,19 +608,18 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
         startActivityForResult(intent, RESULT_CAMERA_IMAGE);
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PHOTO_REQUEST_CAREMA:
-                    toast("相机");
+                    // toast("相机");
                     showImage(uri_);
                     break;
                 case RESULT_CAMERA_IMAGE:
                     // 得到图片的全路径
-                    toast("相册");
+                    // toast("相册");
                     Uri uri = data.getData();
                     showImage(uri);
                     break;
@@ -576,8 +634,21 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
                     break;
             }
         }
-        if (requestCode == SIZE_REQUEST && resultCode == SIZE_REQUEST){
-            cetAddSize.setHint(data.getStringExtra("sizeValue"));
+        if (requestCode == SIZE_REQUEST && resultCode == SIZE_REQUEST) {
+            cetAddSize.setText(data.getStringExtra("sizeValue"));
+        }
+        // 获取识别的内容
+        if (requestCode == Contants.SCANCHECKCODE && resultCode == RESULT_OK) {
+            Bundle bundle = data.getExtras();
+            String result = null;
+            if (bundle != null) {
+                result = bundle.getString(QRCodeCaptureActivity.CODE_CONTENT);
+            }
+            if (TextUtils.isEmpty(result)) {
+                toast("未识别到任何内容");
+                return;
+            }
+            goodsCodeBar.setText(result);
         }
     }
 
@@ -597,7 +668,6 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
         image.setHasAdd(false);
         mImageList.add(image);
 
-
         Message msg = new Message();
         msg.what = GOODS_IMAGE;
         mHandler.sendMessage(msg);
@@ -610,7 +680,6 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
-        Log.d(TAG, " --- result ---- " + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
@@ -629,7 +698,34 @@ public class NewShopActivity extends BaseActivity implements View.OnClickListene
                 }
                 // 新增或更新商品
                 if (result.url().contains("wxapi/v1/goods.php?type=goodsInfoEdit")) {
-                    Log.d(TAG, " ======== " + body.get("data"));
+                    // Log.d(TAG, " ======== " + body.get("data"));
+                    toast(body.get("warn"));
+                    postDelayed(this::finish, 1000);
+                }
+
+                // 商品详情数据 -- 商品数据编辑
+                if (result.url().contains("wxapi/v1/goods.php?type=getGoodsInfo")){
+                    mGoodsDetails = JsonParser.parseJSONObject(GoodsDetailsBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodsInfo"));
+                    // 规格列表
+                    mEditSpecialList = JsonParser.parseJSONArray(EditSpecialBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodsSkulist"));
+                    // 图片列表
+                    List<ImageBean> imageList = JsonParser.parseJSONArray(ImageBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodsWinlist"));
+                    // mImageList
+                    if (ListUtils.getSize(mImageList) == 0) {
+                        ImageBean image = new ImageBean();
+                        image.setHasAdd(true);
+                        image.setPath("");
+                        mImageList.add(image);
+                    }
+                    if (imageList != null) {
+                        mImageList.addAll(imageList);
+                    }
+                    // 促销信息
+                    mPromotion = JsonParser.parseJSONObject(PromotionBean.class, JsonParser.parseJSONObject(body.get("data")).get("goodsPromotion"));
+
+                    Message msg = new Message();
+                    msg.what = GOODS_EDIT_SIZE;
+                    mHandler.sendMessage(msg);
                 }
             } else {
                 toast(body.get("warn"));

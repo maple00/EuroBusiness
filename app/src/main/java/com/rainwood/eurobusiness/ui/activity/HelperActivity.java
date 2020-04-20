@@ -75,7 +75,7 @@ public class HelperActivity extends BaseActivity implements View.OnClickListener
             if ("1".equals(body.get("code"))) {
                 // 门店或开票信息
                 if (result.url().contains("wxapi/v1/index.php?type=getHelp")) {
-                    List<HelpCenterBean> dataList = JsonParser.parseJSONArray(HelpCenterBean.class, JsonParser.parseJSONObject(body.get("data")).get("list"));
+                    /*List<HelpCenterBean> dataList = JsonParser.parseJSONArray(HelpCenterBean.class, JsonParser.parseJSONObject(body.get("data")).get("list"));
                     // 如果问题为空则必然是图片，如果图片为空，则必然是文字
                     for (HelpCenterBean helpData : dataList) {
                         if (TextUtils.isEmpty(helpData.getWord())){     // 必然是图片
@@ -83,7 +83,10 @@ public class HelperActivity extends BaseActivity implements View.OnClickListener
                         }else {
                             content.append(helpData.getWord()).append("\r\n");
                         }
-                    }
+                    }*/
+                    String helperContent = JsonParser.parseJSONObject(body.get("data")).get("list");
+                    content.append(helperContent);
+
                     initWebView();
                     Log.d(TAG, "webView === " + content);
                 }

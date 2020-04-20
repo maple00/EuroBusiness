@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">欧商科技</string>
-
+    <string name="splash_tips" translatable="false">进&#8194;销&#8194;存&#8194;管&#8194;理&#8194;系&#8194;统</string>
+    <string name="common_permission_hint" translatable="false">请先授予权限</string>
+    <string name="common_permission_fail" translatable="false">授权失败，请手动授予权限</string>
     <!-- 占位-->
+    <string name="common_copyright" translatable="false">\u00a9 2019 All Rights Reserved</string>
     <!-- Http-->
     <string name="frame_name" translatable="false">AndroidOHP</string>
     <!-- 通用的-->
@@ -23,7 +26,7 @@
     <string name="common_clear_screening" translatable="false">清空筛选</string>
     <string name="common_delete" translatable="false">删除</string>
     <string name="common_edit" translatable="false">编辑</string>
-    <string name="common_default_address" translatable="false">默认地址</string>
+    <string name="common_default_address" translatable="false">设为默认地址</string>
     <string name="common_default" translatable="false">默认</string>
     <string name="common_disable" translatable="false">停用</string>
     <!-- 更新-->

@@ -157,8 +157,8 @@ public class OrderDetailActivity extends BaseActivity implements View.OnClickLis
      */
     private void initContext() {
         pageBack.setOnClickListener(this);
-        pageBack.setImageResource(R.drawable.icon_white_page_back);
         pageTitle.setText("订单详情");
+        pageBack.setImageResource(R.drawable.icon_white_page_back);
         pageTitle.setTextColor(getResources().getColor(R.color.white));
         confirm.setOnClickListener(this);
         // 门店端订单管理才能收款或者发货

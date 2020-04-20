@@ -53,7 +53,6 @@ public class CustomNewActivity extends BaseActivity implements View.OnClickListe
     private MeasureListView contentLit;
     @ViewById(R.id.btn_confirm)
     private Button confirm;
-
     private final int INITIAL_SIZE = 0x101;
 
     @Override

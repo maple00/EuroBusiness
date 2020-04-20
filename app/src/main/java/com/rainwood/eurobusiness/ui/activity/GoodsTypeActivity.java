@@ -108,8 +108,12 @@ public class GoodsTypeActivity extends BaseActivity implements View.OnClickListe
                     }
                     break;
                 case TYPE_SIZE:      // 加载子项类型--- 通过网络请求
-                    // 更改UI
-                    subTypeList.get(subCount).setChoose(true);
+                    // 不同的批发商能看到不同的分类
+                    try {
+                        subTypeList.get(subCount).setChoose(true);
+                    } catch (Exception e) {
+                        toast("当前商品没有二级分类商品");
+                    }
                     GoodsTypeRightAdapter rightAdapter = new GoodsTypeRightAdapter(GoodsTypeActivity.this, subTypeList);
                     rightType.setAdapter(rightAdapter);
                     rightAdapter.setItemListener(position -> {

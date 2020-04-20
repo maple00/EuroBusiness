@@ -129,8 +129,9 @@ public class CustomDetailActivity extends BaseActivity implements View.OnClickLi
             case R.id.tv_right_text:
                 // toast("编辑");
                 Contants.CHOOSE_MODEL_SIZE = 15;
-                Intent intent = new Intent(this, CustomNewActivity.class);
+                Intent intent = new Intent(this, CustomEditActivity.class);
                 intent.putExtra("editClient", mClientEditDetail);
+                intent.putExtra("customId", mClientEditDetail.getClientBase().getId());
                 startActivity(intent);
                 break;
         }

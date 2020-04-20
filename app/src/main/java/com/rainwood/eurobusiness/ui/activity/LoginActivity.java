@@ -1,5 +1,6 @@
 package com.rainwood.eurobusiness.ui.activity;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -49,6 +50,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         TipsSizeUtils.setHintSize(loginPwd, "请输入密码", 20);
         // 忘记密码
         forgetPwd.setOnClickListener(v -> openActivity(CheckPhoneActivity.class));
+        if (Contants.userType == 0){
+            loginAccount.setText("测试");
+        }else {
+            loginAccount.setText("milan");
+        }
+        loginPwd.setText("123456");
     }
 
     @Override
@@ -65,7 +72,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 }
                 // TODO : login
                 showLoading("");
-                RequestPost.loginIn(loginAccount.getText().toString().trim(), loginPwd.getText().toString().trim(), this);
+                RequestPost.loginIn(loginAccount.getText().toString().trim(), loginPwd.getText().toString().trim(),
+                        Contants.userType == 0 ? "saler" : "store",this);
                 break;
             default:
                 break;

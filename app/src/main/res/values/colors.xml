@@ -56,6 +56,7 @@
     <color name="gray30">#CCCCCC</color>
 
     <!-- 红色 -->
+    <color name="red5">#F55850</color>
     <color name="red30">#CC302C</color>
     <color name="colorCancel">#F44336</color>
     <color name="red35">#F25D87</color>
@@ -71,6 +72,7 @@
     <color name="red85">#E03D3A</color>
     <color name="red95">#E23E3B</color>
     <color name="red100">#FF7263</color>
+    <color name="red105">#FFEDED</color>
     <!-- 金色 -->
     <color name="gold05">#FEFAF7</color>
     <!-- 黄色 -->
@@ -93,4 +95,6 @@
     <color name="orange15">#B9805E</color>
     <color name="orange20">#FFAB51</color>
     <color name="orange25">#EFC787</color>
+    <!-- 标签颜色-->
+    <color name="colorLabel">#999999</color>
 </resources>
